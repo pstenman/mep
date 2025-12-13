@@ -1,0 +1,15 @@
+{
+  "extends": "@mep/tsconfig/backend.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@mep/db/*": ["../../packages/db/*"],
+      "@mep/types/*": ["../../packages/types/*"]
+    }
+  },
+  "include": ["src/**/*", "src/index.ts"],
+  "exclude": ["node_modules", "dist"]
+}

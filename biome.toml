@@ -1,0 +1,13 @@
+[settings]
+formatter = true
+linter = true
+
+[formatter]
+indent_style = "space"
+indent_width = 2
+line_width = 100
+
+[imports]
+sort = true
+newlines_between = "always"
+grouping = "recommended"
