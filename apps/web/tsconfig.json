@@ -5,19 +5,8 @@
     "paths": {
       "@/*": ["src/*"],
       "~locale/*": ["locale/*"]
-    },
-    "types": ["node", "react", "react-dom"],
-    "typeRoots": ["./node_modules/@types", "../../node_modules/types"]
+    }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "src",
-    "next-env.d.ts",
-    "next.config.*",
-    "../../packages/ui/src/**/*",
-    "../api/src/**/*",
-    "../api/src/index.ts"
-  ],
+  "include": ["src/**/*", "src/index.ts"],
   "exclude": ["node_modules", ".next"]
 }

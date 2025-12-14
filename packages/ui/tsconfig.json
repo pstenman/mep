@@ -2,9 +2,9 @@
   "extends": "@mep/tsconfig/react-library.json",
   "compilerOptions": {
     "types": ["node"],
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"],
