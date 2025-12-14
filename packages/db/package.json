@@ -8,7 +8,15 @@
     "./*": "./src/*"
   },
   "devDependencies": {
-    "@mep/tsconfig": "workspace:*"
+    "@mep/tsconfig": "workspace:*",
+    "@types/bun": "^1.3.4",
+    "drizzle-kit": "0.31.8",
+    "drizzle-orm": "0.45.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@mep/types": "workspace:*",
+    "@supabase/supabase-js": "2.87.1",
+    "postgres": "^3.4.7",
+    "drizzle-orm": "^0.45.1"
+  }
 }

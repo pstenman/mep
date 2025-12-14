@@ -8,7 +8,8 @@
     "./*": "./src/*"
   },
   "devDependencies": {
-    "@mep/tsconfig": "workspace:*"
+    "@mep/tsconfig": "workspace:*",
+    "@types/bun": "^1.3.4"
   },
   "dependencies": {}
 }
