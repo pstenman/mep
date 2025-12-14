@@ -10,6 +10,11 @@ export * from "./components/dropdown-menu";
 export * from "./components/popover";
 export * from "./components/navigation-menu";
 export * from "./components/text";
+export * from "./components/card";
+export * from "./components/field";
+export * from "./components/input-group";
+export * from "./components/label";
+export * from "./components/textarea";
 
 
 // HOOKS

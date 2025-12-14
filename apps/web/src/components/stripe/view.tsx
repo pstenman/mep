@@ -1,7 +1,7 @@
 "use client";
 
+import { SubscribeForm } from "./form";
 import { PlanSkeleton } from "./plan-skeleton";
-import { StripeSkeleton } from "./stripe-skeleton";
 
 export function SubscribeView() {
   return (
@@ -11,7 +11,7 @@ export function SubscribeView() {
           <PlanSkeleton />
         </div>
         <div className="space-y-8">
-          <StripeSkeleton />
+          <SubscribeForm />
         </div>
       </div>
     </div>
