@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
-import { Sidebar, SidebarInset, SidebarProvider } from "@mep/ui";
+import { SidebarInset, SidebarProvider } from "@mep/ui";
 import { Header } from "@/components/ui/public/header";
 import { CornerSettings } from "@/components/ui/public/corner-settings";
+import { PublicSidebar } from "@/components/ui/public/sidebar";
 
 interface PublicLayoutProps {
   children: ReactNode;
@@ -11,7 +12,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
   return (
     <SidebarProvider>
       <div className="md:hidden">
-        <Sidebar />
+        <PublicSidebar />
       </div>
       <SidebarInset className="overflow-y-hidden">
         <Header />
