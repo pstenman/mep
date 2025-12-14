@@ -1,23 +1,23 @@
 {
-    "name": "@mep/api",
-    "version": "0.1.0",
-    "type": "module",
-    "private": true,
-    "exports": {
-        ".": "./src/index.ts",
-        "./*": "./src/*"
-    },
-    "scripts": {
-        "dev": "bun src/hono/server.ts",
-        "build": "tsc -b",
-        "start": "node dist/hono/server.js"
-    },
-    "dependencies": {
-        "hono": "4.11.0"
-    },
-    "devDependencies": {
-        "@mep/tsconfig": "workspace:*",
-        "@types/bun": "latest",
-        "typescript": "5.9.3"
-    }
+  "name": "@mep/api",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*"
+  },
+  "scripts": {
+    "dev": "bun src/hono/server.ts",
+    "build": "tsc -b",
+    "start": "node dist/hono/server.js"
+  },
+  "dependencies": {
+    "hono": "4.11.0"
+  },
+  "devDependencies": {
+    "@mep/tsconfig": "workspace:*",
+    "@types/bun": "latest",
+    "typescript": "5.9.3"
+  }
 }

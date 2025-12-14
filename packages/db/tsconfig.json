@@ -9,5 +9,5 @@
       "@mep/types/*": ["../packages/types/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*"]
 }

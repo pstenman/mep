@@ -1,33 +1,33 @@
 {
-    "name": "mep",
-    "private": true,
-    "packageManager": "bun@1.3.2",
-    "workspaces": [
-        "apps/*",
-        "packages/*"
-    ],
-    "scripts": {
-        "lint": "bunx biome check",
-        "lint:fix": "bunx biome check --fix",
-        "format": "bunx biome format --write",
-        "typecheck": "bun tsc --noEmit",
-        "dev": "turbo dev --parallel --filter=@mep/web",
-        "dev:api": "bun run -C apps/api dev",
-        "dev:web": "bun run -C apps/web dev",
-        "build": "turbo build",
-        "clean": "powershell -Command \"Remove-Item -Recurse -Force -ErrorAction SilentlyContinue .turbo, node_modules, .next, build, dist, out; Get-ChildItem -Recurse -Directory -Filter 'node_modules' | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue\"",
-        "check-types": "turbo check-types",
-        "db:generate": "cd packages/db && bunx drizzle-kit generate",
-        "db:push": "cd packages/db && bunx drizzle-kit push",
-        "db:migrate": "cd packages/db && bunx drizzle-kit migrate",
-        "db:studio": "cd packages/db && supabase start"
-    },
-    "devDependencies": {
-        "@biomejs/biome": "2.3.8",
-        "@types/react": "19.2.3",
-        "@types/react-dom": "19.2.3",
-        "rimraf": "6.1.0",
-        "turbo": "^2.6.0",
-        "typescript": "5.9.3"
-    }
+  "name": "mep",
+  "private": true,
+  "packageManager": "bun@1.3.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "lint": "bunx biome check",
+    "lint:fix": "bunx biome check --fix",
+    "format": "bunx biome format --write",
+    "typecheck": "bun tsc --noEmit",
+    "dev": "turbo dev --parallel --filter=@mep/web",
+    "dev:api": "bun run -C apps/api dev",
+    "dev:web": "bun run -C apps/web dev",
+    "build": "turbo build",
+    "clean": "powershell -Command \"Remove-Item -Recurse -Force -ErrorAction SilentlyContinue .turbo, node_modules, .next, build, dist, out; Get-ChildItem -Recurse -Directory -Filter 'node_modules' | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue\"",
+    "check-types": "turbo check-types",
+    "db:generate": "cd packages/db && bunx drizzle-kit generate",
+    "db:push": "cd packages/db && bunx drizzle-kit push",
+    "db:migrate": "cd packages/db && bunx drizzle-kit migrate",
+    "db:studio": "cd packages/db && supabase start"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.8",
+    "@types/react": "19.2.3",
+    "@types/react-dom": "19.2.3",
+    "rimraf": "6.1.0",
+    "turbo": "^2.6.0",
+    "typescript": "5.9.3"
+  }
 }

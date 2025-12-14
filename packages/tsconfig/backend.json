@@ -1,12 +1,8 @@
 {
-    "extends": "./base.json",
-    "compilerOptions": {
-        "lib": [
-            "ESNext"
-        ],
-        "types": [
-            "bun"
-        ],
-        "noEmit": false
-    }
+  "extends": "./base.json",
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "types": ["bun"],
+    "noEmit": false
+  }
 }
