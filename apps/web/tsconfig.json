@@ -17,6 +17,7 @@
     "next.config.*",
     "../../packages/ui/src/**/*",
     "../api/src/**/*",
-     "../api/src/index.ts"  ],
+    "../api/src/index.ts"
+  ],
   "exclude": ["node_modules", ".next"]
 }
