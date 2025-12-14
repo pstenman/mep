@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@mep/tsconfig": "workspace:*",
+    "@mep/ui": "workspace:*",
     "@types/node": "^25.0.1",
     "@types/react": "^19.2.3",
     "@types/react-dom": "^19.2.3",
