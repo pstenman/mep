@@ -1,4 +1,5 @@
 import { SubscribeView } from "@/components/stripe/view";
+import { StripeProvider } from "@/providers/stripe-provider";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,5 +13,9 @@ export const metadata: Metadata = {
 };
 
 export default function SubscribePage() {
-  return <SubscribeView />;
+  return (
+    <StripeProvider>
+      <SubscribeView />
+    </StripeProvider>
+  );
 }
