@@ -6,6 +6,10 @@ export * from "./components/sheet";
 export * from "./components/sidebar";
 export * from "./components/skeleton";
 export * from "./components/tooltip";
+export * from "./components/dropdown-menu";
+export * from "./components/popover";
+export * from "./components/navigation-menu";
+
 
 // HOOKS
 export * from "./hooks/use-mobile";
