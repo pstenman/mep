@@ -9,6 +9,7 @@ export * from "./components/tooltip";
 export * from "./components/dropdown-menu";
 export * from "./components/popover";
 export * from "./components/navigation-menu";
+export * from "./components/text";
 
 
 // HOOKS

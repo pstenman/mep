@@ -5,6 +5,7 @@ import "@/app/globals.css";
 import { cookies } from "next/headers";
 import { loadLocaleMessages } from "@/lib/locale/load-locale-message";
 import { NextIntlClientProvider } from "next-intl";
+import { Providers } from "@/providers";
 
 const geistSans = Geist({
   variable: "--font-geist",
@@ -33,9 +34,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans bg-background text-foreground antialiased`}
       >
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <Providers>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            {children}
+          </NextIntlClientProvider>
+        </Providers>
       </body>
     </html>
   );
