@@ -2,9 +2,12 @@
 
 import { Button, SidebarTrigger } from "@mep/ui";
 import { LogIn } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { DesktopNavigation } from "./desktop-navigation";
 
 export function Header() {
+  const t = useTranslations("public");
   return (
     <div className="h-[70] flex justify-between w-full items-center relative px-4">
       <div className="flex w-0 md:hidden items-center">
@@ -18,10 +21,14 @@ export function Header() {
         <Link href="/">MeP</Link>
       </Button>
 
+      <div className="hidden md:flex flex-1 justify-center">
+        <DesktopNavigation />
+      </div>
+
       {/* Todo: Add tooltip */}
       <div className="hidden md:flex items-center space-x-4">
         <Button size="sm" variant="ghost">
-          Sign In
+          {t("nav.login")}
           <Link href="/auth/login">
             <LogIn />
           </Link>
