@@ -5,5 +5,36 @@
     "about": "About",
     "login": "Log in",
     "getStarted": "Get Started"
+  },
+  "subscribe": {
+    "form": {
+      "title": "Subscribe",
+      "headers": {
+        "details": "Step 1: Your Details",
+        "payment": "Step 2: Payment Method"
+      },
+      "label": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "companyName": "Company Name"
+      },
+      "placeholder": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "your@email.com",
+        "companyName": "Company Name"
+      },
+      "button": {
+        "processing": "Processing...",
+        "continue": "Continue",
+        "confirming": "Confirming...",
+        "confirmPayment": "Confirm Payment"
+      },
+      "validation": {
+        "required": "Required",
+        "email": "Must be a valid email"
+      }
+    }
   }
 }

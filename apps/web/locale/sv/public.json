@@ -5,5 +5,36 @@
     "about": "Om",
     "login": "Logga In",
     "getStarted": "Kom Igång"
+  },
+  "subscribe": {
+    "form": {
+      "title": "Prenumerera",
+      "headers": {
+        "details": "Steg 1: Dina uppgifter",
+        "payment": "Steg 2: Betalningsmetod"
+      },
+      "label": {
+        "firstName": "Förnamn",
+        "lastName": "Efternamn",
+        "email": "E-post",
+        "companyName": "Företagsnamn"
+      },
+      "placeholder": {
+        "firstName": "Förnamn",
+        "lastName": "Efternamn",
+        "email": "din@epost.se",
+        "companyName": "Företagsnamn"
+      },
+      "button": {
+        "processing": "Behandlar...",
+        "continue": "Fortsätt",
+        "confirming": "Bekräftar...",
+        "confirmPayment": "Bekräfta betalning"
+      },
+      "validation": {
+        "required": "Obligatoriskt",
+        "email": "Måste vara en giltigt e-postadress"
+      }
+    }
   }
 }
