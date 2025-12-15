@@ -15,6 +15,7 @@ export * from "./components/field";
 export * from "./components/input-group";
 export * from "./components/label";
 export * from "./components/textarea";
+export * from "./components/accordion";
 
 
 // HOOKS
