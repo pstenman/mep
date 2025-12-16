@@ -4,16 +4,22 @@ import { subscriptions } from "./subscriptions";
 
 export const plans = pgTable("plans", {
   id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(),
-  description: text("description").notNull(),
   price: integer("price").notNull(),
   interval: text("interval").notNull(),
   stripePriceId: text("stripe_price_id").notNull(),
 });
 
-export const planRelations = relations(plans, ({ one }) => ({
-  subscriptions: one(subscriptions, {
-    fields: [plans.id],
-    references: [subscriptions.planId],
-  }),
+export const planTranslations = pgTable("plan_translations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  planId: uuid("plan_id")
+    .notNull()
+    .references(() => plans.id),
+  locale: text("locale").notNull(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+});
+
+export const planRelations = relations(plans, ({ many }) => ({
+  subscriptions: many(subscriptions),
+  translations: many(planTranslations),
 }));
