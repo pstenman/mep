@@ -11,7 +11,26 @@ export class PlanService {
     return queries.planQueries.getById(db, id);
   }
 
-  static async create(db: Database, data: CreatePlanSchema) {
+  static async create(
+    db: Database,
+    data: CreatePlanSchema & {
+      translations?: { locale: string; name: string; description: string }[];
+    },
+  ) {
     return queries.planQueries.create(db, data);
+  }
+
+  static async update(
+    db: Database,
+    id: string,
+    data: Partial<CreatePlanSchema> & {
+      translations?: { locale: string; name: string; description: string }[];
+    },
+  ) {
+    return queries.planQueries.update(db, id, data);
+  }
+
+  static async delete(db: Database, id: string) {
+    return queries.planQueries.delete(db, id);
   }
 }

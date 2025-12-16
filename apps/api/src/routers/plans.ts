@@ -18,11 +18,16 @@ export const planRouter = createTRPCRouter({
   create: publicProcedure
     .input(
       z.object({
-        name: z.string().min(1),
-        description: z.string().min(1),
         price: z.number().min(0),
         interval: z.enum(PlanInterval),
         stripePriceId: z.string().min(1),
+        translations: z.array(
+          z.object({
+            locale: z.string().min(2),
+            name: z.string().min(1),
+            description: z.string().min(1),
+          }),
+        ),
       }),
     )
     .mutation(async ({ ctx, input }) => {
