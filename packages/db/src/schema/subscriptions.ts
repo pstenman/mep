@@ -2,6 +2,7 @@ import { pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 import { companies } from "./companies";
 import { relations } from "drizzle-orm";
 import type { SubscriptionStatus } from "@mep/types";
+import { plans } from "./plans";
 
 export const subscriptions = pgTable("subscriptions",
   {
@@ -12,6 +13,9 @@ export const subscriptions = pgTable("subscriptions",
     stripeSubscriptionId: text("stripe_subscription_id")
       .notNull()
       .unique(),
+    planId: uuid("plan_id")
+      .notNull()
+      .references(() => plans.id),
     status: text("status").$type<SubscriptionStatus>().notNull(),
     currentPeriodStart: timestamp("current_period_start").notNull(),
     currentPeriodEnd: timestamp("current_period_end").notNull(),
@@ -28,5 +32,9 @@ export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
   company: one(companies, {
     fields: [subscriptions.companyId],
     references: [companies.id],
+  }),
+    plan: one(plans, {
+    fields: [subscriptions.planId],
+    references: [plans.id],
   }),
 }));
