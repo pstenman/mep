@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { loadLocaleMessages } from "@/lib/locale/load-locale-message";
 import { NextIntlClientProvider } from "next-intl";
 import { Providers } from "@/providers";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = Geist({
   variable: "--font-geist",
@@ -37,6 +38,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <Providers>
           <NextIntlClientProvider locale={locale} messages={messages}>
             {children}
+            <Toaster />
           </NextIntlClientProvider>
         </Providers>
       </body>

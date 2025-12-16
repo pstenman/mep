@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { ThemeProvider } from "./theme-provider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 type ProvidersProps = {
   children: ReactNode;
@@ -9,9 +10,11 @@ type ProvidersProps = {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      {children}
-    </ThemeProvider>
+    <NuqsAdapter>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        {children}
+      </ThemeProvider>
+    </NuqsAdapter>
   );
 }
 4;

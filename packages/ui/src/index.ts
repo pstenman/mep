@@ -16,6 +16,7 @@ export * from "./components/input-group";
 export * from "./components/label";
 export * from "./components/textarea";
 export * from "./components/accordion";
+export * from "./components/sonner";
 
 
 // HOOKS
