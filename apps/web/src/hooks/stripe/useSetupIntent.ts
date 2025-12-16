@@ -10,15 +10,17 @@ export const useSetupIntent = () => {
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
 
-const create = async (input: CreateSetupIntentInput) => {
-  const data: CreateSetupIntentOutput = await mutation.mutateAsync(input);
+  const create = async (input: CreateSetupIntentInput): Promise<string> => {
+    const data: CreateSetupIntentOutput = await mutation.mutateAsync(input);
 
-  if (!data.clientSecret) {
-    throw new Error("Missing client secret from Stripe");
-  }
+    if (!data.clientSecret) {
+      throw new Error("Missing client secret from Stripe");
+    }
 
-  setClientSecret(data.clientSecret);
-};
+    setClientSecret(data.clientSecret);
+
+    return data.clientSecret;
+  };
 
   return {
     clientSecret,
@@ -26,5 +28,5 @@ const create = async (input: CreateSetupIntentInput) => {
     loading: mutation.isLoading,
     isError: mutation.isError,
     error: mutation.error?.message ?? null,
-  }
-}
+  };
+};

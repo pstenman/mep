@@ -1,4 +1,4 @@
-import { StripeService } from "@/services/service";
+import { StripeService } from "@/services/stripe/service";
 import { publicProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
 import { z } from "zod";
