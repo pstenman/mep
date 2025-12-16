@@ -11,4 +11,5 @@ export enum SubscriptionStatus {
 export enum PlanInterval {
   YEAR = "year",
   MONTH = "month",
+  QUARTER = "quarter",
 }

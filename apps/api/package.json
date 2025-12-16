@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "bun src/hono/server.ts",
     "build": "tsc -b",
-    "start": "node dist/hono/server.js"
+    "start": "node dist/hono/server.js",
+    "seed:plans": "bun src/db/seed/plans.ts"
   },
   "dependencies": {
     "@hono/trpc-server": "0.4.1",

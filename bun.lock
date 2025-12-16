@@ -88,6 +88,7 @@
       "name": "@mep/db",
       "version": "0.1.0",
       "dependencies": {
+        "@mep/api": "workspace:*",
         "@mep/types": "workspace:*",
         "@supabase/supabase-js": "2.87.1",
         "drizzle-orm": "^0.45.1",
