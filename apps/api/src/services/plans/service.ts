@@ -1,36 +1,48 @@
-import type { Database } from "@/db/db";
-import { queries } from "@mep/db";
+import { mapPlan, planQueries } from "@mep/db";
 import type { CreatePlanSchema } from "./schema";
+import { logger } from "@/utils/logger";
 
 export class PlanService {
-  static list(db: Database) {
-    return queries.planQueries.list(db);
+  static async getDefault(locale: string = "en") {
+    const plan = await planQueries.getDefault();
+
+    if (!plan) {
+      return null;
+    }
+
+    const selectedTranslation =
+      plan.translations.find((t) => t.locale === locale) ??
+      plan.translations.find((t) => t.locale === "en") ??
+      plan.translations[0];
+
+    return {
+      ...plan,
+      selectedTranslation,
+    };
   }
 
-  static getById(db: Database, id: string) {
-    return queries.planQueries.getById(db, id);
+  static getById(id: string) {
+    return planQueries.getById(id);
   }
 
   static async create(
-    db: Database,
     data: CreatePlanSchema & {
       translations?: { locale: string; name: string; description: string }[];
     },
   ) {
-    return queries.planQueries.create(db, data);
+    return planQueries.create(data);
   }
 
   static async update(
-    db: Database,
     id: string,
     data: Partial<CreatePlanSchema> & {
       translations?: { locale: string; name: string; description: string }[];
     },
   ) {
-    return queries.planQueries.update(db, id, data);
+    return planQueries.update(id, data);
   }
 
-  static async delete(db: Database, id: string) {
-    return queries.planQueries.delete(db, id);
+  static async delete(id: string) {
+    return planQueries.delete(id);
   }
 }

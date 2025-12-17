@@ -1,35 +1,25 @@
 import { eq } from "drizzle-orm";
 import { plans, planTranslations } from "../schema/plans";
-import type { Db } from "../index";
-import type { PlanInterval } from "@mep/types";
-
-export type PlanTranslation = {
-  locale: string;
-  name: string;
-  description: string;
-};
-
-export type Plan = {
-  id: string;
-  price: number;
-  interval: PlanInterval;
-  stripePriceId: string;
-  translations: PlanTranslation[];
-};
-
-export type CreatePlanInput = {
-  price: number;
-  interval: PlanInterval;
-  stripePriceId: string;
-  translations: PlanTranslation[];
-};
-
-export type UpdatePlanInput = Partial<CreatePlanInput>;
+import type {
+  CreatePlanInput,
+  Plan,
+  PlanInterval,
+  UpdatePlanInput,
+} from "@mep/types";
+import { logger } from "@mep/api";
+import { db } from "..";
 
 type PlanRow = typeof plans.$inferSelect;
 type PlanInsert = typeof plans.$inferInsert;
 
-const mapPlan = (row: PlanRow, translations: PlanTranslation[] = []): Plan => ({
+export const mapPlan = (
+  row: PlanRow,
+  translations: Array<{
+    locale: string;
+    name: string;
+    description: string;
+  }> = [],
+): Plan => ({
   id: row.id,
   price: row.price,
   interval: row.interval as PlanInterval,
@@ -38,24 +28,15 @@ const mapPlan = (row: PlanRow, translations: PlanTranslation[] = []): Plan => ({
 });
 
 export const planQueries = {
-  list: async (db: Db): Promise<Plan[]> => {
-    const rows = await db.query.plans.findMany({
+  getDefault: async () => {
+    const plan = await db.query.plans.findFirst({
       with: { translations: true },
+      orderBy: (p, { asc }) => asc(p.id),
     });
-
-    return rows.map((row) =>
-      mapPlan(
-        row,
-        row.translations.map((t) => ({
-          locale: t.locale,
-          name: t.name,
-          description: t.description,
-        })),
-      ),
-    );
+    return plan ?? null;
   },
 
-  getById: async (db: Db, id: string): Promise<Plan | null> => {
+  getById: async (id: string) => {
     const row = await db.query.plans.findFirst({
       where: eq(plans.id, id),
       with: { translations: true },
@@ -73,7 +54,7 @@ export const planQueries = {
     );
   },
 
-  create: async (db: Db, input: CreatePlanInput) => {
+  create: async (input: CreatePlanInput) => {
     const { translations, ...planData } = input;
 
     const [row] = await db
@@ -93,7 +74,7 @@ export const planQueries = {
     return mapPlan(row, translations);
   },
 
-  update: async (db: Db, id: string, input: UpdatePlanInput) => {
+  update: async (id: string, input: UpdatePlanInput) => {
     const { translations, ...planData } = input;
 
     const [row] = await db
@@ -122,7 +103,7 @@ export const planQueries = {
     return mapPlan(row, translations ?? []);
   },
 
-  delete: async (db: Db, id: string): Promise<Plan | null> => {
+  delete: async (id: string) => {
     await db.delete(planTranslations).where(eq(planTranslations.planId, id));
 
     const [row] = await db.delete(plans).where(eq(plans.id, id)).returning();

@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, integer, uuid } from "drizzle-orm/pg-core";
-import { subscriptions } from "./subscriptions";
 
 export const plans = pgTable("plans", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -20,6 +19,15 @@ export const planTranslations = pgTable("plan_translations", {
 });
 
 export const planRelations = relations(plans, ({ many }) => ({
-  subscriptions: many(subscriptions),
   translations: many(planTranslations),
 }));
+
+export const planTranslationRelations = relations(
+  planTranslations,
+  ({ one }) => ({
+    plan: one(plans, {
+      fields: [planTranslations.planId],
+      references: [plans.id],
+    }),
+  }),
+);

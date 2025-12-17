@@ -7,9 +7,3 @@ export enum SubscriptionStatus {
   CANCELED = "canceled",
   UNPAID = "unpaid",
 }
-
-export enum PlanInterval {
-  YEAR = "year",
-  MONTH = "month",
-  QUARTER = "quarter",
-}

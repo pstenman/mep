@@ -1,14 +1,14 @@
 "use client";
 
 import { SubscribeForm } from "./form";
-import { PlanSkeleton } from "./plan-skeleton";
+import { PlanCard } from "./plan-card";
 
 export function SubscribeView() {
   return (
     <div className="container max-w-5xl mx-auto py-10">
       <div className="flex flex-col gap-10 md:grid md:grid-cols-2 md:gap-16">
         <div className="md:sticky md:top-20">
-          <PlanSkeleton />
+          <PlanCard />
         </div>
         <div className="space-y-8">
           <SubscribeForm />
