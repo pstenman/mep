@@ -22,6 +22,20 @@
       "when": 1765908065837,
       "tag": "0002_chief_vampiro",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1765926538909,
+      "tag": "0003_soft_shriek",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1765926740242,
+      "tag": "0004_dizzy_cerise",
+      "breakpoints": true
     }
   ]
 }

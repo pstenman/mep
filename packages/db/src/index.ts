@@ -1,14 +1,22 @@
 import { drizzle } from "drizzle-orm/postgres-js";
-import type { Sql } from "postgres";
+import postgres from "postgres";
 import * as schema from "./schema/schema";
-import * as queries from "./queries/queries"
 
-export { schema, queries };
+const connectionString = process.env.DATABASE_URL!;
 
-export function createDb(client: Sql) {
-  return drizzle(client, { schema });
-}
+const isLocal = connectionString
+  ? connectionString.includes("localhost") ||
+    connectionString.includes("127.0.0.1")
+  : false;
+const sslConfig = isLocal ? false : "require";
 
-export type Db = 
-  | ReturnType<typeof createDb>
-  | Parameters<Parameters<ReturnType<typeof createDb>["transaction"]>[0]>[0];
+const client = postgres(connectionString!, {
+  ssl: sslConfig,
+  max: 1,
+  idle_timeout: 0,
+  connect_timeout: 10,
+});
+export const db = drizzle(client, { schema });
+export type Database = typeof db;
+
+export * from "./queries/plans";
