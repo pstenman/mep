@@ -6,7 +6,6 @@ import type {
   PlanInterval,
   UpdatePlanInput,
 } from "@mep/types";
-import { logger } from "@mep/api";
 import { db } from "..";
 
 type PlanRow = typeof plans.$inferSelect;
@@ -55,23 +54,26 @@ export const planQueries = {
   },
 
   create: async (input: CreatePlanInput) => {
-    const { translations, ...planData } = input;
+    const { translations = [], ...planData } = input;
 
-    const [row] = await db
-      .insert(plans)
-      .values(planData satisfies PlanInsert)
-      .returning();
+    return db.transaction(async (tx) => {
+      const [row] = await tx
+        .insert(plans)
+        .values(planData satisfies PlanInsert)
+        .returning();
 
-    await db.insert(planTranslations).values(
-      translations.map((t) => ({
-        planId: row.id,
-        locale: t.locale,
-        name: t.name,
-        description: t.description,
-      })),
-    );
-
-    return mapPlan(row, translations);
+      if (translations.length > 0) {
+        await tx.insert(planTranslations).values(
+          translations.map((t) => ({
+            planId: row.id,
+            locale: t.locale,
+            name: t.name,
+            description: t.description,
+          })),
+        );
+      }
+      return mapPlan(row, translations);
+    });
   },
 
   update: async (id: string, input: UpdatePlanInput) => {
