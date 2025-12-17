@@ -1,6 +1,5 @@
-import { mapPlan, planQueries } from "@mep/db";
+import { planQueries } from "@mep/db";
 import type { CreatePlanSchema } from "./schema";
-import { logger } from "@/utils/logger";
 
 export class PlanService {
   static async getDefault(locale: string = "en") {
