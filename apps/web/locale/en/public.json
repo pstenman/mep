@@ -34,6 +34,14 @@
       "validation": {
         "required": "Required",
         "email": "Must be a valid email"
+      },
+      "confirmation": {
+        "title": "Subscription confirmed",
+        "description": "You will recieve an email with for sign in to:",
+        "plan": "Plan",
+        "amount": "Cost",
+        "status": "Status",
+        "startDate": "Start Date"
       }
     }
   }

@@ -25,24 +25,28 @@ export function ConfirmationCard({
   return (
     <Card className="w-full border-none sm:max-w-md">
       <CardHeader>
-        <CardTitle>{t("subscribe.confirmation.title")}</CardTitle>
+        <CardTitle>{t("subscribe.form.confirmation.title")}</CardTitle>
         <CardDescription>
-          {t("subscribe.confirmation.title")} {email}
+          {t("subscribe.form.confirmation.description")} {email}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
         <div>
-          <strong>Plan:</strong> {subscription.plan}
+          <strong>{t("subscribe.form.confirmation.plan")}</strong>{" "}
+          {subscription.plan}
         </div>
         <div>
-          <strong>Amount:</strong> {subscription.amount}
+          <strong>{t("subscribe.form.confirmation.amount")}</strong>{" "}
+          {subscription.amount}
         </div>
         <div>
-          <strong>Status:</strong> {subscription.status}
+          <strong>{t("subscribe.form.confirmation.status")}</strong>{" "}
+          {subscription.status}
         </div>
         {subscription.startDate && (
           <div>
-            <strong>Start Date:</strong> {subscription.startDate}
+            <strong>{t("subscribe.form.confirmation.startDate")}</strong>{" "}
+            {subscription.startDate}
           </div>
         )}
       </CardContent>

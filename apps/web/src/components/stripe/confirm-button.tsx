@@ -30,7 +30,7 @@ export function StripeConfirmButton({
 
     setConfirming(true);
 
-    const { error, setupIntent } = await stripe.confirmSetup({
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: { return_url: undefined },
       redirect: "if_required",
@@ -39,7 +39,7 @@ export function StripeConfirmButton({
     if (error) {
       toast.error(error.message ?? "Payment failed");
       onError?.(error.message ?? "Stripe error");
-    } else if (setupIntent?.status === "succeeded") {
+    } else if (paymentIntent?.status === "succeeded") {
       toast.success("Payment method saved successfully");
       onSuccess?.();
     }

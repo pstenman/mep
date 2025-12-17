@@ -34,6 +34,14 @@
       "validation": {
         "required": "Obligatoriskt",
         "email": "Måste vara en giltigt e-postadress"
+      },
+      "confirmation": {
+        "title": "Prenumeration registrerad",
+        "description": "En link för inlogg är skickad till epost:",
+        "plan": "Plan",
+        "amount": "Avgift",
+        "status": "Status",
+        "startDate": "Start Datum"
       }
     }
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import type { CreateSetupIntentInput } from "@mep/api";
+import type { CreateSubscriptionInput } from "@mep/api";
 import {
   Accordion,
   AccordionContent,
@@ -20,7 +20,7 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createSubscribeSchema } from "./schema";
-import { useSetupIntent } from "@/hooks/stripe/useSetupIntent";
+import { useStripeSubscription } from "@/hooks/stripe/useStripeSubscription";
 import { stripePromise } from "@/providers/stripe-provider";
 import { mapLocale, mapTheme } from "@/utils/stripe";
 import { Elements, PaymentElement } from "@stripe/react-stripe-js";
@@ -34,7 +34,6 @@ import { ConfirmationCard } from "./confirmation-card";
 interface SubscribeFormProps {
   prefillEmail?: string;
 }
-
 export function SubscribeForm({ prefillEmail }: SubscribeFormProps) {
   const { theme: currentTheme } = useTheme();
   const changeLocale = useLocale();
@@ -45,14 +44,21 @@ export function SubscribeForm({ prefillEmail }: SubscribeFormProps) {
   const [paymentReady, setPaymentReady] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
-  const [clientSecret, setClientSecret] = useQueryState(
+  const [queryclientSecret, setQueryClientSecret] = useQueryState(
     "setup_intent_client_secret",
     { defaultValue: "" },
   );
 
-  const { create, loading: setupLoading, error: setupError } = useSetupIntent();
+  const {
+    create,
+    subscriptionStatus,
+    amount,
+    plan,
+    loading: setupLoading,
+    error: setupError,
+  } = useStripeSubscription();
 
-  const form = useForm<CreateSetupIntentInput>({
+  const form = useForm<CreateSubscriptionInput>({
     resolver: zodResolver(createSubscribeSchema(t)),
     defaultValues: {
       firstName: "",
@@ -66,11 +72,12 @@ export function SubscribeForm({ prefillEmail }: SubscribeFormProps) {
   const loading = setupLoading;
   const error = setupError;
 
-  const handleSubmit = async (values: CreateSetupIntentInput) => {
-    // ADD: auth
+  const clientSecret = queryclientSecret;
+
+  const handleSubmit = async (values: CreateSubscriptionInput) => {
     try {
       const secret = await create(values);
-      setClientSecret(secret);
+      setQueryClientSecret(secret);
       setOpenStep("payment");
     } catch (err) {
       console.error("error", err);
@@ -85,7 +92,11 @@ export function SubscribeForm({ prefillEmail }: SubscribeFormProps) {
     return (
       <ConfirmationCard
         email={form.getValues("email")}
-        subscription={{ plan: "basic", amount: "$10", status: "active" }}
+        subscription={{
+          plan: plan || "basic",
+          amount: amount || "$0",
+          status: subscriptionStatus || "incomplete",
+        }}
       />
     );
   }

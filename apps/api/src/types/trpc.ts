@@ -3,10 +3,10 @@ import type { TRPCInputs, TRPCOutputs } from "@/trpc/router";
 // ======================================================================================================
 // STRIPE TYPES
 // ======================================================================================================
-export type CreateSetupIntentInput =
-  NonNullable<TRPCInputs>["stripe"]["createSetupIntent"];
-export type CreateSetupIntentOutput =
-  NonNullable<TRPCOutputs>["stripe"]["createSetupIntent"];
+export type CreateSubscriptionInput =
+  NonNullable<TRPCInputs>["stripe"]["createCustomerAndSubscription"];
+export type CreateSubscriptionOutput =
+  NonNullable<TRPCOutputs>["stripe"]["createCustomerAndSubscription"];
 
 // ======================================================================================================
 // SUPABASE AUTH
@@ -17,9 +17,6 @@ export type CreateAuthOutput = NonNullable<TRPCOutputs>["auth"]["create"];
 // ======================================================================================================
 // PLANS
 // ======================================================================================================
-
-// List
-export type AllPlanOutput = NonNullable<TRPCOutputs>["plans"]["list"];
 
 // By Id
 export type PlanById = NonNullable<TRPCOutputs>["plans"]["getById"];
