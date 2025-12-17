@@ -1,4 +1,4 @@
-import { supabase } from "@/utils/supabase";
+import { getSupabase } from "@/utils/supabase";
 
 export class AuthService {
   static async createUserWithMagicLink({
@@ -10,6 +10,7 @@ export class AuthService {
     lastName: string;
     email: string;
   }) {
+    const supabase = getSupabase();
     const { data: _user, error: createError } = await supabase.auth.admin.createUser({
       email,
       email_confirm: true,

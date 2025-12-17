@@ -8,12 +8,11 @@ if (!process.env.DATABASE_URL) {
 }
 
 export default defineConfig({
-  schema: "./src/schema/schema.ts",
+  schema: "./src/schema.ts",
   out: "./drizzle",
+  extensionsFilters: ["postgis"],
   dialect: "postgresql",
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
-  verbose: true,
-  strict: true,
 });
