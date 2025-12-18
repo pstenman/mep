@@ -20,6 +20,7 @@ export const authRouter = createTRPCRouter({
       return {
         userId: data.user.id,
         companyId: data.company.id,
+        membershipId: data.membership.id,
       };
     }),
 });
