@@ -1,5 +1,6 @@
 import { AuthService } from "@/services/auth/service";
 import { logger } from "@/utils/logger";
+import { db, userQueries } from "@mep/db";
 import { Hono } from "hono";
 import Stripe from "stripe";
 
@@ -40,7 +41,31 @@ stripeWebhookRoute.post("/", async (c) => {
     const { userId, companyId, membershipId } = subscription.metadata;
 
     if (userId && companyId && membershipId) {
-      await AuthService.activateFromStripe({ userId, companyId, membershipId });
+      try {
+        const supabaseId = await userQueries.getSupabaseIdByUserId(userId, db);
+
+        if (!supabaseId) {
+          logger.warn({ userId }, "No Supabase user linked to this app user");
+          return c.text("No Supabase user found", 404);
+        }
+
+        await AuthService.activateFromStripe({
+          userId,
+          companyId,
+          membershipId,
+          supabaseId,
+        });
+        logger.info(
+          { userId, supabaseId },
+          "User activated via Stripe webhook",
+        );
+      } catch (err) {
+        logger.error(
+          { err, subscription },
+          "Error activating user from Stripe webhook",
+        );
+        return c.text("Error activating user", 500);
+      }
     } else {
       logger.warn(
         { subscription },

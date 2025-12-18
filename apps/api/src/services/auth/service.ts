@@ -68,9 +68,10 @@ export class AuthService {
   static async activateFromStripe({
   userId,
   companyId,
-  membershipId
+  membershipId,
+  supabaseId
 }: AuthActivateSchema) {
-  logger.info({ userId, companyId, membershipId }, "Starting Stripe activation");
+  logger.info({ userId, companyId, membershipId, supabaseId }, "Starting Stripe activation");
 
   await db.transaction(async (tx) => {
     logger.info({ userId }, "Activating user in DB");

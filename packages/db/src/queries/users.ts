@@ -21,4 +21,11 @@ export const userQueries = {
       where: eq(users.email, email),
     });
   },
+
+  getSupabaseIdByUserId: async (userId: string, db: Database) => {
+    const row = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+    });
+    return row?.supabaseId ?? null;
+  },
 };

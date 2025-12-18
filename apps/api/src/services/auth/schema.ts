@@ -12,6 +12,7 @@ export const authActivateSchema = z.object({
   userId: z.string().min(1),
   companyId: z.string().min(1),
   membershipId: z.string().min(1),
+  supabaseId: z.string().min(1),
 });
 
 export type CreateAuthUserOwnerSchema = z.infer<typeof authUserOwnerSchema>;
