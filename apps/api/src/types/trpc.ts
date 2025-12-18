@@ -11,8 +11,10 @@ export type CreateSubscriptionOutput =
 // ======================================================================================================
 // SUPABASE AUTH
 // ======================================================================================================
-export type CreateAuthInput = NonNullable<TRPCInputs>["auth"]["create"];
-export type CreateAuthOutput = NonNullable<TRPCOutputs>["auth"]["create"];
+export type CreateAuthOwnerInput =
+  NonNullable<TRPCInputs>["auth"]["createOwner"];
+export type CreateAuthOwnerOutput =
+  NonNullable<TRPCOutputs>["auth"]["createOwner"];
 
 // ======================================================================================================
 // PLANS

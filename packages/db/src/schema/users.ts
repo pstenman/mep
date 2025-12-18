@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { memberships } from "./memberships";
 
 export const users = pgTable("users", {
@@ -8,7 +15,8 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   firstName: text("name_firstname").notNull(),
   lastName: text("last_name").notNull(),
-  phoneNumber: text("phone_number").notNull(),
+  phoneNumber: text("phone_number"),
+  isActive: boolean("is_active").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   image: jsonb("image").$type<{

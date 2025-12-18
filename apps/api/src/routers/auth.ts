@@ -4,16 +4,21 @@ import { createTRPCRouter } from "@/trpc/server";
 import z from "zod";
 
 export const authRouter = createTRPCRouter({
-  create: publicProcedure
+  createOwner: publicProcedure
     .input(
       z.object({
         email: z.email(),
         firstName: z.string().min(1),
         lastName: z.string().min(1),
-      })
+        companyName: z.string().min(1),
+      }),
     )
     .mutation(async ({ input }) => {
-      await AuthService.createUserWithMagicLink(input);
-      return { success: true };
+      const data = await AuthService.createUserOwner(input);
+
+      return {
+        userId: data.user.id,
+        companyId: data.company.id,
+      };
     }),
 });

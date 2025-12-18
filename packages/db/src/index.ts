@@ -17,6 +17,14 @@ const client = postgres(connectionString!, {
   connect_timeout: 10,
 });
 export const db = drizzle(client, { schema });
-export type Database = typeof db;
+
+export type DBTransaction = Parameters<typeof db.transaction>[0] extends (
+  tx: infer T,
+) => any
+  ? T
+  : never;
+
+export type Database = typeof db | DBTransaction;
 
 export * from "./queries/plans";
+export * from "./queries/queries";

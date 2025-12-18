@@ -1,23 +1,22 @@
 import { PlanService } from "@/services/plans/service";
 import { publicProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
-import { logger } from "@/utils/logger";
 import { PlanInterval } from "@mep/types";
 import z from "zod";
 
 export const planRouter = createTRPCRouter({
-getDefault: publicProcedure
-  .input(z.object({ locale: z.string().optional() }))
-  .query(async ({ input }) => {
-    const plan = await PlanService.getDefault( input.locale);
+  getDefault: publicProcedure
+    .input(z.object({ locale: z.string().optional() }))
+    .query(async ({ input }) => {
+      const plan = await PlanService.getDefault(input.locale);
 
-    return { data: plan ?? null };
-  }),
+      return { data: plan ?? null };
+    }),
 
   getById: publicProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ input }) => {
-      const plan = await PlanService.getById(input.id); // antag att service nu hanterar db
+      const plan = await PlanService.getById(input.id);
       return { data: plan };
     }),
 
@@ -37,6 +36,6 @@ getDefault: publicProcedure
       }),
     )
     .mutation(async ({ input }) => {
-      return PlanService.create(input); // db hanteras internt i service
+      return PlanService.create(input);
     }),
 });
