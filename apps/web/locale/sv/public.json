@@ -17,13 +17,15 @@
         "firstName": "Förnamn",
         "lastName": "Efternamn",
         "email": "E-post",
-        "companyName": "Företagsnamn"
+        "companyName": "Företagsnamn",
+        "companyRegistrationNumber": "Organisationsnummer"
       },
       "placeholder": {
         "firstName": "Förnamn",
         "lastName": "Efternamn",
         "email": "din@epost.se",
-        "companyName": "Företagsnamn"
+        "companyName": "Företagsnamn",
+        "companyRegistrationNumber": "Org. nummer"
       },
       "button": {
         "processing": "Behandlar...",

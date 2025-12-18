@@ -17,13 +17,15 @@
         "firstName": "First Name",
         "lastName": "Last Name",
         "email": "Email",
-        "companyName": "Company Name"
+        "companyName": "Company Name",
+        "companyRegistrationNumber": "Co. Registration Number"
       },
       "placeholder": {
         "firstName": "First Name",
         "lastName": "Last Name",
         "email": "your@email.com",
-        "companyName": "Company Name"
+        "companyName": "Company Name",
+        "companyRegistrationNumber": "Co. Registration Number"
       },
       "button": {
         "processing": "Processing...",
