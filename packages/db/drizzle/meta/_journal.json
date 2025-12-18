@@ -50,6 +50,13 @@
       "when": 1766018951355,
       "tag": "0006_calm_stone_men",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1766021176819,
+      "tag": "0007_normal_bullseye",
+      "breakpoints": true
     }
   ]
 }

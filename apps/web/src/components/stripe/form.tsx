@@ -30,11 +30,146 @@ import { useEffect, useState } from "react";
 import { StripeConfirmButton } from "@/components/stripe/confirm-button";
 import { useQueryState } from "nuqs";
 import { ConfirmationCard } from "./confirmation-card";
+import { useAuthUser } from "@/hooks/auth/useAuth";
 
 interface SubscribeFormProps {
   prefillEmail?: string;
 }
+
 export function SubscribeForm({ prefillEmail }: SubscribeFormProps) {
+  const t = useTranslations("public");
+
+  const form = useForm<CreateSubscriptionInput>({
+    resolver: zodResolver(createSubscribeSchema(t)),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: prefillEmail || "",
+      companyName: "",
+    },
+  });
+
+  const { createAuthUser, loading, error } = useAuthUser();
+  const [openStep, setOpenStep] = useState<string | undefined>("details");
+  const [authSuccess, setAuthSuccess] = useState(false);
+
+  const handleSubmit = async (values: CreateSubscriptionInput) => {
+    try {
+      await createAuthUser(values);
+      setAuthSuccess(true);
+      setOpenStep("payment");
+    } catch (err) {
+      console.error("Error creating user:", err);
+    }
+  };
+
+  if (authSuccess) {
+    return (
+      <div className="p-4">
+        <h2>{t("subscribe.form.authCreated")}</h2>
+        <p>{t("subscribe.form.nextStepPayment")}</p>
+      </div>
+    );
+  }
+
+  return (
+    <Card className="w-full border-none sm:max-w-md">
+      <CardHeader>
+        <CardTitle>{t("subscribe.form.title")}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FieldGroup>
+              <Controller
+                name="firstName"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>
+                      {t("subscribe.form.label.firstName")}
+                    </FieldLabel>
+                    <Input {...field} />
+                    {fieldState.error && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            </FieldGroup>
+
+            <FieldGroup>
+              <Controller
+                name="lastName"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>
+                      {t("subscribe.form.label.lastName")}
+                    </FieldLabel>
+                    <Input {...field} />
+                    {fieldState.error && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+            </FieldGroup>
+          </div>
+
+          <FieldGroup>
+            <Controller
+              name="email"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>{t("subscribe.form.label.email")}</FieldLabel>
+                  <Input {...field} />
+                  {fieldState.error && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+
+          <FieldGroup>
+            <Controller
+              name="companyName"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>
+                    {t("subscribe.form.label.companyName")}
+                  </FieldLabel>
+                  <Input {...field} />
+                  {fieldState.error && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+
+          {error && <p className="text-error">{error}</p>}
+
+          <Button type="submit" disabled={loading}>
+            {loading
+              ? t("subscribe.form.button.processing")
+              : t("subscribe.form.button.continue")}
+          </Button>
+        </form>
+
+        {/* 
+          Stripe-kod kan aktiveras senare
+          <Accordion> ... </Accordion>
+        */}
+      </CardContent>
+    </Card>
+  );
+}
+
+/* export function SubscribeForm({ prefillEmail }: SubscribeFormProps) {
   const { theme: currentTheme } = useTheme();
   const changeLocale = useLocale();
   const locale = mapLocale(changeLocale);
@@ -239,4 +374,4 @@ export function SubscribeForm({ prefillEmail }: SubscribeFormProps) {
       </CardContent>
     </Card>
   );
-}
+} */

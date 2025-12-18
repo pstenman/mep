@@ -7,7 +7,7 @@ import { CompanyStatus } from "@mep/types";
 export const companies = pgTable("companies", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
-  stripeCustomerId: text("stripe_customer_id").notNull().unique(),
+  stripeCustomerId: text("stripe_customer_id").unique(),
   status: text("status")
     .$type<CompanyStatus>()
     .notNull()

@@ -1,0 +1,1 @@
+ALTER TABLE "companies" ALTER COLUMN "stripe_customer_id" DROP NOT NULL;

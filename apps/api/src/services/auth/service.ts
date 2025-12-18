@@ -47,7 +47,7 @@ export class AuthService {
 
       const company = await companyQueries.create({
         name: companyName,
-        stripeCustomerId: "pending",
+        stripeCustomerId: null,
       }, 
       tx
     );
