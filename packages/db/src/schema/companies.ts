@@ -8,6 +8,9 @@ export const companies = pgTable("companies", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   stripeCustomerId: text("stripe_customer_id").unique(),
+  companyRegistrationNumber: text("company_registration_number")
+    .notNull()
+    .unique(),
   status: text("status")
     .$type<CompanyStatus>()
     .notNull()

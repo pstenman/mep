@@ -8,6 +8,7 @@ export class AuthService {
     lastName,
     email,
     companyName,
+    companyRegistrationNumber
   }: CreateAuthUserOwnerSchema) {
     const supabase = getSupabase();
 
@@ -48,6 +49,8 @@ export class AuthService {
       const company = await companyQueries.create({
         name: companyName,
         stripeCustomerId: null,
+        companyRegistrationNumber: companyRegistrationNumber,
+        status: "PENDING",
       }, 
       tx
     );

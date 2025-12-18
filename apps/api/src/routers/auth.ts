@@ -11,6 +11,7 @@ export const authRouter = createTRPCRouter({
         firstName: z.string().min(1),
         lastName: z.string().min(1),
         companyName: z.string().min(1),
+        companyRegistrationNumber: z.string().min(1),
       }),
     )
     .mutation(async ({ input }) => {

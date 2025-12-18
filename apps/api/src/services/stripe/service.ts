@@ -6,23 +6,24 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export class StripeService {
-  static async createCustomerAndSubscription({
-    firstName,
-    lastName,
+  static async createCompanySubscription({
     email,
     companyName,
+    companyRegistrationNumber,
   }: {
-    firstName: string;
-    lastName: string;
     email: string;
     companyName: string;
+    companyRegistrationNumber: string;
   }) {
-    logger.debug({ firstName, lastName, email, companyName }, "Creating Stripe customer");
+    logger.debug({ email, companyName, companyRegistrationNumber }, "Creating Stripe customer for company");
 
     const customer = await stripe.customers.create({
-      name: `${firstName} ${lastName}`,
+      name: companyName,
       email,
-      metadata: { companyName },
+      metadata: {
+        companyName,
+        companyRegistrationNumber,
+      },
     });
     logger.debug({ customerId: customer.id }, "Customer created");
 
@@ -35,9 +36,7 @@ export class StripeService {
       customer: customer.id,
       items: [{ price: priceId }],
       payment_behavior: "default_incomplete",
-      expand: [
-        "latest_invoice.confirmation_secret",
-      ],
+      expand: ["latest_invoice.confirmation_secret"],
     });
     logger.debug({ subscriptionId: subscription.id }, "Subscription created");
 
@@ -45,7 +44,8 @@ export class StripeService {
     if (!invoice) throw new Error("Subscription has no latest_invoice");
 
     const confirmationSecret = invoice.confirmation_secret?.client_secret;
-    if (!confirmationSecret) throw new Error("Invoice confirmation_secret.client_secret missing");
+    if (!confirmationSecret)
+      throw new Error("Invoice confirmation_secret.client_secret missing");
 
     const product = await stripe.products.retrieve(productId);
     const plan = product.name || "Basic";
@@ -55,10 +55,14 @@ export class StripeService {
       ? `${(priceObj.unit_amount / 100).toFixed(2)} ${priceObj.currency.toUpperCase()}`
       : "$0";
 
-    logger.debug({ clientSecret: confirmationSecret, plan, amount }, "Returning client secret and plan info");
+    logger.debug(
+      { clientSecret: confirmationSecret, plan, amount },
+      "Returning client secret and plan info"
+    );
 
     return {
       clientSecret: confirmationSecret,
+      companyName,
       customerId: customer.id,
       subscriptionId: subscription.id,
       subscriptionStatus: subscription.status,

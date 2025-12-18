@@ -3,10 +3,10 @@ import type { TRPCInputs, TRPCOutputs } from "@/trpc/router";
 // ======================================================================================================
 // STRIPE TYPES
 // ======================================================================================================
-export type CreateSubscriptionInput =
-  NonNullable<TRPCInputs>["stripe"]["createCustomerAndSubscription"];
-export type CreateSubscriptionOutput =
-  NonNullable<TRPCOutputs>["stripe"]["createCustomerAndSubscription"];
+export type CreateCompanySubscriptionInput =
+  NonNullable<TRPCInputs>["stripe"]["createCompanySubscription"];
+export type CreateCompanySubscriptionOutput =
+  NonNullable<TRPCOutputs>["stripe"]["createCompanySubscription"];
 
 // ======================================================================================================
 // SUPABASE AUTH

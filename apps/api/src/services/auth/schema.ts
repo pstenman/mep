@@ -5,6 +5,7 @@ export const authUserOwnerSchema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   companyName: z.string().min(1),
+  companyRegistrationNumber: z.string().min(1),
 });
 
 export type CreateAuthUserOwnerSchema = z.infer<typeof authUserOwnerSchema>;

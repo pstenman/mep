@@ -57,6 +57,13 @@
       "when": 1766021176819,
       "tag": "0007_normal_bullseye",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1766023201627,
+      "tag": "0008_bored_rhino",
+      "breakpoints": true
     }
   ]
 }

@@ -4,13 +4,12 @@ import { createTRPCRouter } from "@/trpc/server";
 import { z } from "zod";
 
 export const stripeRouter = createTRPCRouter({
-  createCustomerAndSubscription: publicProcedure
+  createCompanySubscription: publicProcedure
     .input(
       z.object({
-        firstName: z.string().min(1),
-        lastName: z.string().min(1),
         email: z.email("Must be a valid email"),
         companyName: z.string().min(1),
+        companyRegistrationNumber: z.string().min(1),
       }),
     )
     .mutation(async ({ input }) => {
@@ -21,7 +20,7 @@ export const stripeRouter = createTRPCRouter({
         subscriptionStatus,
         plan,
         amount,
-      } = await StripeService.createCustomerAndSubscription(input);
+      } = await StripeService.createCompanySubscription(input);
 
       return {
         clientSecret,
