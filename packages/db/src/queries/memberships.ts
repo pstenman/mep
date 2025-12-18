@@ -1,5 +1,7 @@
 import { memberships } from "@/schema/memberships";
 import { db, type Database } from "..";
+import { MembershipStatus } from "@mep/types";
+import { eq } from "drizzle-orm";
 
 type MembershipRow = typeof memberships.$inferSelect;
 type MembershipInsert = typeof memberships.$inferInsert;
@@ -12,5 +14,12 @@ export const membershipQueries = {
     const dbOrTx = executor ?? db;
     const row = await dbOrTx.insert(memberships).values(input).returning();
     return row[0];
+  },
+
+  activate: async (membershipId: string, db: Database) => {
+    return db
+      .update(memberships)
+      .set({ status: MembershipStatus.ACTIVE })
+      .where(eq(memberships.id, membershipId));
   },
 };
