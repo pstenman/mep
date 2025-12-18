@@ -1,6 +1,5 @@
 import { trpc } from "@/lib/trpc/client";
 import type { CreateAuthOwnerInput, CreateAuthOwnerOutput } from "@mep/api"
-import { toast } from "sonner"
 
 
 export const useAuthUser = () => {

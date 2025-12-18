@@ -1,4 +1,4 @@
-import { SubscribeView } from "@/components/stripe/view";
+import { SubscribeView } from "@/components/subscriptions/view";
 import { StripeProvider } from "@/providers/stripe-provider";
 import type { Metadata } from "next";
 
