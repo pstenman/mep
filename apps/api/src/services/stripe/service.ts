@@ -1,5 +1,6 @@
 import { logger } from "@/utils/logger";
 import Stripe from "stripe";
+import type { StripeCustomerSchema } from "./schema";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-11-17.clover",
@@ -10,17 +11,19 @@ export class StripeService {
     email,
     companyName,
     companyRegistrationNumber,
-  }: {
-    email: string;
-    companyName: string;
-    companyRegistrationNumber: string;
-  }) {
+    companyId,
+    membershipId,
+    userId
+  }: StripeCustomerSchema) {
     logger.debug({ email, companyName, companyRegistrationNumber }, "Creating Stripe customer for company");
 
     const customer = await stripe.customers.create({
       name: companyName,
       email,
       metadata: {
+        membershipId,
+        userId,
+        companyId,
         companyName,
         companyRegistrationNumber,
       },
@@ -36,6 +39,12 @@ export class StripeService {
       customer: customer.id,
       items: [{ price: priceId }],
       payment_behavior: "default_incomplete",
+      metadata: {
+        userId: userId.toString(),
+        companyId: companyId.toString(),
+        membershipId: membershipId,
+        email
+      },
       expand: ["latest_invoice.confirmation_secret"],
     });
     logger.debug({ subscriptionId: subscription.id }, "Subscription created");
@@ -61,13 +70,13 @@ export class StripeService {
     );
 
     return {
-      clientSecret: confirmationSecret,
       companyName,
+      plan,
+      amount,
+      clientSecret: confirmationSecret,
       customerId: customer.id,
       subscriptionId: subscription.id,
       subscriptionStatus: subscription.status,
-      plan,
-      amount,
     };
   }
 }

@@ -2,6 +2,11 @@ import { trpc } from "@/lib/trpc/client";
 import type { CreateCompanySubscriptionInput } from "@mep/api";
 import { useState } from "react";
 
+type CreateCompanySubscriptionInputForm = Omit<
+  CreateCompanySubscriptionInput,
+  "userId" | "companyId" | "membershipId"
+>;
+
 export const useCompanySubscription = () => {
   const utils = trpc.useUtils();
 
@@ -22,9 +27,11 @@ export const useCompanySubscription = () => {
   const [amount, setAmount] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const createSubscription = async (input: CreateCompanySubscriptionInput) => {
+  const createSubscription = async (
+    input: CreateCompanySubscriptionInputForm,
+  ) => {
     try {
-      await authMutation.mutateAsync({
+      const authData = await authMutation.mutateAsync({
         email: input.email,
         firstName: input.firstName,
         lastName: input.lastName,
@@ -36,6 +43,9 @@ export const useCompanySubscription = () => {
         email: input.email,
         companyName: input.companyName,
         companyRegistrationNumber: input.companyRegistrationNumber ?? "",
+        userId: authData.userId,
+        companyId: authData.companyId,
+        membershipId: authData.membershipId,
       });
 
       setClientSecret(stripeData.clientSecret);

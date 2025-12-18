@@ -5,33 +5,41 @@ import { cors } from "hono/cors";
 import { logger } from "@/utils/logger";
 import { appRouter } from "@/trpc/router";
 import { createTRPCContext } from "@/trpc/context";
-import { trpcServer } from "@hono/trpc-server"
+import { trpcServer } from "@hono/trpc-server";
+import { stripeWebhookRoute } from "@/webhooks/stripe";
 
 const app = new Hono();
+
+app.route("/webhook/stripe", stripeWebhookRoute);
 
 app.use(secureHeaders());
 app.use("*", corsLoggingMiddleware);
 
-app.use(
-  "*",
-  cors({
+app.use("*", (c, next) => {
+  if (c.req.path.startsWith("/webhook/stripe")) {
+    return next();
+  }
+
+  return cors({
     origin: (origin) => {
       if (!origin) return null;
-      const allowed = process.env.ALLOWED_API_ORIGINS?.split(",").map(s => s.trim()) ?? [];
+      const allowed =
+        process.env.ALLOWED_API_ORIGINS?.split(",").map((s) => s.trim()) ?? [];
       return allowed.includes(origin) ? origin : null;
     },
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization", "x-request-id"],  
-  })
-);
+    allowHeaders: ["Content-Type", "Authorization", "x-request-id"],
+  })(c, next);
+});
 
 app.use(
   "/trpc/*",
   trpcServer({
     router: appRouter,
-    createContext: ({ req }) => createTRPCContext({req, resheader: req.headers})
-  })
-)
+    createContext: ({ req }) =>
+      createTRPCContext({ req, resheader: req.headers }),
+  }),
+);
 
 const port = 3001;
 
@@ -49,6 +57,6 @@ logger.info(
     logLevel: process.env.NODE_ENV || "info",
   },
   "🚀API server starting",
-)
+);
 
 export default server;
