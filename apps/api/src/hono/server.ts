@@ -7,12 +7,14 @@ import { appRouter } from "@/trpc/router";
 import { createTRPCContext } from "@/trpc/context";
 import { trpcServer } from "@hono/trpc-server";
 import { stripeWebhookRoute } from "@/webhooks/stripe";
+import { authMiddleware } from "@/middleware/authMiddleware";
 
 const app = new Hono();
 
 app.route("/webhook/stripe", stripeWebhookRoute);
 
 app.use(secureHeaders());
+app.use("/trpc/*", authMiddleware);
 app.use("*", corsLoggingMiddleware);
 
 app.use("*", (c, next) => {

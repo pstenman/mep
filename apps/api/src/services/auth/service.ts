@@ -1,5 +1,5 @@
 import { companyQueries, db, membershipQueries, userQueries, type DBTransaction } from "@mep/db";
-import { getSupabase } from "@/utils/supabase";
+import { getSupabase } from "@/lib/supabase";
 import type { AuthActivateSchema, CreateAuthUserOwnerSchema } from "./schema";
 import { logger } from "@/utils/logger";
 
