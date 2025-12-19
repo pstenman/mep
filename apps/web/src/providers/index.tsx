@@ -11,10 +11,13 @@ type ProvidersProps = {
 export function Providers({ children }: ProvidersProps) {
   return (
     <NuqsAdapter>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem={true}
+      >
         {children}
       </ThemeProvider>
     </NuqsAdapter>
   );
 }
-4;
