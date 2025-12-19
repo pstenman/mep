@@ -17,7 +17,7 @@ export * from "./components/label";
 export * from "./components/textarea";
 export * from "./components/accordion";
 export * from "./components/sonner";
-
+export * from "./components/dialog";
 
 // HOOKS
 export * from "./hooks/use-mobile";
