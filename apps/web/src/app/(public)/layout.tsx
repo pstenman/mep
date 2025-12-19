@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { SidebarInset, SidebarProvider } from "@mep/ui";
-import { Header } from "@/components/ui/public/header";
+import { Header } from "@/components/public/header";
 import { CornerSettings } from "@/components/ui/corner-settings";
-import { PublicSidebar } from "@/components/ui/public/sidebar";
+import { PublicSidebar } from "@/components/public/sidebar";
 import { PublicTRPCProvider } from "@/providers/public-trpc-provider";
 
 interface PublicLayoutProps {

@@ -12,7 +12,7 @@ import {
 } from "@mep/ui";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { LanguageSelect } from "../language-select";
+import { LanguageSelect } from "../ui/language-select";
 
 export function PublicSidebar() {
   const t = useTranslations("public");
