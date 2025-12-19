@@ -18,6 +18,9 @@ export * from "./components/textarea";
 export * from "./components/accordion";
 export * from "./components/sonner";
 export * from "./components/dialog";
+export * from "./components/collapsible";
+export * from "./components/avatar";
+export * from "./components/breadcrumb";
 
 // HOOKS
 export * from "./hooks/use-mobile";
