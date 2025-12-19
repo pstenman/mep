@@ -1,1 +1,13 @@
-{}
+{
+  "preparations": "Preparations",
+  "main": "Main",
+  "breakfast": "Breakfast",
+  "lunch": "Lunch",
+  "alACarte": "À la Carte",
+  "menues": "Menus",
+  "menu": "Menu",
+  "recepies": "Recipes",
+  "allergyList": "Allergies",
+  "all": "All",
+  "orders": "Orders"
+}

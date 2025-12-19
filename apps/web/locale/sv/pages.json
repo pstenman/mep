@@ -1,1 +1,13 @@
-{}
+{
+  "preparations": "Prepp",
+  "main": "Huvud",
+  "breakfast": "Frukost",
+  "lunch": "Lunch",
+  "alACarte": "À la Carte",
+  "menues": "Menyer",
+  "menu": "Meny",
+  "recepies": "Recept",
+  "allergyList": "Allergier",
+  "all": "Alla",
+  "orders": "Beställningar"
+}
