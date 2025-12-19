@@ -1,8 +1,8 @@
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@mep/ui";
 
 import { Globe } from "lucide-react";
-import { LanguageSelect } from "../language-select";
-import { ThemeSwitch } from "../theme-switch";
+import { LanguageSelect } from "./language-select";
+import { ThemeSwitch } from "./theme-switch";
 
 export function CornerSettings() {
   return (
