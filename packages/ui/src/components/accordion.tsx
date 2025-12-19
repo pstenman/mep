@@ -23,11 +23,16 @@ function AccordionItem({
   );
 }
 
+type TriggerProps = React.ComponentProps<typeof AccordionPrimitive.Trigger> & {
+  chevronSize?: number;
+};
+
 function AccordionTrigger({
   className,
   children,
+  chevronSize = 16,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
+}: TriggerProps) {
   return (
     <AccordionPrimitive.Header className="flex">
       <AccordionPrimitive.Trigger
