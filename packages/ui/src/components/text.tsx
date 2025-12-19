@@ -1,17 +1,31 @@
+import { Slot } from "@radix-ui/react-slot";
 import { cn } from "../utils/cn";
 
-export interface Props extends React.HTMLAttributes<HTMLDivElement> {
+type Props = {
+  className?: string;
   loading?: boolean;
+  asChild?: boolean;
   children: React.ReactNode;
-}
+} & React.HTMLAttributes<HTMLElement>;
 
-export const Text = ({ className, loading, children, ...restProps }: Props) => {
+export const Text = ({
+  className,
+  loading,
+  asChild = false,
+  children,
+  ...restProps
+}: Props) => {
+  const Component = asChild ? Slot : "p";
+
   return (
-    <p
-      className={cn(loading && "skeleton-line self-start block", className)}
+    <Component
+      className={cn(
+        loading && "skeleton-line self-start block",
+        className
+      )}
       {...restProps}
     >
       {children}
-    </p>
+    </Component>
   );
 };
