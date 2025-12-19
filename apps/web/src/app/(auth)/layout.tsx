@@ -1,4 +1,4 @@
-import { CornerSettings } from "@/components/ui/public/corner-settings";
+import { CornerSettings } from "@/components/ui/corner-settings";
 import { PublicTRPCProvider } from "@/providers/public-trpc-provider";
 import type { ReactNode } from "react";
 

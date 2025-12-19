@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { SidebarInset, SidebarProvider } from "@mep/ui";
 import { Header } from "@/components/ui/public/header";
-import { CornerSettings } from "@/components/ui/public/corner-settings";
+import { CornerSettings } from "@/components/ui/corner-settings";
 import { PublicSidebar } from "@/components/ui/public/sidebar";
 import { PublicTRPCProvider } from "@/providers/public-trpc-provider";
 
