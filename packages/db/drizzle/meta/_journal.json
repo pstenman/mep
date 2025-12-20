@@ -64,6 +64,20 @@
       "when": 1766023201627,
       "tag": "0008_bored_rhino",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1766270624502,
+      "tag": "0009_little_ultragirl",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1766270702506,
+      "tag": "0010_polite_triathlon",
+      "breakpoints": true
     }
   ]
 }

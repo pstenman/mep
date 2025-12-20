@@ -1,10 +1,14 @@
+import { PlanInterval } from "@mep/types";
 import { relations } from "drizzle-orm";
 import { pgTable, text, integer, uuid } from "drizzle-orm/pg-core";
 
 export const plans = pgTable("plans", {
   id: uuid("id").primaryKey().defaultRandom(),
   price: integer("price").notNull(),
-  interval: text("interval").notNull(),
+  interval: text("interval")
+    .$type<PlanInterval>()
+    .notNull()
+    .default(PlanInterval.MONTH),
   stripePriceId: text("stripe_price_id").notNull(),
 });
 
