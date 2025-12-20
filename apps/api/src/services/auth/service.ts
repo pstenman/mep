@@ -1,6 +1,6 @@
 import { companyQueries, db, membershipQueries, userQueries, type DBTransaction } from "@mep/db";
 import { getSupabase } from "@/lib/supabase";
-import type { AuthActivateSchema, CreateAuthUserOwnerSchema } from "./schema";
+import { authActivateSchema, type AuthActivateSchema, type CreateAuthUserOwnerSchema, type SendMagicLinkOnPaymentSuccessSchema } from "./schema";
 import { logger } from "@/utils/logger";
 
 export class AuthService {
@@ -66,57 +66,61 @@ export class AuthService {
   return result;
   }
 
-  static async activateFromStripe({
-  userId,
-  companyId,
-  membershipId,
-  supabaseId
-}: AuthActivateSchema) {
-  logger.info({ userId, companyId, membershipId, supabaseId }, "Starting Stripe activation");
+  static async sendMagicLinkOnPaymentSuccess({
+    supabaseId,
+  }: SendMagicLinkOnPaymentSuccessSchema) {
+    const supabase = getSupabase();
 
-  await db.transaction(async (tx) => {
-    logger.info({ userId }, "Activating user in DB");
-    await userQueries.activate(userId, tx);
+    let supabaseUser: any = null;
+    for (let i = 0; i < 5; i++) {
+      const { data } = await supabase.auth.admin.getUserById(supabaseId);
+      if (data?.user) {
+        supabaseUser = data.user;
+        break;
+      }
+      await new Promise((r) => setTimeout(r, 200));
+    }
 
-    logger.info({ companyId }, "Activating company in DB");
-    await companyQueries.activate(companyId, tx);
+    if (!supabaseUser) {
+      const { data } = await supabase.auth.admin.createUser({
+        id: supabaseId,
+        email: "",
+        password: "Temp123!",
+        email_confirm: true,
+      });
+      supabaseUser = data.user;
+    }
 
-    logger.info({ membershipId }, "Activating membership in DB");
-    await membershipQueries.activate(membershipId, tx);
-  });
-  logger.info({ userId }, "Database activation completed");
+    if (!supabaseUser.email) throw new Error("Supabase user missing email");
 
-  const supabase = getSupabase();
+    const { data: magicLinkData, error } = await supabase.auth.admin.generateLink({
+      type: "magiclink",
+      email: supabaseUser.email,
+      options: { redirectTo: process.env.SUPABASE_MAGIGLINK_REDIRECT || "http://localhost:3000/dashboard" },
+    });
+    if (error) throw error;
+    logger.info({ supabaseId, magicLink: magicLinkData }, "Magic link generated successfully");
 
-  logger.info({ userId }, "Fetching user from Supabase admin");
-  const { data, error: fetchError } = await supabase.auth.admin.getUserById(userId);
-  
-  if (fetchError || !data?.user) {
-    logger.error({ fetchError, userId }, "Failed to fetch user email for Magic Link");
-    throw fetchError || new Error("User not found");
+    return magicLinkData;
   }
 
-  const email = data.user.email;
-  if (!email) {
-    logger.error({ userId }, "User email is missing in Supabase");
-    throw new Error("User email is missing");
+  static async authActivateFromStripe({
+    userId,
+    companyId,
+    membershipId,
+  }: AuthActivateSchema) {
+    const supabaseId = await userQueries.getSupabaseIdByUserId(userId, db);
+    logger.info({ userId, supabaseId }, "Supabase ID fetched from DB");
+
+    if (!supabaseId) throw new Error("Supabase ID not found");
+
+    await db.transaction(async (tx) => {
+      await userQueries.activate(userId, tx);
+      await companyQueries.activate(companyId, tx);
+      await membershipQueries.activate(membershipId, tx);
+    });
+    logger.info({ userId, companyId, membershipId }, "DB transaction completed");
+
+    return await this.sendMagicLinkOnPaymentSuccess({supabaseId });
   }
-
-  logger.info({ email, userId }, "Generating Magic Link");
-  const { data: magicLinkData, error } = await supabase.auth.admin.generateLink({
-    type: "magiclink",
-    email,
-    options: {
-      redirectTo: process.env.SUPABASE_MAGIGLINK_REDIRECT || "http://localhost:3000",
-    },
-  });
-
-  if (error) {
-    logger.error({ error, userId }, "Failed to send Magic Link after Stripe activation");
-    throw error;
-  }
-
-  logger.info({ userId }, "Magic Link sent successfully after Stripe activation");
-  return magicLinkData;
-}
 }

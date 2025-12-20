@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import type { StripeCustomerSchema } from "./schema";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-11-17.clover",
+  apiVersion: "2025-12-15.clover",
 });
 
 export class StripeService {
@@ -13,9 +13,12 @@ export class StripeService {
     companyRegistrationNumber,
     companyId,
     membershipId,
-    userId
+    userId,
   }: StripeCustomerSchema) {
-    logger.debug({ email, companyName, companyRegistrationNumber }, "Creating Stripe customer for company");
+    logger.debug(
+      { email, companyName, companyRegistrationNumber },
+      "Creating Stripe customer for company",
+    );
 
     const customer = await stripe.customers.create({
       name: companyName,
@@ -43,7 +46,7 @@ export class StripeService {
         userId: userId.toString(),
         companyId: companyId.toString(),
         membershipId: membershipId,
-        email
+        email,
       },
       expand: ["latest_invoice.confirmation_secret"],
     });
@@ -66,7 +69,7 @@ export class StripeService {
 
     logger.debug(
       { clientSecret: confirmationSecret, plan, amount },
-      "Returning client secret and plan info"
+      "Returning client secret and plan info",
     );
 
     return {

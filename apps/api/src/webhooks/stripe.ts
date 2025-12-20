@@ -1,11 +1,10 @@
 import { AuthService } from "@/services/auth/service";
 import { logger } from "@/utils/logger";
-import { db, userQueries } from "@mep/db";
 import { Hono } from "hono";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-11-17.clover",
+  apiVersion: "2025-12-15.clover",
 });
 
 export const stripeWebhookRoute = new Hono();
@@ -20,7 +19,6 @@ stripeWebhookRoute.post("/", async (c) => {
   const bodyBuffer = Buffer.from(rawBody);
 
   let event: Stripe.Event;
-
   try {
     event = await stripe.webhooks.constructEventAsync(
       bodyBuffer,
@@ -32,47 +30,29 @@ stripeWebhookRoute.post("/", async (c) => {
     return c.text(`Webhook Error: ${error.message}`, 400);
   }
 
-  if (
-    ["customer.subscription.created", "invoice.payment_succeeded"].includes(
-      event.type,
-    )
-  ) {
-    const subscription = event.data.object as Stripe.Subscription;
-    const { userId, companyId, membershipId } = subscription.metadata;
+  if (event.type === "invoice.payment_succeeded") {
+    const invoice = event.data.object as Stripe.Invoice;
 
-    if (userId && companyId && membershipId) {
-      try {
-        const supabaseId = await userQueries.getSupabaseIdByUserId(userId, db);
+    const line = invoice.lines.data[0];
+    const metadata = line?.metadata ?? {};
 
-        if (!supabaseId) {
-          logger.warn({ userId }, "No Supabase user linked to this app user");
-          return c.text("No Supabase user found", 404);
-        }
+    const { userId, companyId, membershipId } = metadata;
 
-        await AuthService.activateFromStripe({
-          userId,
-          companyId,
-          membershipId,
-          supabaseId,
-        });
-        logger.info(
-          { userId, supabaseId },
-          "User activated via Stripe webhook",
-        );
-      } catch (err) {
-        logger.error(
-          { err, subscription },
-          "Error activating user from Stripe webhook",
-        );
-        return c.text("Error activating user", 500);
-      }
-    } else {
-      logger.warn(
-        { subscription },
-        "Missing metadata, cannot activate or send Magic Link",
-      );
+    if (!userId || !companyId || !membershipId) {
+      logger.warn({ invoiceId: invoice.id }, "Missing metadata");
+      return c.text("Missing metadata", 200);
     }
-  }
 
-  return c.text("ok");
+    if (invoice.amount_paid <= 0) {
+      logger.info({ invoiceId: invoice.id }, "Zero-amount invoice, skipping");
+      return c.text("Zero invoice", 200);
+    }
+
+    await AuthService.authActivateFromStripe({
+      userId,
+      companyId,
+      membershipId,
+    });
+  }
+  return c.text("Activation completed", 200);
 });
