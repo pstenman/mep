@@ -1,21 +1,17 @@
 import { TRPCError } from "@trpc/server";
 import { t } from "../server";
 
-export const withAuthMiddleware = t.middleware(({ ctx, next }) => {
+export const requireAuth = t.middleware(({ ctx, next }) => {
   if (!ctx.auth) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "Authentication required",
-    });
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Auth required" });
   }
+  return next({ ctx });
+});
 
-  if (!ctx.auth.companyId) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "User has no company",
-    });
+export const requireCompany = t.middleware(({ ctx, next }) => {
+  if (!ctx.auth?.companyId) {
+    throw new TRPCError({ code: "FORBIDDEN", message: "No company access" });
   }
-
   return next({
     ctx: {
       ...ctx,

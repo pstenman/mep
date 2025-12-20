@@ -96,7 +96,7 @@ export class AuthService {
     const { data: magicLinkData, error } = await supabase.auth.admin.generateLink({
       type: "magiclink",
       email: supabaseUser.email,
-      options: { redirectTo: process.env.SUPABASE_MAGIGLINK_REDIRECT || "http://localhost:3000/dashboard" },
+      options: { redirectTo: process.env.SUPABASE_MAGIGLINK_REDIRECT || "http://localhost:3000/auth/callback" },
     });
     if (error) throw error;
     logger.info({ supabaseId, magicLink: magicLinkData }, "Magic link generated successfully");

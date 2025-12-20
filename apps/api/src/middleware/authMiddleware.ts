@@ -8,19 +8,19 @@ import { jwtVerify } from "jose";
 export const authMiddleware: MiddlewareHandler = async (c, next) => {
   const authHeader = c.req.header("authorization");
   const reqAny = c.req as any;
-
   reqAny[AUTH_SYMBOL] = null;
 
-  if (!authHeader?.startsWith("Bearer ")) {
-    return next();
-  }
+  if (!authHeader?.startsWith("Bearer ")) return next();
 
   const token = authHeader.replace("Bearer ", "").trim();
 
   try {
-    const { payload } = await jwtVerify(token, supabaseJWKS);
-    const supabaseId = payload.sub as string;
+    const { payload } = await jwtVerify(token, supabaseJWKS, {
+      audience: "authenticated",
+      issuer: `${process.env.SUPABASE_URL}/auth/v1`,
+    });
 
+    const supabaseId = payload.sub as string;
     if (!supabaseId) return next();
 
     const users = await db.query.users.findFirst({
