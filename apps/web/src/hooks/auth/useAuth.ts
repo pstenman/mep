@@ -1,27 +1,34 @@
-import { trpc } from "@/lib/trpc/client";
-import type { CreateAuthOwnerInput, CreateAuthOwnerOutput } from "@mep/api"
+import { getSupabaseBrowser } from "@/lib/supabase/supabase-browser";
+import type { Session, AuthChangeEvent } from "@supabase/supabase-js";
+import { useEffect, useMemo, useState } from "react";
 
+export const useAuth = () => {
+  const supabase = useMemo(() => getSupabaseBrowser(), []);
 
-export const useAuthUser = () => {
-  const utils = trpc.useUtils();
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const mutation = trpc.auth.createOwner.useMutation({
-    onSuccess: () => utils.invalidate(),
-  });
+  useEffect(() => {
+    const init = async () => {
+      const { data } = await supabase.auth.getSession();
+      setSession(data.session ?? null);
+      setLoading(false);
+    };
 
-  const createAuthUser = async (input: CreateAuthOwnerInput) => {
-    try {
-      const data: CreateAuthOwnerOutput = await mutation.mutateAsync(input);
-      return data;
-    } catch (error) {
-      console.error("Error creating user:", error);
-      throw error;
-    }
-  };
+    init();
 
-  return {
-    createAuthUser,
-    loading: mutation.isLoading,
-    error: mutation.error,
-  };
+    const { data: authListener, _error } = supabase.auth.onAuthStateChange(
+      (_event: AuthChangeEvent, session: Session) => {
+        setSession(session ?? null);
+      },
+    );
+
+    return () => {
+      authListener?.subscription?.unsubscribe?.();
+    };
+  }, [supabase]);
+
+  const token = session?.access_token || null;
+
+  return { session, supabase, loading, token };
 };
