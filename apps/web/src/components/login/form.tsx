@@ -15,12 +15,25 @@ import { Controller, useForm } from "react-hook-form";
 import { type LoginFormValues, loginSchema } from "./schema";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ForgotPasswordModal } from "./reset-dialog";
+import { createBrowserClient } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const [isForgotOpen, setIsForgotOpen] = useState(false);
   const t = useTranslations("auth");
+  const router = useRouter();
+
+  const supabase = useMemo(
+    () =>
+      createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      ),
+    [],
+  );
+
   const {
     handleSubmit,
     control,
@@ -34,8 +47,16 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    // TODO: add Submit logic
-    console.log("Login data:", data);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+    router.push("/dashboard");
   };
 
   return (
