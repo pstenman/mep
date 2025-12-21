@@ -1,10 +1,10 @@
-import { StripeService } from "@/services/stripe/service";
+import { StripeSubscriptionService } from "@/services/stripe-subscriptions/service";
 import { publicProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
 import { z } from "zod";
 
 export const stripeRouter = createTRPCRouter({
-  createCompanySubscription: publicProcedure
+  createStripeSubscription: publicProcedure
     .input(
       z.object({
         email: z.email("Must be a valid email"),
@@ -23,7 +23,7 @@ export const stripeRouter = createTRPCRouter({
         subscriptionStatus,
         plan,
         amount,
-      } = await StripeService.createCompanySubscription(input);
+      } = await StripeSubscriptionService.createStripeSubscription(input);
 
       return {
         clientSecret,

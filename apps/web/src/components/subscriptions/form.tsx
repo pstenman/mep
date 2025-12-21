@@ -1,6 +1,6 @@
 "use client";
 
-import type { CreateCompanySubscriptionInput } from "@mep/api";
+import type { CreateStripeSubscriptionInput } from "@mep/api";
 import {
   Accordion,
   AccordionContent,
@@ -41,7 +41,7 @@ export function SubscribeForm({ prefillEmail }: SubscribeFormProps) {
   const locale = mapLocale(changeLocale);
   const appearance = mapTheme(currentTheme as "light" | "dark" | "system");
 
-  const form = useForm<CreateCompanySubscriptionInput>({
+  const form = useForm<CreateStripeSubscriptionInput>({
     resolver: zodResolver(createSubscribeSchema(t)),
     defaultValues: {
       firstName: "",
@@ -84,7 +84,7 @@ export function SubscribeForm({ prefillEmail }: SubscribeFormProps) {
     );
   }
 
-  const handleSubmit = async (values: CreateCompanySubscriptionInput) => {
+  const handleSubmit = async (values: CreateStripeSubscriptionInput) => {
     console.log("FORM VALUES:", form.getValues());
     try {
       await createSubscription(values);

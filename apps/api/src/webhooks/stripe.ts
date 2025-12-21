@@ -1,4 +1,4 @@
-import { AuthService } from "@/services/auth/service";
+import { SubscriptionService } from "@/services/subscription/services";
 import { logger } from "@/utils/logger";
 import { Hono } from "hono";
 import Stripe from "stripe";
@@ -48,7 +48,7 @@ stripeWebhookRoute.post("/", async (c) => {
       return c.text("Zero invoice", 200);
     }
 
-    await AuthService.authActivateFromStripe({
+    await SubscriptionService.activateSubscriptionFromStripe({
       userId,
       companyId,
       membershipId,

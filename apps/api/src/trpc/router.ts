@@ -1,12 +1,12 @@
 import { stripeRouter } from "@/routers/stripe";
 import { createTRPCRouter } from "./server";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
-import { authRouter } from "@/routers/auth";
 import { planRouter } from "@/routers/plans";
+import { subscriptionRouter } from "@/routers/subscriptions";
 
 export const appRouter = createTRPCRouter({
   stripe: stripeRouter,
-  auth: authRouter,
+  subscription: subscriptionRouter,
   plans: planRouter,
 });
 

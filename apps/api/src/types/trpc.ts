@@ -3,18 +3,18 @@ import type { TRPCInputs, TRPCOutputs } from "@/trpc/router";
 // ======================================================================================================
 // STRIPE TYPES
 // ======================================================================================================
-export type CreateCompanySubscriptionInput =
-  NonNullable<TRPCInputs>["stripe"]["createCompanySubscription"];
-export type CreateCompanySubscriptionOutput =
-  NonNullable<TRPCOutputs>["stripe"]["createCompanySubscription"];
+export type CreateStripeSubscriptionInput =
+  NonNullable<TRPCInputs>["stripe"]["createStripeSubscription"];
+export type CreateStripeSubscriptionOutput =
+  NonNullable<TRPCOutputs>["stripe"]["createStripeSubscription"];
 
 // ======================================================================================================
-// SUPABASE AUTH
+// SUBSCRIPTIONS TYPES
 // ======================================================================================================
-export type CreateAuthOwnerInput =
-  NonNullable<TRPCInputs>["auth"]["createOwner"];
-export type CreateAuthOwnerOutput =
-  NonNullable<TRPCOutputs>["auth"]["createOwner"];
+export type CreateSubscriptionInput =
+  NonNullable<TRPCInputs>["subscription"]["createSubscription"];
+export type CreateSubscriptionOutput =
+  NonNullable<TRPCOutputs>["subscription"]["createSubscription"];
 
 // ======================================================================================================
 // PLANS

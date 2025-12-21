@@ -1,20 +1,20 @@
 import { trpc } from "@/lib/trpc/client";
-import type { CreateCompanySubscriptionInput } from "@mep/api";
+import type { CreateStripeSubscriptionInput } from "@mep/api";
 import { useState } from "react";
 
-type CreateCompanySubscriptionInputForm = Omit<
-  CreateCompanySubscriptionInput,
+type CreateStripeSubscriptionInputForm = Omit<
+  CreateStripeSubscriptionInput,
   "userId" | "companyId" | "membershipId"
 >;
 
 export const useCompanySubscription = () => {
   const utils = trpc.useUtils();
 
-  const authMutation = trpc.auth.createOwner.useMutation({
+  const authMutation = trpc.subscription.createSubscription.useMutation({
     onSuccess: () => utils.invalidate(),
   });
 
-  const stripeMutation = trpc.stripe.createCompanySubscription.useMutation({
+  const stripeMutation = trpc.stripe.createStripeSubscription.useMutation({
     onSuccess: () => utils.invalidate(),
   });
 
@@ -28,7 +28,7 @@ export const useCompanySubscription = () => {
   const [loading, setLoading] = useState(false);
 
   const createSubscription = async (
-    input: CreateCompanySubscriptionInputForm,
+    input: CreateStripeSubscriptionInputForm,
   ) => {
     try {
       const authData = await authMutation.mutateAsync({

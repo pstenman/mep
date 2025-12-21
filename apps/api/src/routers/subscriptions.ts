@@ -1,10 +1,10 @@
-import { AuthService } from "@/services/auth/service";
+import { SubscriptionService } from "@/services/subscription/services";
 import { publicProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
 import z from "zod";
 
-export const authRouter = createTRPCRouter({
-  createOwner: publicProcedure
+export const subscriptionRouter = createTRPCRouter({
+  createSubscription: publicProcedure
     .input(
       z.object({
         email: z.email(),
@@ -15,7 +15,7 @@ export const authRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input }) => {
-      const data = await AuthService.createUserOwner(input);
+      const data = await SubscriptionService.createSubscription(input);
 
       return {
         userId: data.user.id,
