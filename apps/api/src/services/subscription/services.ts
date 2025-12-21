@@ -2,10 +2,11 @@ import {
   companyQueries,
   db,
   membershipQueries,
+  planQueries,
   subscriptionQueries,
   userQueries,
 } from "@mep/db";
-import type { SubscriptionStatus } from "@mep/types";
+import { Role, type SubscriptionStatus } from "@mep/types";
 import { StripeSubscriptionService } from "../stripe-subscriptions/service";
 import { AuthService } from "../auth/service";
 import type { SubscriptionActivateSchema, SubscriptionSchema } from "./schema";
@@ -99,5 +100,44 @@ export class SubscriptionService {
     );
 
     return magicLinkData;
+  }
+
+  static async getSubscription({
+    companyId,
+    userId,
+  }: {
+    companyId: string;
+    userId: string;
+  }) {
+    const membership = await membershipQueries.findByUserAndCompany(
+      userId,
+      companyId,
+      db,
+    );
+
+    if (!membership || membership.role !== Role.OWNER) {
+      throw new Error("Not authorized to view subscription");
+    }
+
+    const subscription = await subscriptionQueries.findByCompanyId(
+      companyId,
+      db,
+    );
+
+    if (!subscription) {
+      return { hasSubscription: false };
+    }
+
+    const plan = await planQueries.getById(subscription.planId);
+
+    return {
+      hasSubscription: true,
+      status: subscription.status,
+      cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+      currentPeriodStart: subscription.currentPeriodStart,
+      currentPeriodEnd: subscription.currentPeriodEnd,
+      stripeSubscriptionId: subscription.stripeSubscriptionId,
+      plan,
+    };
   }
 }

@@ -1,7 +1,7 @@
 import { memberships } from "@/schema/memberships";
 import { db, type Database } from "..";
 import { MembershipStatus } from "@mep/types";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 type MembershipRow = typeof memberships.$inferSelect;
 type MembershipInsert = typeof memberships.$inferInsert;
@@ -21,5 +21,22 @@ export const membershipQueries = {
       .update(memberships)
       .set({ status: MembershipStatus.ACTIVE })
       .where(eq(memberships.id, membershipId));
+  },
+
+  findByUserAndCompany: async (
+    userId: string,
+    companyId: string,
+    executor?: Database,
+  ): Promise<MembershipRow | null> => {
+    const dbOrTx = executor ?? db;
+
+    const row = await dbOrTx.query.memberships.findFirst({
+      where: and(
+        eq(memberships.userId, userId),
+        eq(memberships.companyId, companyId),
+      ),
+    });
+
+    return row ?? null;
   },
 };
