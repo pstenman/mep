@@ -21,44 +21,13 @@ import {
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
-import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { applyNavSettings } from "@/lib/navigation/dashboard/navigation-settings";
+import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
 import { UserMenu } from "./user-settings";
-import { mockAdminNavSettings } from "@/lib/navigation/dashboard/mock-settings";
-import { Navigation } from "@/lib/navigation/dashboard/navigation";
 
 export function DashboardSidebar() {
   const { state } = useSidebar();
   const isMobile = useIsMobile();
-  const pathname = usePathname();
-  const t = useTranslations("pages");
-
-  const visibleNavigation = applyNavSettings(
-    Navigation,
-    mockAdminNavSettings.hiddenItemIds,
-  );
-
-  const menuItems = visibleNavigation.map((group) => {
-    const isGroupActive =
-      pathname === group.href ||
-      pathname.startsWith(group.href.replace(/\/[^/]+$/, ""));
-
-    return {
-      key: group.id,
-      title: t(group.titleKey),
-      url: group.href,
-      icon: group.icon,
-      collapsible: group.collapsible,
-      isActive: isGroupActive,
-      items: group.items?.map((item) => ({
-        key: item.id,
-        label: t(item.labelKey),
-        url: item.href,
-        isActive: pathname === item.href,
-      })),
-    };
-  });
+  const menuItems = useDashboardNavigation();
 
   return (
     <Sidebar collapsible="icon">
@@ -94,7 +63,7 @@ export function DashboardSidebar() {
             {menuItems.map((item) =>
               item.collapsible && item.items?.length ? (
                 <Collapsible
-                  key={item.key}
+                  key={item.id}
                   asChild
                   defaultOpen={item.isActive}
                   className="group/collapsible"
@@ -109,7 +78,7 @@ export function DashboardSidebar() {
                         )}
                       >
                         {item.icon && (
-                          <Link href={item.url}>
+                          <Link href={item.href}>
                             <item.icon
                               size={20}
                               className={cn(
@@ -131,10 +100,10 @@ export function DashboardSidebar() {
                     <CollapsibleContent>
                       <SidebarMenuSub className="mx-0 px-0 border-l-0 w-full gap-0">
                         {item.items.map((subItem) => (
-                          <SidebarMenuSubItem key={subItem.key}>
+                          <SidebarMenuSubItem key={subItem.id}>
                             <SidebarMenuButton asChild>
                               <Link
-                                href={subItem.url}
+                                href={subItem.href}
                                 className={cn(
                                   "hover:bg-subtle-pale dark:hover:bg-gray-700 pl-[48px]",
                                   subItem.isActive &&
@@ -151,7 +120,7 @@ export function DashboardSidebar() {
                   </SidebarMenuItem>
                 </Collapsible>
               ) : (
-                <SidebarMenuItem key={item.key}>
+                <SidebarMenuItem key={item.id}>
                   <SidebarMenuButton
                     tooltip={item.title}
                     asChild
@@ -161,7 +130,7 @@ export function DashboardSidebar() {
                         "bg-accent-pale dark:bg-gray-800 font-medium",
                     )}
                   >
-                    <Link href={item.url} className="flex items-center gap-2">
+                    <Link href={item.href} className="flex items-center gap-2">
                       {item.icon && (
                         <item.icon
                           size={20}
