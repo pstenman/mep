@@ -1,0 +1,24 @@
+{
+  "subscription": {
+    "title": "Prenumeration",
+    "loading": "Laddar prenumeration...",
+    "noSubscription": "Ingen prenumeration hittad.",
+    "plan": "Plan",
+    "status": "Status",
+    "currentPeriod": "Aktuell Period",
+    "cancelAtPeriodEnd": "Prenumerationen kommer att avslutas i slutet av perioden.",
+    "manageButtonLabel": "Hantera Prenumeration"
+  },
+  "company": {
+    "title": "Företagsinställningar",
+    "description": "Företagssättningar"
+  },
+  "users": {
+    "title": "Anställda",
+    "description": "Anställda"
+  },
+  "personal": {
+    "title": "Användarinställningar",
+    "description": "Användarinställningar"
+  }
+}

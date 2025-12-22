@@ -2,13 +2,15 @@
 
 import { trpc } from "@/lib/trpc/client";
 import { useState } from "react";
-import { useLocale } from "next-intl";
-import { Badge, Button } from "@mep/ui";
+import { useLocale, useTranslations } from "next-intl";
+import { Badge, Button, Text } from "@mep/ui";
 import type { PlanTranslation } from "@mep/types";
 
 export function SubscriptionPanel() {
+  const t = useTranslations("settings");
   const locale = useLocale();
-  const { data: subscription, isLoading } = trpc.subscription.getSubscription.useQuery();
+  const { data: subscription, isLoading } =
+    trpc.subscription.getSubscription.useQuery();
   const [billingUrl, setBillingUrl] = useState<string | null>(null);
 
   const createPortal = trpc.stripe.createBillingPortalSession.useMutation();
@@ -23,14 +25,20 @@ export function SubscriptionPanel() {
     window.open(url, "_blank");
   };
 
-  if (isLoading) return <p>Loading subscription...</p>;
-  if (!subscription || !subscription.hasSubscription) return <p>No subscription found.</p>;
+  if (isLoading) return <Text>{t("subscription.loading")}</Text>;
+  if (!subscription || !subscription.hasSubscription)
+    return <Text>{t("subscription.noSubscription")}</Text>;
 
   const planTranslation =
-    subscription.plan?.translations.find((t: PlanTranslation) => t.locale === locale) ??
-    subscription.plan?.translations.find((t: PlanTranslation) => t.locale === "en") ??
+    subscription.plan?.translations.find(
+      (t: PlanTranslation) => t.locale === locale,
+    ) ??
+    subscription.plan?.translations.find(
+      (t: PlanTranslation) => t.locale === "en",
+    ) ??
     subscription.plan?.translations[0];
-  const planName = planTranslation?.name ?? subscription.plan?.id ?? "Unknown Plan";
+  const planName =
+    planTranslation?.name ?? subscription.plan?.id ?? "Unknown Plan";
 
   const getStatusBadgeProps = (status: string) => {
     switch (status) {
@@ -60,33 +68,32 @@ export function SubscriptionPanel() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-between items-center">
-        <span className="font-medium">Plan:</span>
-        <span>{planName}</span>
+        <Text className="font-medium">{t("subscription.plan")}</Text>
+        <Text>{planName}</Text>
       </div>
 
       <div className="flex justify-between items-center">
-        <span className="font-medium">Status:</span>
+        <Text className="font-medium">{t("subscription.status")}</Text>
         <Badge {...statusBadgeProps}>{subscription.status}</Badge>
       </div>
 
       <div className="flex justify-between items-center">
-        <span className="font-medium">Current Period:</span>
-        <span>
+        <Text className="font-medium">{t("subscription.currentPeriod")}</Text>
+        <Text>
           {new Date(subscription.currentPeriodStart).toLocaleDateString()} -{" "}
           {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
-        </span>
+        </Text>
       </div>
 
       {subscription.cancelAtPeriodEnd && (
-        <p className="text-sm text-error">
-          Subscription will cancel at the end of the period.
-        </p>
+        <Text className="text-sm text-error">
+          {t("subscription.cancelAtPeriodEnd")}
+        </Text>
       )}
 
       <Button onClick={handleBillingPortal} className="mt-2">
-        Manage Subscription
+        <Text>{t("subscription.manageButtonLabel")}</Text>
       </Button>
     </div>
   );
-};
-    
+}

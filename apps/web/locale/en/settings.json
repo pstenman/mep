@@ -1,0 +1,24 @@
+{
+  "subscription": {
+    "title": "Subscription",
+    "loading": "Loading subscription...",
+    "noSubscription": "No subscription found.",
+    "plan": "Plan",
+    "status": "Status",
+    "currentPeriod": "Current Period",
+    "cancelAtPeriodEnd": "Subscription will cancel at the end of the period.",
+    "manageButtonLabel": "Manage Subscription"
+  },
+  "company": {
+    "title": "Company",
+    "description": "Company settings"
+  },
+  "users": {
+    "title": "Users",
+    "description": "User settings"
+  },
+  "personal": {
+    "title": "Personal",
+    "description": "Personal settings"
+  }
+}
