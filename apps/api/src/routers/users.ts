@@ -3,7 +3,6 @@ import { createUserSchema, userFiltersSchema } from "@/services/users/schema";
 import { UserService } from "@/services/users/service";
 import { companyProcedure, ownerProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
-import { Role } from "@mep/types";
 import { z } from "zod";
 
 export const userRouter = createTRPCRouter({
@@ -38,7 +37,7 @@ export const userRouter = createTRPCRouter({
     create: ownerProcedure
     .input(createUserSchema)
     .mutation(async ({ input, ctx }) => {
-      return await UserService.createUser(input, ctx.userId);
+      return await UserService.createUser(input, ctx.companyId);
     }),
 });
 

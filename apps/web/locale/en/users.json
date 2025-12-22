@@ -12,7 +12,6 @@
       "owner": "Owner",
       "user": "User"
     },
-    "success": "User saved successfully",
     "validation": {
       "required": "This field is required",
       "email": "Please enter a valid email address" 
@@ -34,6 +33,11 @@
         "email": "Email",
         "phoneNumber": "Phone Number"
       }
+    },
+    "toast": {
+      "updateSuccess": "User updated successfully",
+      "createSuccess": "User created successfully",
+      "error": "Something went wrong. Please try again."
     }
   }
 }

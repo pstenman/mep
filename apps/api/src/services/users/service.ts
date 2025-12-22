@@ -1,9 +1,9 @@
-import { userQueries, db, type Database, type UserFilters } from "@mep/db";
+import { userQueries, db, type UserFilters } from "@mep/db";
 import type { CreateUserSchema, userFiltersSchema } from "./schema";
 import type { z } from "zod";
 import type { paginationSchema, sortingSchema } from "@/lib/schemas";
 import { MembershipService } from "../memberships/service";
-import { MembershipStatus, Role } from "@mep/types";
+import { MembershipStatus } from "@mep/types";
 import { AuthService } from "../auth/service";
 
 export class UserService {
@@ -35,17 +35,7 @@ export class UserService {
     return await userQueries.getByEmail(email);
   }
 
-  static async createUser(input: CreateUserSchema, userId: string) {
-    const companyMembership = await MembershipService.findCompanyByUserId(userId);
-
-    if (!companyMembership) throw new Error("Company membership not found");
-
-    if (![Role.OWNER, Role.ADMIN].includes(companyMembership.role as Role)) {
-      throw new Error("Not allowed to invite users");
-    }
-
-    const companyId = companyMembership.companyId;
-
+  static async createUser(input: CreateUserSchema, companyId: string) {
     const supabaseUserId = await AuthService.createUser({
       email: input.email,
       firstName: input.firstName,

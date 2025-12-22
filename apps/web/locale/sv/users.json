@@ -12,7 +12,11 @@
       "owner": "Ägare",
       "user": "Användare"
     },
-    "success": "Användare sparad",
+    "toast": {
+      "updateSuccess": "Användare uppdaterad",
+      "createSuccess": "Användare skapad",
+      "error": "Något gick fel. Försök igen."
+    },
     "validation": {
       "required": "Detta fält är obligatoriskt",
       "email": "Vänligen ange en giltig e-postadress"

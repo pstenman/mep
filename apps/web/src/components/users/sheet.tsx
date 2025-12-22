@@ -5,8 +5,8 @@ import { parseAsBoolean, parseAsString } from "nuqs";
 import { useQueryState } from "nuqs";
 import { trpc } from "@/lib/trpc/client";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
 import { UserForm } from "./form";
+import { useTranslations } from "next-intl";
 
 export const useUserSheet = () => {
   const [isOpen, setIsOpen] = useQueryState(
@@ -18,16 +18,12 @@ export const useUserSheet = () => {
     parseAsString.withDefault(""),
   );
 
-  console.log("useUserSheet -> isOpen,", isOpen, "userId", userId);
-
   const open = (id?: string) => {
-    console.log("useUserSheet -> open,", id);
     setUserId(id || "");
     setIsOpen(true);
   };
 
   const close = () => {
-    console.log("useUserSheet -> close");
     setUserId("");
     setIsOpen(false);
   };
@@ -41,6 +37,7 @@ export const useUserSheet = () => {
 };
 
 export function UserSheet() {
+  const t = useTranslations("users");
   const { isOpen, userId, close } = useUserSheet();
   const utils = trpc.useUtils();
 
@@ -51,28 +48,30 @@ export function UserSheet() {
 
   const handleSuccess = () => {
     utils.users.getAll.invalidate();
-    toast.success("User updated successfully");
     close();
   };
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && close()}>
-      <SheetContent className="overflow-y-auto">
-        <SheetHeader className="mb-4 pb-4 border-b">
-          <SheetTitle>{userId ? "Edit" : "Create"} User</SheetTitle>
+      <SheetContent className="flex flex-col p-0">
+        <SheetHeader className="px-6 pt-6 pb-4 border-b shrink-0">
+          <SheetTitle>
+            {userId ? t("form.title.edit") : t("form.title.create")}
+          </SheetTitle>
         </SheetHeader>
-
-        {!isLoading ? (
-          <UserForm
-            user={data || undefined}
-            onSuccess={handleSuccess}
-            onCancel={close}
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <Loader2 className="w-6 h-6 animate-spin" />
-          </div>
-        )}
+        <div className="flex-1 min-h-0">
+          {!isLoading ? (
+            <UserForm
+              user={data || undefined}
+              onSuccess={handleSuccess}
+              onCancel={close}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <Loader2 className="w-6 h-6 animate-spin" />
+            </div>
+          )}
+        </div>
       </SheetContent>
     </Sheet>
   );

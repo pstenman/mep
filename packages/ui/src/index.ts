@@ -23,6 +23,7 @@ export * from "./components/avatar";
 export * from "./components/breadcrumb";
 export * from "./components/badge";
 export * from "./components/select";
+export * from "./components/form";
 
 // HOOKS
 export * from "./hooks/use-mobile";
