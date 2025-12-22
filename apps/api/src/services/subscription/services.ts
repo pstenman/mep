@@ -15,7 +15,7 @@ import { TRPCError } from "@trpc/server";
 
 export class SubscriptionService {
   static async createSubscription(input: SubscriptionSchema) {
-    const supabaseUserId = await AuthService.createUserOwner({
+    const supabaseUserId = await AuthService.createUser({
       email: input.email,
       firstName: input.firstName,
       lastName: input.lastName,

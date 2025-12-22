@@ -1,7 +1,7 @@
 import { getSupabase } from "@/lib/supabase";
 
 export class AuthService {
-  static async createUserOwner({
+  static async createUser({
     email,
     firstName,
     lastName,

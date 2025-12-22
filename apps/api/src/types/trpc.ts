@@ -32,3 +32,12 @@ export type GetSubscriptionOutput =
 
 // By Id
 export type PlanById = NonNullable<TRPCOutputs>["plans"]["getById"];
+
+// ======================================================================================================
+// EMPLOYEES
+// ======================================================================================================
+// Create Employee
+export type CreateEmployeeInput =
+  NonNullable<TRPCInputs>["employees"]["createEmployee"];
+export type CreateEmployeeOutput =
+  NonNullable<TRPCOutputs>["employees"]["createEmployee"];

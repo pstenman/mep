@@ -23,6 +23,19 @@ export const membershipQueries = {
       .where(eq(memberships.id, membershipId));
   },
 
+  findCompanyByUserId: async (
+    userId: string,
+    executor?: Database,
+  ) => {
+    const dbOrTx = executor ?? db;
+    const row = await dbOrTx.query.memberships.findFirst({
+      where: eq(memberships.userId, userId),
+    });
+  
+    return row ?? null;
+  },
+  
+
   findByUserAndCompany: async (
     userId: string,
     companyId: string,
