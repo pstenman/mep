@@ -1,0 +1,40 @@
+{
+  "form": {
+    "label": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "role": "Role"
+    },
+    "role": {
+      "admin": "Admin",
+      "owner": "Owner",
+      "user": "User"
+    },
+    "success": "User saved successfully",
+    "validation": {
+      "required": "This field is required",
+      "email": "Please enter a valid email address" 
+    },
+    "title": {
+      "create": "Create User",
+      "edit": "Edit User"
+    },
+    "button": {
+      "create": "Create User",
+      "edit": "Edit User",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "form": {
+      "placeholder": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "phoneNumber": "Phone Number"
+      }
+    }
+  }
+}
+
