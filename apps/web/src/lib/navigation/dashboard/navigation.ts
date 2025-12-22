@@ -51,20 +51,50 @@ export const Navigation: NavGroup[] = [
         labelKey: "alACarte",
         href: dashboardPrefix("preparations/al-a-carte"),
       },
+      {
+        id: "prep-set",
+        labelKey: "set",
+        href: dashboardPrefix("preparations/set"),
+      },
+      {
+        id: "prep-group",
+        labelKey: "group",
+        href: dashboardPrefix("preparations/group"),
+      },
     ],
   },
 
   {
     id: "menues",
     titleKey: "menues",
-    href: dashboardPrefix("menues/menu"),
+    href: dashboardPrefix("menues"),
     icon: BookOpenText,
     collapsible: true,
     items: [
       {
-        id: "menu-main",
-        labelKey: "menu",
-        href: dashboardPrefix("menues/menu"),
+        id: "breakfast-menu",
+        labelKey: "breakfastMenu",
+        href: dashboardPrefix("menues/breakfast"),
+      },
+      {
+        id: "lunch-menu",
+        labelKey: "lunchMenu",
+        href: dashboardPrefix("menues/lunch"),
+      },
+      {
+        id: "alacarte-menu",
+        labelKey: "alacarteMenu",
+        href: dashboardPrefix("menues/al-a-carte"),
+      },
+      {
+        id: "set-menu",
+        labelKey: "setMenu",
+        href: dashboardPrefix("menues/set"),
+      },
+      {
+        id: "group-menu",
+        labelKey: "groupMenu",
+        href: dashboardPrefix("menues/group"),
       },
     ],
   },
@@ -89,6 +119,31 @@ export const Navigation: NavGroup[] = [
         labelKey: "all",
         href: dashboardPrefix("allergies/all"),
       },
+      {
+        id: "allergies-breakfast",
+        labelKey: "breakfastAllergies",
+        href: dashboardPrefix("allergies/breakfast"),
+      },
+      {
+        id: "allergies-lunch",
+        labelKey: "lunchAllergies",
+        href: dashboardPrefix("allergies/lunch"),
+      },
+      {
+        id: "allergies-alacarte",
+        labelKey: "alacarteAllergies",
+        href: dashboardPrefix("allergies/al-a-carte"),
+      },
+      {
+        id: "allergies-set",
+        labelKey: "setAllergies",
+        href: dashboardPrefix("allergies/set"),
+      },
+      {
+        id: "allergies-group",
+        labelKey: "groupAllergies",
+        href: dashboardPrefix("allergies/group"),
+      },
     ],
   },
 
@@ -103,6 +158,31 @@ export const Navigation: NavGroup[] = [
         id: "orders-all",
         labelKey: "all",
         href: dashboardPrefix("orders/all"),
+      },
+      {
+        id: "orders-breakfast",
+        labelKey: "breakfastOrders",
+        href: dashboardPrefix("orders/breakfast"),
+      },
+      {
+        id: "orders-lunch",
+        labelKey: "lunchOrders",
+        href: dashboardPrefix("orders/lunch"),
+      },
+      {
+        id: "orders-alacarte",
+        labelKey: "alacarteOrders",
+        href: dashboardPrefix("orders/al-a-carte"),
+      },
+      {
+        id: "orders-set",
+        labelKey: "setOrders",
+        href: dashboardPrefix("orders/set"),
+      },
+      {
+        id: "orders-group",
+        labelKey: "groupOrders",
+        href: dashboardPrefix("orders/group"),
       },
     ],
   },
