@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { t } from "../server";
-import { Role } from "@mep/types";
+import type { Role } from "@mep/types";
 
 export const requireAuth = t.middleware(({ ctx, next }) => {
   if (!ctx.auth?.userId || !ctx.auth?.companyId || !ctx.auth?.role) {
