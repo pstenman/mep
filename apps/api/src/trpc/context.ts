@@ -1,26 +1,36 @@
-import { AUTH_SYMBOL, type AuthUser } from "@/types/auth";
+import { logger } from "@/utils/logger";
 import { db } from "@mep/db";
 import type { Role } from "@mep/types/src";
+import type { HonoRequest } from "hono";
 
 export const createTRPCContext = async (opts: {
-  req: Request;
+  req: HonoRequest;
   resheader: Headers;
+  auth: { userId: string | null; companyId: string | null; role: Role | null };
 }) => {
-  const reqAny = opts.req as any;
-  const auth = (reqAny[AUTH_SYMBOL] ?? null) as AuthUser | null;
+  const { auth, req } = opts;
+
+  // Log auth info for debugging
+  logger.debug({
+    userId: auth.userId,
+    companyId: auth.companyId,
+    role: auth.role,
+    path: req.path,
+    method: req.method,
+  }, "🛠 TRPC context auth debug");
   return {
-    db,
-    auth,
-    headers: opts.req.headers,
-  };
-};
+  db,
+  auth: opts.auth,
+  getHeader: (name: string) => opts.req.header(name),
+}};
 
 type BaseContext = Awaited<ReturnType<typeof createTRPCContext>>;
 
-export type Context = BaseContext;
-
-export type CompanyContext = BaseContext & {
+export type ProtectedContext = BaseContext & {
   userId: string;
   companyId: string;
   role: Role;
 };
+
+export type Context = BaseContext | ProtectedContext;
+

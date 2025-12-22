@@ -8,6 +8,7 @@ import { createTRPCContext } from "@/trpc/context";
 import { trpcServer } from "@hono/trpc-server";
 import { stripeWebhookRoute } from "@/webhooks/stripe";
 import { authMiddleware } from "@/middleware/authMiddleware";
+import { AUTH_SYMBOL } from "@/types/auth";
 
 const app = new Hono();
 
@@ -34,14 +35,24 @@ app.use("*", (c, next) => {
   })(c, next);
 });
 
-app.use(
-  "/trpc/*",
-  trpcServer({
+app.all("/trpc/*", async (c, next) => {
+  const reqAny = c.req as any;
+
+  const ctx = await createTRPCContext({
+    req: c.req,
+    resheader: c.res.headers,
+    auth: reqAny[AUTH_SYMBOL] ?? {
+      userId: null,
+      companyId: null,
+      role: null,
+    },
+  });
+
+  return trpcServer({
     router: appRouter,
-    createContext: ({ req }) =>
-      createTRPCContext({ req, resheader: req.headers }),
-  }),
-);
+    createContext: () => ctx,
+  })(c, next);
+});
 
 const port = 3001;
 
