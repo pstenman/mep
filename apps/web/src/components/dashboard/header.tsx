@@ -1,6 +1,9 @@
 "use client";
 
 import { SidebarTrigger } from "@mep/ui";
+import { CreateButton } from "../ui/create-button";
+
+//import create button with dynamic
 
 export function DashboardHeader() {
   return (
@@ -9,7 +12,9 @@ export function DashboardHeader() {
         <SidebarTrigger />
         {/* TODO: Add breadcrumb for group navigation */}
       </div>
-      <div></div>
+      <div>
+        <CreateButton />
+      </div>
       <div className="absolute bottom-0 left-4 right-4 border-t border-gray-200 dark:border-gray-700"></div>
     </div>
   );
