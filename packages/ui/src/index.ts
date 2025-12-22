@@ -22,6 +22,7 @@ export * from "./components/collapsible";
 export * from "./components/avatar";
 export * from "./components/breadcrumb";
 export * from "./components/badge";
+export * from "./components/select";
 
 // HOOKS
 export * from "./hooks/use-mobile";

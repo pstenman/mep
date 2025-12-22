@@ -3,13 +3,13 @@ import { createTRPCRouter } from "./server";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { planRouter } from "@/routers/plans";
 import { subscriptionRouter } from "@/routers/subscriptions";
-import { employeeRouter } from "@/routers/employees";
+import { userRouter } from "@/routers/users";
 
 export const appRouter = createTRPCRouter({
   stripe: stripeRouter,
   subscription: subscriptionRouter,
   plans: planRouter,
-  employees: employeeRouter,
+  users: userRouter,
 });
 
 export type AppRouter = typeof appRouter;
