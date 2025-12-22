@@ -1,5 +1,6 @@
 import { StripeSubscriptionService } from "@/services/stripe-subscriptions/service";
-import { publicProcedure } from "@/trpc/procedures";
+import { StripeService } from "@/services/stripe/services";
+import { ownerProcedure, publicProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
 import { z } from "zod";
 
@@ -33,5 +34,20 @@ export const stripeRouter = createTRPCRouter({
         plan,
         amount,
       };
+    }),
+
+    createBillingPortalSession: ownerProcedure
+    .input(
+      z.object({
+        customerId: z.string(),
+        returnUrl: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+        const session = await StripeService.createBillingPortalSession(
+        input.customerId,
+        input.returnUrl
+      );
+      return { url: session.url };
     }),
 });

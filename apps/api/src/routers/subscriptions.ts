@@ -1,5 +1,5 @@
 import { SubscriptionService } from "@/services/subscription/services";
-import { publicProcedure } from "@/trpc/procedures";
+import { ownerProcedure, protectedProcedure, publicProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
 import z from "zod";
 
@@ -23,4 +23,11 @@ export const subscriptionRouter = createTRPCRouter({
         membershipId: data.membership.id,
       };
     }),
+
+  getSubscription: ownerProcedure.query(async ({ ctx }) => {
+    return await SubscriptionService.getSubscription({
+      companyId: ctx.companyId,
+      userId: ctx.userId,
+    });
+  }),
 });

@@ -6,11 +6,12 @@ import {
   subscriptionQueries,
   userQueries,
 } from "@mep/db";
-import { Role, type SubscriptionStatus } from "@mep/types";
+import { CompanyStatus, Role, type SubscriptionStatus } from "@mep/types";
 import { StripeSubscriptionService } from "../stripe-subscriptions/service";
 import { AuthService } from "../auth/service";
 import type { SubscriptionActivateSchema, SubscriptionSchema } from "./schema";
 import { logger } from "@/utils/logger";
+import { TRPCError } from "@trpc/server";
 
 export class SubscriptionService {
   static async createSubscription(input: SubscriptionSchema) {
@@ -36,12 +37,12 @@ export class SubscriptionService {
           name: input.companyName,
           stripeCustomerId: null,
           companyRegistrationNumber: input.companyRegistrationNumber,
-          status: "PENDING",
+          status: CompanyStatus.PENDING,
         },
         tx,
       );
       const membership = await membershipQueries.create(
-        { userId: user.id, companyId: company.id, role: "OWNER" },
+        { userId: user.id, companyId: company.id, role: Role.OWNER },
         tx,
       );
       const subscriptionInfo =
@@ -53,8 +54,11 @@ export class SubscriptionService {
           membershipId: membership.id,
           userId: user.id,
         });
+      
+      // TODO: Sync plan with stripe
       const planId = process.env.PLAN_ID;
       if (!planId) throw new Error("PLAN_ID is missing in env");
+
       const subscription = await subscriptionQueries.create(
         {
           companyId: company.id,
@@ -115,8 +119,12 @@ export class SubscriptionService {
       db,
     );
 
-    if (!membership || membership.role !== Role.OWNER) {
-      throw new Error("Not authorized to view subscription");
+    // TODO: make role helper function
+    if (!membership || membership.role.toUpperCase() !== Role.OWNER.toUpperCase()) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Not authorized to view subscription",
+      });
     }
 
     const subscription = await subscriptionQueries.findByCompanyId(
@@ -137,6 +145,7 @@ export class SubscriptionService {
       currentPeriodStart: subscription.currentPeriodStart,
       currentPeriodEnd: subscription.currentPeriodEnd,
       stripeSubscriptionId: subscription.stripeSubscriptionId,
+      stripeCustomerId: subscription.stripeCustomerId,
       plan,
     };
   }
