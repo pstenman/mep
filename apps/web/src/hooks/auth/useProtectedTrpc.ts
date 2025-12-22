@@ -1,13 +1,18 @@
 import { trpc } from "@/lib/trpc/client";
 import { QueryClient } from "@tanstack/react-query";
 import { httpBatchLink, loggerLink } from "@trpc/react-query";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 export const useProtectedTRPC = (token: string | null) => {
   const queryClientRef = useRef<QueryClient | null>(null);
   const trpcClientRef = useRef<ReturnType<typeof trpc.createClient> | null>(
     null,
   );
+  const tokenRef = useRef<string | null>(token);
+
+  useEffect(() => {
+    tokenRef.current = token;
+  }, [token]);
 
   if (!queryClientRef.current) {
     queryClientRef.current = new QueryClient({
@@ -24,12 +29,17 @@ export const useProtectedTRPC = (token: string | null) => {
           enabled: () => process.env.NODE_ENV === "development",
         }),
         httpBatchLink({
-          url: "/trpc",
+          url: process.env.NEXT_PUBLIC_API_URL
+            ? `${process.env.NEXT_PUBLIC_API_URL}/trpc`
+            : "/trpc",
           fetch: (input, init) => {
             const headers = new Headers(init?.headers);
-            if (token) {
-              headers.set("Authorization", `Bearer ${token}`);
+            const currentToken = tokenRef.current;
+
+            if (currentToken) {
+              headers.set("Authorization", `Bearer ${currentToken}`);
             }
+
             return fetch(input, { ...init, headers });
           },
         }),

@@ -17,7 +17,7 @@ export const useAuth = () => {
 
     init();
 
-    const { data: authListener, _error } = supabase.auth.onAuthStateChange(
+    const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event: AuthChangeEvent, session: Session) => {
         setSession(session ?? null);
       },
