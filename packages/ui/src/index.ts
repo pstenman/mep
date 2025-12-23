@@ -24,6 +24,7 @@ export * from "./components/breadcrumb";
 export * from "./components/badge";
 export * from "./components/select";
 export * from "./components/form";
+export * from "./components/command";
 
 // HOOKS
 export * from "./hooks/use-mobile";
