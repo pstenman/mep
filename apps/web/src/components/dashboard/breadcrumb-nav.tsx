@@ -14,7 +14,7 @@ import { useActiveNavGroup } from "@/hooks/use-dashboard-navigation";
 export function BreadcrumbNav() {
   const activeGroup = useActiveNavGroup();
 
-  if (!activeGroup) {
+  if (!activeGroup || !activeGroup.href) {
     return null;
   }
 

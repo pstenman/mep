@@ -1,4 +1,4 @@
-import { dashboardPrefix } from "@/utils/dashboard-prefix";
+import { dashboardPrefix } from "@/utils/nav-path/dashboard-prefix";
 import {
   BookOpenText,
   BookText,

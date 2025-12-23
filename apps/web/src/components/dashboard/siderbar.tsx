@@ -23,6 +23,7 @@ import Link from "next/link";
 
 import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
 import { UserMenu } from "./user-settings";
+import type { DashboardPath } from "@/utils/nav-path/dashboard-prefix";
 
 export function DashboardSidebar() {
   const { state } = useSidebar();
@@ -78,7 +79,7 @@ export function DashboardSidebar() {
                         )}
                       >
                         {item.icon && (
-                          <Link href={item.href}>
+                          <Link href={item.href as DashboardPath}>
                             <item.icon
                               size={20}
                               className={cn(
@@ -130,7 +131,10 @@ export function DashboardSidebar() {
                         "bg-accent-pale dark:bg-gray-800 font-medium",
                     )}
                   >
-                    <Link href={item.href} className="flex items-center gap-2">
+                    <Link
+                      href={item.href as DashboardPath}
+                      className="flex items-center gap-2"
+                    >
                       {item.icon && (
                         <item.icon
                           size={20}

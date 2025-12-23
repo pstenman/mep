@@ -2,6 +2,7 @@
 
 import { SidebarTrigger } from "@mep/ui";
 import { CreateButton } from "../ui/create-button";
+import { BreadcrumbNav } from "./breadcrumb-nav";
 
 //import create button with dynamic
 
@@ -10,7 +11,7 @@ export function DashboardHeader() {
     <div className="h-[70] flex justify-between w-full items-center relative px-4 ">
       <div className="flex items-center space-x-2">
         <SidebarTrigger />
-        {/* TODO: Add breadcrumb for group navigation */}
+        <BreadcrumbNav />
       </div>
       <div>
         <CreateButton />
