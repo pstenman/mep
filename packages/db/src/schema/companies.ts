@@ -3,6 +3,7 @@ import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { memberships } from "./memberships";
 import { subscriptions } from "./subscriptions";
 import { CompanyStatus } from "@mep/types";
+import { orders } from "./orders";
 
 export const companies = pgTable("companies", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -45,4 +46,14 @@ export const companySidebarSettingsRelations = relations(companySidebarSettings,
     fields: [companySidebarSettings.companyId],
     references: [companies.id],
   }),
+}));
+
+export const companiesOrders = pgTable("companies_orders", {
+  companyId: uuid("company_id").notNull().references(() => companies.id),
+  orderId: uuid("order_id").notNull().references(() => orders.id),
+});
+
+export const companiesOrdersRelations = relations(companiesOrders, ({ one }) => ({
+  company: one(companies, { fields: [companiesOrders.companyId], references: [companies.id] }),
+  order: one(orders, { fields: [companiesOrders.orderId], references: [orders.id] }),
 }));

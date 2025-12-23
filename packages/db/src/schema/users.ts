@@ -8,6 +8,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { memberships } from "./memberships";
+import { orders } from "./orders";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -29,3 +30,17 @@ export const users = pgTable("users", {
 export const usersRelations = relations(users, ({ many }) => ({
   memberships: many(memberships),
 }));
+
+
+export const usersOrders = pgTable("users_orders", {
+  userId: uuid("user_id").notNull().references(() => users.id),
+  orderId: uuid("order_id").notNull().references(() => orders.id),
+});
+
+
+export const usersOrdersRelations = relations(usersOrders, ({ one }) => ({
+  user: one(users, { fields: [usersOrders.userId], references: [users.id] }),
+  order: one(orders, { fields: [usersOrders.orderId], references: [orders.id] }),
+}));
+
+
