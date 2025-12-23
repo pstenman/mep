@@ -5,7 +5,7 @@ import type { GroupedSection, GroupKey } from "@/utils/nav-path/types";
 
 const GROUPED_SECTIONS = [
   "preparations",
-  "menues",
+  "menus",
   "orders",
   "allergies",
 ] as const;

@@ -1,0 +1,14 @@
+{
+  "emptyState": {
+    "title": "Inga {group} menyer hittades",
+    "description": "Denna sida visar menyn för {group}. För att komma igång, tryck antingen på knappen nedan eller plusknappen längst upp på sidan.",
+    "button": "Skapa Meny"
+  },
+  "group": {
+    "breakfast": "Frukost",
+    "lunch": "Lunch",
+    "alACarte": "À la Carte",
+    "set": "Set Meny",
+    "group": "Grupp Meny"
+  }
+}

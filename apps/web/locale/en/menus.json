@@ -1,0 +1,15 @@
+{
+  "emptyState": {
+    "title": "No {group} menus found",
+    "description": "This page shows the menu for {group}. To get started, either press the button below or the plus button at the top of the page.",
+    "button": "Create Menu"
+  },
+  "group": {
+    "main": "Main",
+    "breakfast": "Breakfast",
+    "lunch": "Lunch",
+    "alACarte": "À la Carte",
+    "set": "Set Menu",
+    "group": "Group Menu"
+  }
+}

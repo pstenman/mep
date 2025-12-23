@@ -32,10 +32,10 @@ export const menuItems = pgTable("menu_items", {
 export const menuItemsRelations = relations(menuItems, ({ one, many }) => ({
   company: one(companies, { fields: [menuItems.companyId], references: [companies.id] }),
   menu: one(menus, { fields: [menuItems.menuId], references: [menus.id] }),
-  prepGroups: many(prepGroups, { relationName: "prepGroups" }),
+  prepGroups: many(prepGroups),
 }));
 
 export const menusRelations = relations(menus, ({ one, many }) => ({
   company: one(companies, { fields: [menus.companyId], references: [companies.id] }),
-  menuItems: many(menuItems, { relationName: "menuItems" }),
+  menuItems: many(menuItems),
 }));

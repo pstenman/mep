@@ -6,10 +6,12 @@ import { usePathname } from "next/navigation";
 import { CreateRouteKeyEnum, createRoutes } from "@/lib/routes/create-routes";
 import { DynamicButton } from "./dynamic-button";
 import { usePreparationsSheet } from "../preparations/sheet";
+import { useMenusSheet } from "../menus/sheet";
 
 export function CreateButton() {
   const { open: openUserSheet } = useUserSheet();
   const { open: openPreparationsSheet } = usePreparationsSheet();
+  const { open: openMenusSheet } = useMenusSheet();
   const pathname = usePathname();
   const route = createRoutes.find((r) => r.match(pathname));
 
@@ -20,6 +22,9 @@ export function CreateButton() {
         break;
       case CreateRouteKeyEnum.PREPARATION:
         openPreparationsSheet();
+        break;
+      case CreateRouteKeyEnum.MENU:
+        openMenusSheet();
         break;
       default:
         return;
