@@ -2,7 +2,7 @@ import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { companies } from "./companies";
 import { users } from "./users";
 import { recipes } from "./recipes";
-import { PrepStatus } from "@mep/types";
+import { PrepStatus, type PrepType } from "@mep/types";
 import { relations } from "drizzle-orm";
 import { menuItems } from "./menus";
 
@@ -10,7 +10,7 @@ export const prepGroups = pgTable("prep_groups", {
   id: uuid("id").primaryKey().defaultRandom(),
   companyId: uuid("company_id").notNull().references(() => companies.id),
   menuItemId: uuid("menu_item_id").references(() => menuItems.id),
-  prepTypes: text(),
+  prepTypes: text().$type<PrepType[]>().notNull(), 
   name: text("name").notNull(),
   note: text("note"), 
   createdBy: uuid("created_by").notNull().references(() => users.id),
