@@ -3,17 +3,27 @@
 import { Plus } from "lucide-react";
 import { useUserSheet } from "../users/sheet";
 import { usePathname } from "next/navigation";
-import { createRoutes } from "@/lib/routes/create-routes";
+import { CreateRouteKeyEnum, createRoutes } from "@/lib/routes/create-routes";
 import { DynamicButton } from "./dynamic-button";
+import { usePreparationsSheet } from "../preparations/sheet";
 
 export function CreateButton() {
   const { open: openUserSheet } = useUserSheet();
+  const { open: openPreparationsSheet } = usePreparationsSheet();
   const pathname = usePathname();
   const route = createRoutes.find((r) => r.match(pathname));
+
   const handleCreate = () => {
-    if (!route) return;
-    console.log("CreateButton -> handleCreate");
-    openUserSheet();
+    switch (route?.key) {
+      case CreateRouteKeyEnum.USER:
+        openUserSheet();
+        break;
+      case CreateRouteKeyEnum.PREPARATION:
+        openPreparationsSheet();
+        break;
+      default:
+        return;
+    }
   };
 
   if (!route) return null;
