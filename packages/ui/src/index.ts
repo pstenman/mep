@@ -25,6 +25,7 @@ export * from "./components/badge";
 export * from "./components/select";
 export * from "./components/form";
 export * from "./components/command";
+export * from "./components/combobox";
 
 // HOOKS
 export * from "./hooks/use-mobile";
