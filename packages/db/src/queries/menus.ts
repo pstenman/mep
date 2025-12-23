@@ -1,0 +1,76 @@
+import { menus } from "@/schema/menus";
+import { db, type Database } from "..";
+import { and, eq, ilike } from "drizzle-orm";
+
+type MenuRow = typeof menus.$inferSelect;
+type MenuInsert = typeof menus.$inferInsert;
+
+export interface MenuFilters {
+  companyId: string;
+  search?: string;
+}
+
+export function buildMenuFilters(filters: MenuFilters) {
+  const whereConditions = [];
+
+  whereConditions.push(eq(menus.companyId, filters.companyId));
+
+  if (filters.search?.trim()) {
+    whereConditions.push(ilike(menus.name, `%${filters.search}%`));
+  }
+
+  return and(...whereConditions);
+}
+
+export const menuQueries = {
+  getAll: async (filters: MenuFilters) => {
+    const whereClauses = buildMenuFilters(filters);
+    const rows = await db.query.menus.findMany({
+      where: whereClauses,
+      orderBy: (menus, { asc }) => [asc(menus.name)],
+      with: {
+        company: true,
+        menuItems: true,
+      },
+    });
+    return rows;
+  },
+
+  getById: async (id: string) => {
+    const row = await db.query.menus.findFirst({
+      where: eq(menus.id, id),
+      with: {
+        company: true,
+        menuItems: true,
+      },
+    });
+    return row;
+  },
+
+  create: async (input: MenuInsert, executor?: Database): Promise<MenuRow> => {
+    const dbOrTx = executor ?? db;
+    const row = await dbOrTx.insert(menus).values(input).returning();
+    return row[0];
+  },
+
+  update: async (
+    id: string,
+    input: Partial<Omit<MenuInsert, "id" | "companyId" | "createdAt">>,
+    executor?: Database,
+  ): Promise<MenuRow> => {
+    const dbOrTx = executor ?? db;
+    const updatedAt = new Date();
+    const row = await dbOrTx
+      .update(menus)
+      .set({ ...input, updatedAt })
+      .where(eq(menus.id, id))
+      .returning();
+    return row[0];
+  },
+
+  delete: async (id: string, executor?: Database): Promise<void> => {
+    const dbOrTx = executor ?? db;
+    await dbOrTx.delete(menus).where(eq(menus.id, id));
+  },
+};
+
