@@ -61,3 +61,241 @@ export type CreateUserInput =
   NonNullable<TRPCInputs>["users"]["create"];
 export type CreateUserOutput =
   NonNullable<TRPCOutputs>["users"]["create"];
+
+// ======================================================================================================
+// ALLERGIES
+// ======================================================================================================
+
+// Get All
+export type AllergiesInput =
+  NonNullable<TRPCInputs>["allergies"]["getAll"];
+export type AllergiesOutput =
+  NonNullable<TRPCOutputs>["allergies"]["getAll"];
+
+// Get By Id
+export type AllergyInput =
+  NonNullable<TRPCInputs>["allergies"]["getById"];
+export type AllergyOutput =
+  NonNullable<TRPCOutputs>["allergies"]["getById"];
+
+// Create
+export type CreateAllergyInput =
+  NonNullable<TRPCInputs>["allergies"]["create"];
+export type CreateAllergyOutput =
+  NonNullable<TRPCOutputs>["allergies"]["create"];
+
+// Update
+export type UpdateAllergyInput =
+  NonNullable<TRPCInputs>["allergies"]["update"];
+export type UpdateAllergyOutput =
+  NonNullable<TRPCOutputs>["allergies"]["update"];
+
+// Delete
+export type DeleteAllergyInput =
+  NonNullable<TRPCInputs>["allergies"]["delete"];
+export type DeleteAllergyOutput =
+  NonNullable<TRPCOutputs>["allergies"]["delete"];
+
+// ======================================================================================================
+// RECIPES
+// ======================================================================================================
+
+// Get All
+export type RecipesInput =
+  NonNullable<TRPCInputs>["recipes"]["getAll"];
+export type RecipesOutput =
+  NonNullable<TRPCOutputs>["recipes"]["getAll"];
+
+// Get By Id
+export type RecipeInput =
+  NonNullable<TRPCInputs>["recipes"]["getById"];
+export type RecipeOutput =
+  NonNullable<TRPCOutputs>["recipes"]["getById"];
+
+// Create
+export type CreateRecipeInput =
+  NonNullable<TRPCInputs>["recipes"]["create"];
+export type CreateRecipeOutput =
+  NonNullable<TRPCOutputs>["recipes"]["create"];
+
+// Update
+export type UpdateRecipeInput =
+  NonNullable<TRPCInputs>["recipes"]["update"];
+export type UpdateRecipeOutput =
+  NonNullable<TRPCOutputs>["recipes"]["update"];
+
+// Delete
+export type DeleteRecipeInput =
+  NonNullable<TRPCInputs>["recipes"]["delete"];
+export type DeleteRecipeOutput =
+  NonNullable<TRPCOutputs>["recipes"]["delete"];
+
+// ======================================================================================================
+// MENUS
+// ======================================================================================================
+
+// Get All
+export type MenusInput =
+  NonNullable<TRPCInputs>["menus"]["getAll"];
+export type MenusOutput =
+  NonNullable<TRPCOutputs>["menus"]["getAll"];
+
+// Get By Id
+export type MenuInput =
+  NonNullable<TRPCInputs>["menus"]["getById"];
+export type MenuOutput =
+  NonNullable<TRPCOutputs>["menus"]["getById"];
+
+// Create
+export type CreateMenuInput =
+  NonNullable<TRPCInputs>["menus"]["create"];
+export type CreateMenuOutput =
+  NonNullable<TRPCOutputs>["menus"]["create"];
+
+// Update
+export type UpdateMenuInput =
+  NonNullable<TRPCInputs>["menus"]["update"];
+export type UpdateMenuOutput =
+  NonNullable<TRPCOutputs>["menus"]["update"];
+
+// Delete
+export type DeleteMenuInput =
+  NonNullable<TRPCInputs>["menus"]["delete"];
+export type DeleteMenuOutput =
+  NonNullable<TRPCOutputs>["menus"]["delete"];
+
+// ======================================================================================================
+// MENU ITEMS
+// ======================================================================================================
+
+// Get All
+export type MenuItemsInput =
+  NonNullable<TRPCInputs>["menuItems"]["getAll"];
+export type MenuItemsOutput =
+  NonNullable<TRPCOutputs>["menuItems"]["getAll"];
+
+// Get By Id
+export type MenuItemInput =
+  NonNullable<TRPCInputs>["menuItems"]["getById"];
+export type MenuItemOutput =
+  NonNullable<TRPCOutputs>["menuItems"]["getById"];
+
+// Create
+export type CreateMenuItemInput =
+  NonNullable<TRPCInputs>["menuItems"]["create"];
+export type CreateMenuItemOutput =
+  NonNullable<TRPCOutputs>["menuItems"]["create"];
+
+// Update
+export type UpdateMenuItemInput =
+  NonNullable<TRPCInputs>["menuItems"]["update"];
+export type UpdateMenuItemOutput =
+  NonNullable<TRPCOutputs>["menuItems"]["update"];
+
+// Delete
+export type DeleteMenuItemInput =
+  NonNullable<TRPCInputs>["menuItems"]["delete"];
+export type DeleteMenuItemOutput =
+  NonNullable<TRPCOutputs>["menuItems"]["delete"];
+
+// ======================================================================================================
+// ORDERS
+// ======================================================================================================
+
+// Get All
+export type OrdersInput =
+  NonNullable<TRPCInputs>["orders"]["getAll"];
+export type OrdersOutput =
+  NonNullable<TRPCOutputs>["orders"]["getAll"];
+
+// Get By Id
+export type OrderInput =
+  NonNullable<TRPCInputs>["orders"]["getById"];
+export type OrderOutput =
+  NonNullable<TRPCOutputs>["orders"]["getById"];
+
+// Create
+export type CreateOrderInput =
+  NonNullable<TRPCInputs>["orders"]["create"];
+export type CreateOrderOutput =
+  NonNullable<TRPCOutputs>["orders"]["create"];
+
+// Update
+export type UpdateOrderInput =
+  NonNullable<TRPCInputs>["orders"]["update"];
+export type UpdateOrderOutput =
+  NonNullable<TRPCOutputs>["orders"]["update"];
+
+// Delete
+export type DeleteOrderInput =
+  NonNullable<TRPCInputs>["orders"]["delete"];
+export type DeleteOrderOutput =
+  NonNullable<TRPCOutputs>["orders"]["delete"];
+
+// ======================================================================================================
+// PREPARATIONS - PREP GROUPS
+// ======================================================================================================
+
+// Get All
+export type PrepGroupsInput =
+  NonNullable<TRPCInputs>["preparations"]["prepGroups"]["getAll"];
+export type PrepGroupsOutput =
+  NonNullable<TRPCOutputs>["preparations"]["prepGroups"]["getAll"];
+
+// Get By Id
+export type PrepGroupInput =
+  NonNullable<TRPCInputs>["preparations"]["prepGroups"]["getById"];
+export type PrepGroupOutput =
+  NonNullable<TRPCOutputs>["preparations"]["prepGroups"]["getById"];
+
+// Create
+export type CreatePrepGroupInput =
+  NonNullable<TRPCInputs>["preparations"]["prepGroups"]["create"];
+export type CreatePrepGroupOutput =
+  NonNullable<TRPCOutputs>["preparations"]["prepGroups"]["create"];
+
+// Update
+export type UpdatePrepGroupInput =
+  NonNullable<TRPCInputs>["preparations"]["prepGroups"]["update"];
+export type UpdatePrepGroupOutput =
+  NonNullable<TRPCOutputs>["preparations"]["prepGroups"]["update"];
+
+// Delete
+export type DeletePrepGroupInput =
+  NonNullable<TRPCInputs>["preparations"]["prepGroups"]["delete"];
+export type DeletePrepGroupOutput =
+  NonNullable<TRPCOutputs>["preparations"]["prepGroups"]["delete"];
+
+// ======================================================================================================
+// PREPARATIONS - PREP ITEMS
+// ======================================================================================================
+
+// Get All
+export type PrepItemsInput =
+  NonNullable<TRPCInputs>["preparations"]["prepItems"]["getAll"];
+export type PrepItemsOutput =
+  NonNullable<TRPCOutputs>["preparations"]["prepItems"]["getAll"];
+
+// Get By Id
+export type PrepItemInput =
+  NonNullable<TRPCInputs>["preparations"]["prepItems"]["getById"];
+export type PrepItemOutput =
+  NonNullable<TRPCOutputs>["preparations"]["prepItems"]["getById"];
+
+// Create
+export type CreatePrepItemInput =
+  NonNullable<TRPCInputs>["preparations"]["prepItems"]["create"];
+export type CreatePrepItemOutput =
+  NonNullable<TRPCOutputs>["preparations"]["prepItems"]["create"];
+
+// Update
+export type UpdatePrepItemInput =
+  NonNullable<TRPCInputs>["preparations"]["prepItems"]["update"];
+export type UpdatePrepItemOutput =
+  NonNullable<TRPCOutputs>["preparations"]["prepItems"]["update"];
+
+// Delete
+export type DeletePrepItemInput =
+  NonNullable<TRPCInputs>["preparations"]["prepItems"]["delete"];
+export type DeletePrepItemOutput =
+  NonNullable<TRPCOutputs>["preparations"]["prepItems"]["delete"];
