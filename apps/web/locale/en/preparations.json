@@ -1,0 +1,15 @@
+{
+  "emptyState": {
+    "title": "No {group} preparations found",
+    "description": "This page shows all preparation points for {group}. To get started, either press the button below or the plus button at the top of the page.",
+    "button": "Create Preparation"
+  },
+  "group": {
+    "main": "Main",
+    "breakfast": "Breakfast",
+    "lunch": "Lunch",
+    "alACarte": "À la Carte",
+    "set": "Set Menu",
+    "group": "Group Menu"
+  }
+}
