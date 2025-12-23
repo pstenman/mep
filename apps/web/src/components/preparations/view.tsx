@@ -3,8 +3,8 @@
 import type { PrepGroup } from "@/utils/nav-path/types";
 import { trpc } from "@/lib/trpc/client";
 import {
-  mapPrepGroupToType,
-  filterPrepGroupsByType,
+  mapGroupToType,
+  filterGroupsByType,
 } from "@/utils/preparations/group-to-type";
 import { PreparationsList } from "./list";
 import { EmptyState } from "./empty-state";
@@ -17,7 +17,7 @@ interface PreparationsViewProps {
 
 export function PreparationsView({ group }: PreparationsViewProps) {
   const type = group === "all" ? "all" : group;
-  const prepType = mapPrepGroupToType(type);
+  const prepType = mapGroupToType("preparations", type);
 
   const { data, isLoading } = trpc.preparations.prepGroups.getAll.useQuery({
     filter: {},
@@ -35,7 +35,11 @@ export function PreparationsView({ group }: PreparationsViewProps) {
     );
   }
 
-  const filteredGroups = filterPrepGroupsByType(data?.data.items, prepType);
+  const filteredGroups = filterGroupsByType(
+    "preparations",
+    data?.data.items,
+    prepType,
+  );
   const hasGroups = filteredGroups.length > 0;
 
   return (

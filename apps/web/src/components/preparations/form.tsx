@@ -8,8 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
 import {
-  mapPrepGroupToType,
-  filterPrepGroupsByType,
+  mapGroupToType,
+  filterGroupsByType,
 } from "@/utils/preparations/group-to-type";
 import {
   Button,
@@ -28,6 +28,8 @@ import {
   SheetFooter,
   useForm,
 } from "@mep/ui";
+import { PrepGroupCombobox } from "./autocomplete";
+import { useTranslations } from "next-intl";
 
 const formSchema = z.object({
   mode: z.enum(["group", "item"]),
@@ -53,8 +55,8 @@ export function PreparationsForm({
   onCancel,
 }: PreparationsFormProps) {
   const utils = trpc.useUtils();
-  const prepType = mapPrepGroupToType(type);
-
+  const prepType = mapGroupToType("preparations", type);
+  const t = useTranslations("preparations.form");
   const [mode, setMode] = useState<"group" | "item">("group");
 
   // Fetch groups for combobox
@@ -63,7 +65,8 @@ export function PreparationsForm({
   });
 
   // Filter groups by type
-  const filteredGroups = filterPrepGroupsByType(
+  const filteredGroups = filterGroupsByType(
+    "preparations",
     groupsData?.data.items,
     prepType,
   );
@@ -148,6 +151,24 @@ export function PreparationsForm({
       >
         <div className="flex-1 overflow-y-auto min-h-0 px-6 py-4">
           <div className="space-y-4">
+            <FormField
+              name="groupId"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("label.prepGroup")}</FormLabel>
+                  <FormControl>
+                    <PrepGroupCombobox
+                      value={field.value}
+                      placeholder={t("placeholder.prepGroup")}
+                      onValueChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               name="mode"
               control={form.control}
