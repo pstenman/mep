@@ -1,5 +1,5 @@
 import { PrepType } from "@mep/types";
-import type { PrepGroup } from "../nav-path/types";
+import type { GroupedSection, GroupKey } from "../nav-path/types";
 
 type PrepGroupWithTypes = {
   prepTypes?: string | PrepType[] | null;
@@ -10,14 +10,20 @@ type PrepGroupWithTypes = {
 };
 
 /**
- * Maps navigation PrepGroup type to PrepType enum
+ * Maps navigation group type to PrepType enum based on section
+ * @param section - The section (preparations, menues, orders, allergies)
  * @param group - The navigation group type
  * @returns The corresponding PrepType or null if no mapping exists
  */
-export function mapPrepGroupToType(group: PrepGroup | "all"): PrepType | null {
+export function mapGroupToType(
+  section: GroupedSection,
+  group: GroupKey | "all",
+): PrepType | null {
   if (group === "all") return null;
   
-  const mapping: Record<PrepGroup, PrepType> = {
+  if (group === "main" && section !== "preparations") return null;
+  
+  const mapping: Record<GroupKey, PrepType> = {
     breakfast: PrepType.BREAKFAST,
     lunch: PrepType.LUNCH,
     "al-a-carte": PrepType.ALACARTE,
@@ -26,7 +32,7 @@ export function mapPrepGroupToType(group: PrepGroup | "all"): PrepType | null {
     main: PrepType.MAIN,
   };
   
-  return mapping[group as PrepGroup] ?? null;
+  return mapping[group as GroupKey] ?? null;
 }
 
 /**
@@ -47,12 +53,14 @@ export function parsePrepTypes(
 }
 
 /**
- * Filters prep groups by prepType
- * @param groups - Array of prep groups to filter
+ * Filters groups by prepType
+ * @param _section - The section (preparations, menues, orders, allergies) - kept for API consistency
+ * @param groups - Array of groups to filter
  * @param prepType - The PrepType to filter by, or null to return all groups
- * @returns Filtered array of prep groups
+ * @returns Filtered array of groups
  */
-export function filterPrepGroupsByType<T extends PrepGroupWithTypes>(
+export function filterGroupsByType<T extends PrepGroupWithTypes>(
+  _section: GroupedSection,
   groups: T[] | undefined | null,
   prepType: PrepType | null,
 ): T[] {

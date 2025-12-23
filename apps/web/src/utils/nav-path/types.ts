@@ -8,7 +8,7 @@ export interface NavItem {
 }
 
 export interface NavGroup {
-  id: "preparations" | "menues" | "recepies" | "allergies" | "orders";
+  id: "preparations" | "menus" | "recepies" | "allergies" | "orders";
   titleKey: string;
   href?: DashboardPath;
   icon: LucideIcon;
@@ -46,4 +46,4 @@ const VALID_GROUPS = [
 export type PrepGroup = typeof VALID_GROUPS[number];
 
 export type GroupKey = typeof VALID_GROUPS[number];
-export type GroupedSection = "preparations" | "menues" | "orders" | "allergies";
+export type GroupedSection = "preparations" | "menus" | "orders" | "allergies";

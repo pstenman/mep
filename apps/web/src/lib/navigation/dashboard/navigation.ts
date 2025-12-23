@@ -67,34 +67,34 @@ export const Navigation: NavGroup[] = [
   {
     id: "menues",
     titleKey: "menues",
-    href: dashboardPrefix("menues"),
+    href: dashboardPrefix("menus"),
     icon: BookOpenText,
     collapsible: true,
     items: [
       {
         id: "breakfast-menu",
         labelKey: "breakfastMenu",
-        href: dashboardPrefix("menues/breakfast"),
+        href: dashboardPrefix("menus/breakfast"),
       },
       {
         id: "lunch-menu",
         labelKey: "lunchMenu",
-        href: dashboardPrefix("menues/lunch"),
+        href: dashboardPrefix("menus/lunch"),
       },
       {
         id: "alacarte-menu",
         labelKey: "alacarteMenu",
-        href: dashboardPrefix("menues/al-a-carte"),
+        href: dashboardPrefix("menus/al-a-carte"),
       },
       {
         id: "set-menu",
         labelKey: "setMenu",
-        href: dashboardPrefix("menues/set"),
+        href: dashboardPrefix("menus/set"),
       },
       {
         id: "group-menu",
         labelKey: "groupMenu",
-        href: dashboardPrefix("menues/group"),
+        href: dashboardPrefix("menus/group"),
       },
     ],
   },

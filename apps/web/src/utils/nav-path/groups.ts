@@ -38,12 +38,12 @@ export const groupNavItems = (prefix: string, labelSuffix: string): readonly Nav
     items: groupNavItems("preparations", ""),
   },
   {
-    id: "menues",
-    titleKey: "menues",
-    href: dashboardPrefix("menues/breakfast"),
+    id: "menus",
+    titleKey: "menus",
+    href: dashboardPrefix("menus/breakfast"),
     icon: BookOpenText,
     collapsible: true,
-    items: groupNavItems("menues", "Menu"),
+    items: groupNavItems("menus", "Menu"),
   },
   {
     id: "recepies",
