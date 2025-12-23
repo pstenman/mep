@@ -33,7 +33,7 @@ export function BreadcrumbNav() {
         {visibleSubItems.length > 0 && (
           <>
             <BreadcrumbSeparator>
-              <ChevronRight />
+              <ChevronRight size={12} />
             </BreadcrumbSeparator>
             {visibleSubItems.flatMap((subItem, index) => {
               const isLast = index === visibleSubItems.length - 1;
