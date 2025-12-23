@@ -1,4 +1,6 @@
 import type { GroupKey, GroupedSection } from "@/utils/nav-path/types";
+import { PreparationsView } from "../preparations/view";
+import type { PrepGroup } from "@/utils/nav-path/types";
 
 interface GroupedViewProps {
   section: GroupedSection;
@@ -6,11 +8,10 @@ interface GroupedViewProps {
 }
 
 export function GroupedView({ section, group }: GroupedViewProps) {
-  return (
-    <section className="space-y-4">
-      <h2 className="text-lg font-semibold capitalize">
-        {section} {group}
-      </h2>
-    </section>
-  );
+  switch (section) {
+    case "preparations":
+      return <PreparationsView group={group as PrepGroup} />;
+    default:
+      return <div>GroupedView</div>;
+  }
 }
