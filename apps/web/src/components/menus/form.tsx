@@ -22,6 +22,7 @@ import {
   SelectItem,
   Button,
   SheetFooter,
+  Checkbox,
 } from "@mep/ui";
 import type { MenuItemOutput, AllergyOutput } from "@mep/api";
 import { useMenusSheet } from "./sheet";
@@ -30,7 +31,7 @@ import { useEffect } from "react";
 
 interface MenuFormProps {
   onSuccess?: () => void;
-  onCancel?: () => void;
+  onCancel: () => void;
 }
 
 export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
@@ -51,6 +52,7 @@ export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
     defaultValues: {
       name: "",
       menuType: MenuType.ALACARTE,
+      isActive: false,
       menuItems: [],
     },
   });
@@ -60,6 +62,7 @@ export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
       form.reset({
         name: menuData.data.name,
         menuType: menuData.data.menuType,
+        isActive: menuData.data.isActive ?? false,
         menuItems: (menuData.data.menuItems || []).map(
           (item: MenuItemOutput) => ({
             name: item.name,
@@ -102,12 +105,14 @@ export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
         id: menuId,
         name: data.name,
         menuType: data.menuType,
+        isActive: data.isActive,
         menuItems: menuItemsPayload,
       });
     } else {
       createMenu.mutate({
         name: data.name,
         menuType: data.menuType,
+        isActive: data.isActive,
         menuItems: menuItemsPayload,
       });
     }
@@ -158,6 +163,26 @@ export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
                     </Select>
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="isActive"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Active Menu</FormLabel>
+                    <p className="text-sm text-muted-foreground">
+                      Mark this menu as the active menu to display by default
+                    </p>
+                  </div>
                 </FormItem>
               )}
             />

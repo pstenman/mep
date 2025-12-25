@@ -19,7 +19,7 @@ export class MenuItemService {
       companyId,
       search: filter?.search,
       menuId: filter?.menuId,
-      category: filter?.category,
+      category: filter?.category as MenuCategory | undefined,
     };
     const rows = await menuItemQueries.getAll(filters);
     return { items: rows };

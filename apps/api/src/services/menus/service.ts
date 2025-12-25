@@ -30,6 +30,7 @@ export class MenuService {
           companyId,
           name: input.name,
           menuType: input.menuType as MenuType,
+          isActive: input.isActive ?? false,
           createdBy: userId,
           updatedBy: userId,
         },
@@ -78,6 +79,7 @@ export class MenuService {
       const updateData: Partial<{
         name: string;
         menuType: MenuType | null;
+        isActive: boolean;
         updatedBy: string;
       }> = {
         updatedBy: userId,
@@ -89,6 +91,10 @@ export class MenuService {
 
       if (input.menuType !== undefined) {
         updateData.menuType = input.menuType as MenuType;
+      }
+
+      if (input.isActive !== undefined) {
+        updateData.isActive = input.isActive;
       }
 
       const menu = await menuQueries.update(input.id, updateData as any, tx);

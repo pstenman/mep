@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { companies } from "./companies";
 import { users } from "./users";
 import { relations } from "drizzle-orm";
@@ -12,6 +12,7 @@ export const menus = pgTable("menus", {
   companyId: uuid("company_id").notNull().references(() => companies.id),
   menuType: text().$type<MenuType>().notNull().default(MenuType.BREAKFAST),
   name: text("name").notNull(),
+  isActive: boolean("is_active").notNull().default(false),
   createdBy: uuid("created_by").notNull().references(() => users.id),
   updatedBy: uuid("updated_by").notNull().references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),

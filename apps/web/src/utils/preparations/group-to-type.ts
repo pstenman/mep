@@ -59,16 +59,26 @@ export function parsePrepTypes(
  * @param prepType - The PrepType to filter by, or null to return all groups
  * @returns Filtered array of groups
  */
-export function filterGroupsByType<T extends PrepGroupWithTypes>(
-  _section: GroupedSection,
+export function filterGroupsByType<T extends { prepTypes?: any; menuType?: string }>(
+  _section: string,
   groups: T[] | undefined | null,
-  prepType: PrepType | null,
+  prepType: string | null,
 ): T[] {
   if (!groups) return [];
   if (!prepType) return groups;
-  
+
   return groups.filter((group) => {
-    const groupPrepTypes = parsePrepTypes(group.prepTypes);
-    return groupPrepTypes.includes(prepType);
+    if (group.prepTypes) {
+      const groupPrepTypes = parsePrepTypes(group.prepTypes);
+      return groupPrepTypes.some(
+        (t) => String(t).toLowerCase() === prepType.toLowerCase()
+      );
+    }
+
+    if (group.menuType) {
+      return String(group.menuType).toLowerCase() === prepType.toLowerCase();
+    }
+
+    return false;
   });
 }

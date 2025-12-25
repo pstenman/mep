@@ -4,6 +4,7 @@ import { z } from "zod";
 export const menuFormSchema = (t: (key: string) => string) => z.object({
   name: z.string().min(1, t("name.required")),
   menuType: z.enum(Object.values(MenuType)),
+  isActive: z.boolean().optional(),
   menuItems: z.array(z.object({
     name: z.string().min(1, t("name.required")),
     category: z.enum(Object.values(MenuCategory)),

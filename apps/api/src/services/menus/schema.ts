@@ -10,6 +10,7 @@ const menuItemSchema = z.object({
 export const createMenuSchema = z.object({
   name: z.string().min(1),
   menuType: z.string().optional(),
+  isActive: z.boolean().optional(),
   menuItems: z.array(menuItemSchema).optional(),
 });
 
@@ -17,6 +18,7 @@ export const updateMenuSchema = z.object({
   id: z.uuid(),
   name: z.string().min(1).optional(),
   menuType: z.string().optional(),
+  isActive: z.boolean().optional(),
   menuItems: z.array(menuItemSchema).optional(),
 });
 
