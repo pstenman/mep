@@ -1,6 +1,7 @@
 import { menus } from "@/schema/menus";
 import { db, type Database } from "..";
 import { and, eq, ilike } from "drizzle-orm";
+import type { MenuType } from "@mep/types";
 
 type MenuRow = typeof menus.$inferSelect;
 type MenuInsert = typeof menus.$inferInsert;
@@ -8,6 +9,7 @@ type MenuInsert = typeof menus.$inferInsert;
 export interface MenuFilters {
   companyId: string;
   search?: string;
+  menuType?: MenuType;
 }
 
 export function buildMenuFilters(filters: MenuFilters) {
@@ -19,6 +21,10 @@ export function buildMenuFilters(filters: MenuFilters) {
     whereConditions.push(ilike(menus.name, `%${filters.search}%`));
   }
 
+  if (filters.menuType) {
+    whereConditions.push(eq(menus.menuType, filters.menuType));
+  }
+
   return and(...whereConditions);
 }
 
@@ -27,7 +33,10 @@ export const menuQueries = {
     const whereClauses = buildMenuFilters(filters);
     const rows = await db.query.menus.findMany({
       where: whereClauses,
-      orderBy: (menus, { asc }) => [asc(menus.name)],
+      orderBy: (menus, { desc }) => [
+        desc(menus.isActive),
+        desc(menus.updatedAt),
+      ],
       with: {
         menuItems: true,
       },

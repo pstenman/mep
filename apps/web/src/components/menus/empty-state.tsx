@@ -26,7 +26,7 @@ export function EmptyState({ group }: EmptyStateProps) {
           variant="outline"
           size="lg"
           className="hover:bg-primary/90 hover:text-primary-foreground hover:border-primary"
-          onClick={open}
+          onClick={() => open()}
         >
           {t("emptyState.button")}
         </Button>
