@@ -1,10 +1,11 @@
-import { menuItemQueries, type MenuItemFilters } from "@mep/db";
+import { menuItemQueries, menuItemAllergyQueries, type MenuItemFilters, db } from "@mep/db";
 import type {
   CreateMenuItemSchema,
   UpdateMenuItemSchema,
   menuItemFiltersSchema,
 } from "./schema";
 import type { z } from "zod";
+import type { MenuCategory } from "@mep/types";
 
 export class MenuItemService {
   static async getAll(
@@ -29,15 +30,30 @@ export class MenuItemService {
   }
 
   static async create(input: CreateMenuItemSchema, companyId: string, userId: string) {
-    const menuItem = await menuItemQueries.create({
-      companyId,
-      name: input.name,
-      menuId: input.menuId,
-      category: input.category,
-      createdBy: userId,
-      updatedBy: userId,
+    return await db.transaction(async (tx) => {
+      const menuItem = await menuItemQueries.create({
+        companyId,
+        name: input.name,
+        menuId: input.menuId,
+        category: input.category as MenuCategory,
+        description: input.description,
+        createdBy: userId,
+        updatedBy: userId,
+      }, tx);
+
+      if (input.allergyIds && input.allergyIds.length > 0) {
+        const allergyInserts = input.allergyIds.map((allergyId) => ({
+          companyId,
+          menuItemId: menuItem.id,
+          allergyId,
+          createdBy: userId,
+          updatedBy: userId,
+        }));
+        await menuItemAllergyQueries.createMany(allergyInserts, tx);
+      }
+
+      return menuItem;
     });
-    return menuItem;
   }
 
   static async update(input: UpdateMenuItemSchema, userId: string) {
@@ -49,7 +65,7 @@ export class MenuItemService {
     const updateData: Partial<{
       name: string;
       menuId: string | null;
-      category: string | null;
+      category: MenuCategory | null;
       updatedBy: string;
     }> = {
       updatedBy: userId,
@@ -64,7 +80,7 @@ export class MenuItemService {
     }
 
     if (input.category !== undefined) {
-      updateData.category = input.category;
+      updateData.category = input.category as MenuCategory;
     }
 
     const menuItem = await menuItemQueries.update(input.id, updateData);

@@ -29,7 +29,6 @@ export const menuQueries = {
       where: whereClauses,
       orderBy: (menus, { asc }) => [asc(menus.name)],
       with: {
-        company: true,
         menuItems: true,
       },
     });
@@ -40,7 +39,6 @@ export const menuQueries = {
     const row = await db.query.menus.findFirst({
       where: eq(menus.id, id),
       with: {
-        company: true,
         menuItems: true,
       },
     });

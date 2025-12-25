@@ -4,6 +4,7 @@ import { memberships } from "./memberships";
 import { subscriptions } from "./subscriptions";
 import { CompanyStatus } from "@mep/types";
 import { orders } from "./orders";
+import { allergies } from "./allergies";
 
 export const companies = pgTable("companies", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -39,6 +40,7 @@ export const companiesRelations = relations(companies, ({ many, one }) => ({
     fields: [companies.id],
     references: [companySidebarSettings.companyId],
   }),
+  allergies: many(allergies),
 }));
 
 export const companySidebarSettingsRelations = relations(companySidebarSettings, ({ one }) => ({

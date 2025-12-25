@@ -1,6 +1,7 @@
-import { menuQueries, type MenuFilters } from "@mep/db";
+import { menuQueries, menuItemQueries, menuItemAllergyQueries, type MenuFilters, db } from "@mep/db";
 import type { CreateMenuSchema, UpdateMenuSchema, menuFiltersSchema } from "./schema";
 import type { z } from "zod";
+import type { MenuType, MenuCategory } from "@mep/types";
 
 export class MenuService {
   static async getAll(
@@ -23,14 +24,48 @@ export class MenuService {
   }
 
   static async create(input: CreateMenuSchema, companyId: string, userId: string) {
-    const menu = await menuQueries.create({
-      companyId,
-      name: input.name,
-      menuType: input.menuType,
-      createdBy: userId,
-      updatedBy: userId,
+    return await db.transaction(async (tx) => {
+      const menu = await menuQueries.create(
+        {
+          companyId,
+          name: input.name,
+          menuType: input.menuType as MenuType,
+          createdBy: userId,
+          updatedBy: userId,
+        },
+        tx,
+      );
+
+      if (input.menuItems && input.menuItems.length > 0) {
+        for (const menuItem of input.menuItems) {
+          const createdMenuItem = await menuItemQueries.create(
+            {
+              companyId,
+              menuId: menu.id,
+              name: menuItem.name,
+              category: menuItem.category as MenuCategory,
+              description: menuItem.description || null,
+              createdBy: userId,
+              updatedBy: userId,
+            },
+            tx,
+          );
+
+          if (menuItem.allergyIds && menuItem.allergyIds.length > 0) {
+            const allergyInserts = menuItem.allergyIds.map((allergyId) => ({
+              companyId,
+              menuItemId: createdMenuItem.id,
+              allergyId,
+              createdBy: userId,
+              updatedBy: userId,
+            }));
+            await menuItemAllergyQueries.createMany(allergyInserts, tx);
+          }
+        }
+      }
+
+      return menu;
     });
-    return menu;
   }
 
   static async update(input: UpdateMenuSchema, userId: string) {
@@ -39,24 +74,62 @@ export class MenuService {
       throw new Error("Menu not found");
     }
 
-    const updateData: Partial<{
-      name: string;
-      menuType: string | null;
-      updatedBy: string;
-    }> = {
-      updatedBy: userId,
-    };
+    return await db.transaction(async (tx) => {
+      const updateData: Partial<{
+        name: string;
+        menuType: MenuType | null;
+        updatedBy: string;
+      }> = {
+        updatedBy: userId,
+      };
 
-    if (input.name !== undefined) {
-      updateData.name = input.name;
-    }
+      if (input.name !== undefined) {
+        updateData.name = input.name;
+      }
 
-    if (input.menuType !== undefined) {
-      updateData.menuType = input.menuType || null;
-    }
+      if (input.menuType !== undefined) {
+        updateData.menuType = input.menuType as MenuType;
+      }
 
-    const menu = await menuQueries.update(input.id, updateData);
-    return menu;
+      const menu = await menuQueries.update(input.id, updateData as any, tx);
+
+      if (input.menuItems !== undefined) {
+        const existingMenuItems = existing.menuItems || [];
+
+        for (const existingItem of existingMenuItems) {
+          await menuItemAllergyQueries.deleteByMenuItemId(existingItem.id, tx);
+          await menuItemQueries.delete(existingItem.id, tx);
+        }
+
+        for (const menuItem of input.menuItems) {
+          const createdMenuItem = await menuItemQueries.create(
+            {
+              companyId: existing.companyId,
+              menuId: menu.id,
+              name: menuItem.name,
+              category: menuItem.category as MenuCategory,
+              description: menuItem.description || null,
+              createdBy: userId,
+              updatedBy: userId,
+            },
+            tx,
+          );
+
+          if (menuItem.allergyIds && menuItem.allergyIds.length > 0) {
+            const allergyInserts = menuItem.allergyIds.map((allergyId) => ({
+              companyId: existing.companyId,
+              menuItemId: createdMenuItem.id,
+              allergyId,
+              createdBy: userId,
+              updatedBy: userId,
+            }));
+            await menuItemAllergyQueries.createMany(allergyInserts, tx);
+          }
+        }
+      }
+
+      return menu;
+    });
   }
 
   static async delete(id: string, companyId: string) {

@@ -17,9 +17,7 @@ interface MenusListProps {
 export function MenusList({ type }: MenusListProps) {
   const prepType = mapGroupToType("menus", type);
 
-  const { data, isLoading } = trpc.menus.getAll.useQuery({
-    filter: {},
-  });
+  const { data, isLoading } = trpc.menus.getAll.useQuery({});
 
   if (isLoading) {
     return (

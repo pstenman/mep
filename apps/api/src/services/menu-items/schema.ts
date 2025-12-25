@@ -4,6 +4,8 @@ export const createMenuItemSchema = z.object({
   name: z.string().min(1),
   menuId: z.uuid().optional(),
   category: z.string().optional(),
+  description: z.string().optional(),
+  allergyIds: z.array(z.uuid()).optional(),
 });
 
 export const updateMenuItemSchema = z.object({

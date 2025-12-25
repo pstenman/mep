@@ -7,6 +7,7 @@ export * from "./allergies";
 export * from "./recipes";
 export * from "./menus";
 export * from "./menu-items";
+export * from "./menu-item-allergies";
 export * from "./orders";
 export * from "./preparations";
 export * from "./query-build";

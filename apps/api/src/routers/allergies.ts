@@ -40,7 +40,7 @@ export const allergiesRouter = createTRPCRouter({
   delete: companyProcedure
     .input(z.object({ id: z.uuid() }))
     .mutation(async ({ input, ctx }) => {
-      const result = await AllergyService.delete(input.id, ctx.companyId!);
+      const result = await AllergyService.delete(input.id);
       return { data: result };
     }),
 });

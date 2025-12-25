@@ -3,12 +3,13 @@ import { z } from "zod";
 
 export const menuFormSchema = (t: (key: string) => string) => z.object({
   name: z.string().min(1, t("name.required")),
-  menuType: z.enum(Object.values(MenuType)).optional().default(MenuType.ALACARTE),
+  menuType: z.enum(Object.values(MenuType)),
   menuItems: z.array(z.object({
     name: z.string().min(1, t("name.required")),
-    category: z.enum(Object.values(MenuCategory)).optional(),
-    description: z.string().optional(),
+    category: z.enum(Object.values(MenuCategory)),
+    description: z.string(),
+    allergies: z.array(z.string().uuid()),
   })),
-})
+});
 
-export type MenuFormSchema = z.infer<typeof menuFormSchema>;
+export type MenuFormSchema = z.infer<ReturnType<typeof menuFormSchema>>;

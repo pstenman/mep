@@ -9,6 +9,7 @@ import {
 import { MenusList } from "./list";
 import { Loader2 } from "lucide-react";
 import { EmptyState } from "./empty-state";
+import { MenusSheet } from "./sheet";
 
 interface MenusViewProps {
   group: GroupKey | "all";
@@ -42,10 +43,13 @@ export function MenusView({ group }: MenusViewProps) {
   const hasGroups = filteredGroups.length > 0;
 
   return (
-    <div className="flex w-full justify-center">
-      <div className="w-full px-3 py-4 md:px-6 lg:px-8 max-w-full lg:max-w-[794px]">
-        {hasGroups ? <MenusList type={type} /> : <EmptyState group={type} />}
+    <>
+      <div className="flex w-full justify-center">
+        <div className="w-full px-3 py-4 md:px-6 lg:px-8 max-w-full lg:max-w-[794px]">
+          {hasGroups ? <MenusList type={type} /> : <EmptyState group={type} />}
+        </div>
       </div>
-    </div>
+      <MenusSheet />
+    </>
   );
 }

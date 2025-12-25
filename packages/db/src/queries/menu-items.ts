@@ -1,6 +1,7 @@
 import { menuItems } from "@/schema/menus";
 import { db, type Database } from "..";
 import { and, eq, ilike } from "drizzle-orm";
+import type { MenuCategory } from "@mep/types";
 
 type MenuItemRow = typeof menuItems.$inferSelect;
 type MenuItemInsert = typeof menuItems.$inferInsert;
@@ -8,7 +9,7 @@ type MenuItemInsert = typeof menuItems.$inferInsert;
 export interface MenuItemFilters {
   companyId: string;
   menuId?: string;
-  category?: string;
+  category?: MenuCategory;
   search?: string;
 }
 
@@ -39,9 +40,9 @@ export const menuItemQueries = {
       where: whereClauses,
       orderBy: (menuItems, { asc }) => [asc(menuItems.name)],
       with: {
-        company: true,
         menu: true,
         prepGroups: true,
+        allergies: true,
       },
     });
     return rows;
@@ -54,6 +55,7 @@ export const menuItemQueries = {
         company: true,
         menu: true,
         prepGroups: true,
+        allergies: true,
       },
     });
     return row;

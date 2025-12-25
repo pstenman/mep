@@ -1,32 +1,35 @@
 "use client";
 
-import type { GroupKey } from "@/utils/nav-path/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@mep/ui";
-import { useParams } from "next/navigation";
-import { parseAsBoolean } from "nuqs";
+import { parseAsBoolean, parseAsString } from "nuqs";
 import { useQueryState } from "nuqs";
+import { MenuForm } from "./form";
 
 export const useMenusSheet = () => {
   const [isOpen, setIsOpen] = useQueryState(
     "menusSheetOpen",
     parseAsBoolean.withDefault(false),
   );
+  const [menuId, setMenuId] = useQueryState(
+    "menuId",
+    parseAsString.withDefault(""),
+  );
 
-  const open = () => {
+  const open = (id?: string) => {
+    setMenuId(id || "");
     setIsOpen(true);
   };
 
   const close = () => {
+    setMenuId("");
     setIsOpen(false);
   };
 
-  return { isOpen, open, close };
+  return { isOpen, open, close, menuId: menuId || null };
 };
 
 export function MenusSheet() {
-  const { isOpen, close } = useMenusSheet();
-  const params = useParams();
-  const group = (params?.group as GroupKey) || "all";
+  const { isOpen, close, menuId } = useMenusSheet();
 
   const handleSuccess = () => {
     close();
@@ -36,10 +39,10 @@ export function MenusSheet() {
     <Sheet open={isOpen} onOpenChange={(open) => !open && close()}>
       <SheetContent className="flex flex-col p-0">
         <SheetHeader className="px-6 pt-6 pb-4 border-b shrink-0">
-          <SheetTitle>Create Menu</SheetTitle>
+          <SheetTitle>{menuId ? "Edit Menu" : "Create Menu"}</SheetTitle>
         </SheetHeader>
         <div className="flex-1 min-h-0">
-          {/* <MenusForm type={group} onSuccess={handleSuccess} onCancel={close} /> */}
+          <MenuForm onSuccess={handleSuccess} onCancel={close} />
         </div>
       </SheetContent>
     </Sheet>

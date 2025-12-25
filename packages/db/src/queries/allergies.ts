@@ -40,11 +40,6 @@ export const allergyQueries = {
   getById: async (id: string) => {
     const row = await db.query.allergies.findFirst({
       where: eq(allergies.id, id),
-      with: {
-        company: true,
-        createdBy: true,
-        updatedBy: true,
-      },
     });
     return row;
   },

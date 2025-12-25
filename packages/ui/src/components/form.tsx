@@ -166,4 +166,4 @@ export {
   FormMessage,
   FormField,
 };
-export { useForm, useFieldArray } from "react-hook-form";
+export { useForm, useFieldArray, type UseFormReturn } from "react-hook-form";

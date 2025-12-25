@@ -1,4 +1,4 @@
-import { allergyQueries, type AllergyFilters } from "@mep/db";
+import { allergyQueries, db, type AllergyFilters, type Database } from "@mep/db";
 import type { CreateAllergySchema, UpdateAllergySchema, allergyFiltersSchema } from "./schema";
 import type { z } from "zod";
 import type { Allergen } from "@mep/types";
@@ -11,7 +11,12 @@ export class AllergyService {
     },
   ) {
     const { filter } = params || {};
-    const filters: AllergyFilters = {
+
+    if (!companyId) {
+      throw new Error("Company ID is required");
+    }
+    
+    const filters: AllergyFilters = { 
       companyId,
       search: filter?.search,
     };
@@ -25,8 +30,8 @@ export class AllergyService {
 
   static async create(input: CreateAllergySchema, companyId: string, userId: string) {
     const allergy = await allergyQueries.create({
-      companyId,
       name: input.name,
+      companyId,
       createdBy: userId,
       updatedBy: userId,
     });
@@ -39,7 +44,7 @@ export class AllergyService {
       throw new Error("Allergy not found");
     }
 
-    const updateData: Partial<{ name: Allergen; updatedBy: string }> = {
+    const updateData: Partial<{ name: Allergen, updatedBy: string }> = {
       updatedBy: userId,
     };
 
@@ -47,17 +52,14 @@ export class AllergyService {
       updateData.name = input.name;
     }
 
-    const allergy = await allergyQueries.update(input.id, updateData);
+    const allergy = await allergyQueries.update(input.id, updateData, db as Database);
     return allergy;
   }
 
-  static async delete(id: string, companyId: string) {
+  static async delete(id: string) {
     const existing = await allergyQueries.getById(id);
     if (!existing) {
       throw new Error("Allergy not found");
-    }
-    if (existing.companyId !== companyId) {
-      throw new Error("Allergy does not belong to this company");
     }
 
     await allergyQueries.delete(id);
