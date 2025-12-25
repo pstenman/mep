@@ -3,8 +3,8 @@ import { db, type Database } from "..";
 import { and, eq, ilike } from "drizzle-orm";
 import type { MenuCategory } from "@mep/types";
 
-type MenuItemRow = typeof menuItems.$inferSelect;
-type MenuItemInsert = typeof menuItems.$inferInsert;
+export type MenuItemRow = typeof menuItems.$inferSelect;
+export type MenuItemInsert = typeof menuItems.$inferInsert;
 
 export interface MenuItemFilters {
   companyId: string;
@@ -40,9 +40,9 @@ export const menuItemQueries = {
       where: whereClauses,
       orderBy: (menuItems, { asc }) => [asc(menuItems.name)],
       with: {
-        menu: true,
+        allergies: { with: { allergy: true } },
         prepGroups: true,
-        allergies: true,
+        menu: { columns: { id: true, name: true } },
       },
     });
     return rows;
@@ -52,16 +52,22 @@ export const menuItemQueries = {
     const row = await db.query.menuItems.findFirst({
       where: eq(menuItems.id, id),
       with: {
-        company: true,
         menu: true,
         prepGroups: true,
-        allergies: true,
+        allergies: {
+          with: {
+            allergy: true,
+          },
+        },
       },
     });
     return row;
   },
 
-  create: async (input: MenuItemInsert, executor?: Database): Promise<MenuItemRow> => {
+  create: async (
+    input: MenuItemInsert,
+    executor?: Database,
+  ): Promise<MenuItemRow> => {
     const dbOrTx = executor ?? db;
     const row = await dbOrTx.insert(menuItems).values(input).returning();
     return row[0];
@@ -87,4 +93,3 @@ export const menuItemQueries = {
     await dbOrTx.delete(menuItems).where(eq(menuItems.id, id));
   },
 };
-

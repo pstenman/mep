@@ -1,17 +1,20 @@
 /**
  * PrepType Helper Utilities
- * 
+ *
  * Utilities for working with PrepType enums and filtering preparation-related data.
  * These are specific to preparations and use PrepType enums.
  */
 
 import { PrepType } from "@mep/types";
-import type { GroupedSection, GroupKey } from "@/lib/navigation/dashboard/types";
+import type {
+  GroupedSection,
+  GroupKey,
+} from "@/lib/navigation/dashboard/types";
 
 /**
  * Maps navigation group type to PrepType enum based on section
  * Used for preparations that need PrepType enum values
- * 
+ *
  * @param section - The section (preparations, menus, orders, allergies)
  * @param group - The navigation group type
  * @returns The corresponding PrepType or null if no mapping exists
@@ -56,7 +59,7 @@ export function parsePrepTypes(
 /**
  * Filters groups by prepType (client-side filtering for preparations)
  * Used when server-side filtering isn't available or for client-side data manipulation
- * 
+ *
  * @param _section - The section (preparations, menus, orders, allergies) - kept for API consistency
  * @param groups - Array of groups to filter
  * @param prepType - The PrepType to filter by, or null to return all groups
@@ -71,7 +74,6 @@ export function filterGroupsByPrepType<
 ): T[] {
   if (!groups) return [];
   if (!Array.isArray(groups)) {
-    console.error("filterGroupsByPrepType: groups is not an array", groups);
     return [];
   }
   if (!prepType) return groups;
@@ -91,4 +93,3 @@ export function filterGroupsByPrepType<
     return false;
   });
 }
-
