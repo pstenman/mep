@@ -1,7 +1,24 @@
-import { menuQueries, menuItemQueries, menuItemAllergyQueries, type MenuFilters, db } from "@mep/db";
-import type { CreateMenuSchema, UpdateMenuSchema, menuFiltersSchema } from "./schema";
-import type { z } from "zod";
+import {
+  menuQueries,
+  menuItemQueries,
+  menuItemAllergyQueries,
+  db,
+  type MenuFilters,
+} from "@mep/db";
+import type {
+  CreateMenuSchema,
+  UpdateMenuSchema,
+  menuFiltersSchema,
+} from "./schema";
 import type { MenuType, MenuCategory } from "@mep/types";
+import type { z } from "zod";
+import {
+  transformMenu,
+  transformMenus,
+  type FormattedMenu,
+  type RawMenuWithRelations,
+} from "./transform";
+import { MenuItemService } from "../menu-items/service";
 
 export class MenuService {
   static async getAll(
@@ -10,20 +27,27 @@ export class MenuService {
       filter?: z.infer<typeof menuFiltersSchema>;
     },
   ) {
-    const { filter } = params || {};
     const filters: MenuFilters = {
       companyId,
-      search: filter?.search,
+      search: params?.filter?.search,
+      menuType: params?.filter?.menuType as MenuType | undefined,
     };
+
     const rows = await menuQueries.getAll(filters);
-    return { items: rows };
+    return { items: transformMenus(rows as RawMenuWithRelations[]) };
   }
 
   static async getById(id: string) {
-    return await menuQueries.getById(id);
+    const menu = await menuQueries.getById(id);
+    if (!menu) throw new Error("Menu not found");
+    return transformMenu(menu);
   }
 
-  static async create(input: CreateMenuSchema, companyId: string, userId: string) {
+  static async create(
+    input: CreateMenuSchema,
+    companyId: string,
+    userId: string,
+  ): Promise<FormattedMenu> {
     return await db.transaction(async (tx) => {
       const menu = await menuQueries.create(
         {
@@ -38,42 +62,40 @@ export class MenuService {
       );
 
       if (input.menuItems && input.menuItems.length > 0) {
-        for (const menuItem of input.menuItems) {
-          const createdMenuItem = await menuItemQueries.create(
+        for (const item of input.menuItems) {
+          const createdItem = await menuItemQueries.create(
             {
               companyId,
               menuId: menu.id,
-              name: menuItem.name,
-              category: menuItem.category as MenuCategory,
-              description: menuItem.description || null,
+              name: item.name,
+              category: item.category as MenuCategory,
+              description: item.description || null,
               createdBy: userId,
               updatedBy: userId,
             },
             tx,
           );
 
-          if (menuItem.allergyIds && menuItem.allergyIds.length > 0) {
-            const allergyInserts = menuItem.allergyIds.map((allergyId) => ({
-              companyId,
-              menuItemId: createdMenuItem.id,
-              allergyId,
-              createdBy: userId,
-              updatedBy: userId,
-            }));
-            await menuItemAllergyQueries.createMany(allergyInserts, tx);
-          }
+          await MenuItemService.setAllergies(
+            createdItem.id,
+            item.allergyIds ?? [],
+            companyId,
+            userId,
+            tx,
+          );
         }
       }
 
-      return menu;
+      return transformMenu(menu);
     });
   }
 
-  static async update(input: UpdateMenuSchema, userId: string) {
+  static async update(
+    input: UpdateMenuSchema,
+    userId: string,
+  ): Promise<FormattedMenu> {
     const existing = await menuQueries.getById(input.id);
-    if (!existing) {
-      throw new Error("Menu not found");
-    }
+    if (!existing) throw new Error("Menu not found");
 
     return await db.transaction(async (tx) => {
       const updateData: Partial<{
@@ -81,74 +103,56 @@ export class MenuService {
         menuType: MenuType | null;
         isActive: boolean;
         updatedBy: string;
-      }> = {
-        updatedBy: userId,
-      };
+      }> = { updatedBy: userId };
 
-      if (input.name !== undefined) {
-        updateData.name = input.name;
-      }
-
-      if (input.menuType !== undefined) {
+      if (input.name !== undefined) updateData.name = input.name;
+      if (input.menuType !== undefined)
         updateData.menuType = input.menuType as MenuType;
-      }
-
-      if (input.isActive !== undefined) {
-        updateData.isActive = input.isActive;
-      }
+      if (input.isActive !== undefined) updateData.isActive = input.isActive;
 
       const menu = await menuQueries.update(input.id, updateData as any, tx);
 
       if (input.menuItems !== undefined) {
-        const existingMenuItems = existing.menuItems || [];
-
-        for (const existingItem of existingMenuItems) {
-          await menuItemAllergyQueries.deleteByMenuItemId(existingItem.id, tx);
-          await menuItemQueries.delete(existingItem.id, tx);
+        for (const oldItem of existing.menuItems ?? []) {
+          await menuItemAllergyQueries.deleteByMenuItemId(oldItem.id, tx);
+          await menuItemQueries.delete(oldItem.id, tx);
         }
 
-        for (const menuItem of input.menuItems) {
-          const createdMenuItem = await menuItemQueries.create(
+        for (const item of input.menuItems) {
+          const createdItem = await menuItemQueries.create(
             {
               companyId: existing.companyId,
               menuId: menu.id,
-              name: menuItem.name,
-              category: menuItem.category as MenuCategory,
-              description: menuItem.description || null,
+              name: item.name,
+              category: item.category as MenuCategory,
+              description: item.description || null,
               createdBy: userId,
               updatedBy: userId,
             },
             tx,
           );
 
-          if (menuItem.allergyIds && menuItem.allergyIds.length > 0) {
-            const allergyInserts = menuItem.allergyIds.map((allergyId) => ({
-              companyId: existing.companyId,
-              menuItemId: createdMenuItem.id,
-              allergyId,
-              createdBy: userId,
-              updatedBy: userId,
-            }));
-            await menuItemAllergyQueries.createMany(allergyInserts, tx);
-          }
+          await MenuItemService.setAllergies(
+            createdItem.id,
+            item.allergyIds ?? [],
+            existing.companyId,
+            userId,
+            tx,
+          );
         }
       }
 
-      return menu;
+      return transformMenu(menu);
     });
   }
 
   static async delete(id: string, companyId: string) {
     const existing = await menuQueries.getById(id);
-    if (!existing) {
-      throw new Error("Menu not found");
-    }
-    if (existing.companyId !== companyId) {
+    if (!existing) throw new Error("Menu not found");
+    if (existing.companyId !== companyId)
       throw new Error("Menu does not belong to this company");
-    }
 
     await menuQueries.delete(id);
     return { success: true };
   }
 }
-

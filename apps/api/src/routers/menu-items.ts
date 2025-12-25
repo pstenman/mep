@@ -11,13 +11,15 @@ import { z } from "zod";
 export const menuItemsRouter = createTRPCRouter({
   getAll: companyProcedure
     .input(
-      z.object({
-        filter: menuItemFiltersSchema.optional(),
-      }).partial(),
+      z
+        .object({
+          filter: menuItemFiltersSchema.optional(),
+        })
+        .partial(),
     )
     .query(async ({ input, ctx }) => {
       const result = await MenuItemService.getAll(ctx.companyId!, input);
-      return { data: result };
+      return { data: result.items };
     }),
 
   getById: companyProcedure
@@ -30,7 +32,11 @@ export const menuItemsRouter = createTRPCRouter({
   create: companyProcedure
     .input(createMenuItemSchema)
     .mutation(async ({ input, ctx }) => {
-      const menuItem = await MenuItemService.create(input, ctx.companyId!, ctx.userId!);
+      const menuItem = await MenuItemService.create(
+        input,
+        ctx.companyId!,
+        ctx.userId!,
+      );
       return { data: menuItem };
     }),
 
@@ -48,4 +54,3 @@ export const menuItemsRouter = createTRPCRouter({
       return { data: result };
     }),
 });
-

@@ -1,4 +1,8 @@
-import { menuFiltersSchema, createMenuSchema, updateMenuSchema } from "@/services/menus/schema";
+import {
+  menuFiltersSchema,
+  createMenuSchema,
+  updateMenuSchema,
+} from "@/services/menus/schema";
 import { MenuService } from "@/services/menus/service";
 import { companyProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
@@ -9,7 +13,7 @@ export const menusRouter = createTRPCRouter({
     .input(
       z.object({
         filter: menuFiltersSchema.optional(),
-      }).partial(),
+      }),
     )
     .query(async ({ input, ctx }) => {
       const result = await MenuService.getAll(ctx.companyId!, input);
@@ -44,4 +48,3 @@ export const menusRouter = createTRPCRouter({
       return { data: result };
     }),
 });
-

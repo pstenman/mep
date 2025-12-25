@@ -1,26 +1,13 @@
-import { allergyQueries, db, type AllergyFilters, type Database } from "@mep/db";
-import type { CreateAllergySchema, UpdateAllergySchema, allergyFiltersSchema } from "./schema";
-import type { z } from "zod";
+import { allergyQueries, db, type Database } from "@mep/db";
+import type { CreateAllergySchema, UpdateAllergySchema } from "./schema";
 import type { Allergen } from "@mep/types";
 
 export class AllergyService {
-  static async getAll(
-    companyId: string,
-    params?: {
-      filter?: z.infer<typeof allergyFiltersSchema>;
-    },
-  ) {
-    const { filter } = params || {};
+    static async getAll(companyId: string) {
+    if (!companyId) throw new Error("Company ID is required");
 
-    if (!companyId) {
-      throw new Error("Company ID is required");
-    }
-    
-    const filters: AllergyFilters = { 
-      companyId,
-      search: filter?.search,
-    };
-    const rows = await allergyQueries.getAll(filters);
+    const allergies = await allergyQueries.getAll({ companyId });
+    const rows = allergies.map(a => ({ id: a.id, name: a.name }));
     return { items: rows };
   }
 

@@ -1,4 +1,4 @@
-import type { PrepGroup } from "@/utils/nav-path/types";
+import type { PrepGroup } from "@/lib/navigation/dashboard/types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@mep/ui";
 import { useParams } from "next/navigation";
 import { parseAsBoolean } from "nuqs";

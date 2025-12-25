@@ -20,10 +20,9 @@ import {
 } from "@mep/ui";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-
-import { useDashboardNavigation } from "@/hooks/use-dashboard-navigation";
+import { useDashboardNavigation } from "@/lib/navigation/dashboard/hooks";
 import { UserMenu } from "./user-settings";
-import type { DashboardPath } from "@/utils/nav-path/dashboard-prefix";
+import type { DashboardPath } from "@/lib/navigation/paths";
 
 export function DashboardSidebar() {
   const { state } = useSidebar();

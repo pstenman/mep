@@ -24,6 +24,7 @@ export const updateMenuSchema = z.object({
 
 export const menuFiltersSchema = z.object({
   search: z.string().optional(),
+  menuType: z.string().optional(),
 });
 
 export type CreateMenuSchema = z.infer<typeof createMenuSchema>;

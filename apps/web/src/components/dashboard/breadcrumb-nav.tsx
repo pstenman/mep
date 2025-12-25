@@ -9,7 +9,7 @@ import {
 } from "@mep/ui";
 import Link from "next/link";
 import { ChevronRight, Dot } from "lucide-react";
-import { useActiveNavGroup } from "@/hooks/use-dashboard-navigation";
+import { useActiveNavGroup } from "@/lib/navigation/dashboard/hooks";
 
 export function BreadcrumbNav() {
   const activeGroup = useActiveNavGroup();

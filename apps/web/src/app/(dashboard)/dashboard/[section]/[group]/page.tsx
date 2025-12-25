@@ -1,7 +1,10 @@
 import { GroupedView } from "@/components/shared/grouped-view";
-import { GROUP_KEYS } from "@/utils/nav-path/groups";
+import { GROUP_KEYS } from "@/lib/navigation/dashboard/types";
 import { notFound } from "next/navigation";
-import type { GroupedSection, GroupKey } from "@/utils/nav-path/types";
+import type {
+  GroupedSection,
+  GroupKey,
+} from "@/lib/navigation/dashboard/types";
 
 const GROUPED_SECTIONS = [
   "preparations",

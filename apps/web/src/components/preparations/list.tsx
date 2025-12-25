@@ -1,12 +1,12 @@
 "use client";
 
 import { trpc } from "@/lib/trpc/client";
-import type { PrepGroup } from "@/utils/nav-path/types";
+import type { PrepGroup } from "@/lib/navigation/dashboard/types";
 import {
-  mapGroupToType,
-  filterGroupsByType,
+  mapGroupToPrepType,
+  filterGroupsByPrepType,
   parsePrepTypes,
-} from "@/utils/preparations/group-to-type";
+} from "@/utils/filters/prep-type-helpers";
 import { Text } from "@mep/ui";
 import { Loader2 } from "lucide-react";
 
@@ -15,7 +15,7 @@ interface PreparationsListProps {
 }
 
 export function PreparationsList({ type }: PreparationsListProps) {
-  const prepType = mapGroupToType("preparations", type);
+  const prepType = mapGroupToPrepType("preparations", type);
 
   const { data, isLoading } = trpc.preparations.prepGroups.getAll.useQuery({
     filter: {},
@@ -29,10 +29,10 @@ export function PreparationsList({ type }: PreparationsListProps) {
     );
   }
 
-  const filteredGroups = filterGroupsByType(
+  const filteredGroups = filterGroupsByPrepType(
     "preparations",
     data?.data.items,
-    prepType,
+    prepType ? String(prepType) : null,
   );
 
   const sortedGroups = [...filteredGroups].sort((a, b) => {

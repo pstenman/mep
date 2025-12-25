@@ -1,6 +1,6 @@
 "use client";
 
-import type { PrepGroup } from "@/utils/nav-path/types";
+import type { PrepGroup } from "@/lib/navigation/dashboard/types";
 import { PrepStatus } from "@mep/types";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
@@ -8,9 +8,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
 import {
-  mapGroupToType,
-  filterGroupsByType,
-} from "@/utils/preparations/group-to-type";
+  mapGroupToPrepType,
+  filterGroupsByPrepType,
+} from "@/utils/filters/prep-type-helpers";
 import {
   Button,
   Form,
@@ -55,7 +55,7 @@ export function PreparationsForm({
   onCancel,
 }: PreparationsFormProps) {
   const utils = trpc.useUtils();
-  const prepType = mapGroupToType("preparations", type);
+  const prepType = mapGroupToPrepType("preparations", type);
   const t = useTranslations("preparations.form");
   const [mode, setMode] = useState<"group" | "item">("group");
 
@@ -65,7 +65,7 @@ export function PreparationsForm({
   });
 
   // Filter groups by type
-  const filteredGroups = filterGroupsByType(
+  const filteredGroups = filterGroupsByPrepType(
     "preparations",
     groupsData?.data.items,
     prepType,

@@ -3,7 +3,7 @@
 import { Combobox, type ComboboxOption } from "@mep/ui";
 import { trpc } from "@/lib/trpc/client";
 import { useMemo } from "react";
-import type { PrepGroup } from "@/utils/nav-path/types";
+import type { PrepGroup } from "@/lib/navigation/dashboard/types";
 import type { PrepGroupOutput } from "@mep/api";
 
 export type PrepGroupComboboxProps = {
@@ -23,18 +23,16 @@ export function PrepGroupCombobox({
   onValueChange,
   onSelect,
 }: PrepGroupComboboxProps) {
-  // Fetch prep groups internally
   const { data, isLoading } = trpc.preparations.prepGroups.getAll.useQuery({
     filter: {},
   });
 
-  // Transform data to ComboboxOption format
   const options: ComboboxOption<PrepGroup>[] = useMemo(() => {
     if (!data?.data.items) return [];
     return data.data.items.map((prepGroup: PrepGroupOutput) => ({
       value: prepGroup.id,
       label: prepGroup.name,
-      meta: prepGroup, // Store full prep group object if needed
+      meta: prepGroup,
     }));
   }, [data]);
 

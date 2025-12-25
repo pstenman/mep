@@ -21,7 +21,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createSubscribeSchema } from "./schema";
 import { stripePromise } from "@/providers/stripe-provider";
-import { mapLocale, mapTheme } from "@/utils/stripe";
+import { mapLocale, mapTheme } from "@/utils/stripe/stripe";
 import { Elements, PaymentElement } from "@stripe/react-stripe-js";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";

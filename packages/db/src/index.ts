@@ -27,3 +27,4 @@ export type DBTransaction = Parameters<typeof db.transaction>[0] extends (
 export type Database = typeof db | DBTransaction;
 
 export * from "./queries/queries";
+export * from "./schema/schema";
