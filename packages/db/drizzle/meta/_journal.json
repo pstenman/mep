@@ -148,6 +148,13 @@
       "when": 1766626619386,
       "tag": "0020_wonderful_the_professor",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1766704680445,
+      "tag": "0021_cloudy_rocket_racer",
+      "breakpoints": true
     }
   ]
 }

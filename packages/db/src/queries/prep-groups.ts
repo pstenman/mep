@@ -6,14 +6,12 @@ type PrepGroupRow = typeof prepGroups.$inferSelect;
 type PrepGroupInsert = typeof prepGroups.$inferInsert;
 
 export interface PrepGroupFilters {
-  companyId: string;
+  prepListId: string;
   search?: string;
 }
 
 export function buildPrepGroupFilters(filters: PrepGroupFilters) {
-  const whereConditions = [];
-
-  whereConditions.push(eq(prepGroups.companyId, filters.companyId));
+  const whereConditions = [eq(prepGroups.prepListId, filters.prepListId)];
 
   if (filters.search?.trim()) {
     whereConditions.push(ilike(prepGroups.name, `%${filters.search}%`));
@@ -24,13 +22,10 @@ export function buildPrepGroupFilters(filters: PrepGroupFilters) {
 
 export const prepGroupQueries = {
   getAll: async (filters: PrepGroupFilters) => {
-    const whereClauses = buildPrepGroupFilters(filters);
     const rows = await db.query.prepGroups.findMany({
-      where: whereClauses,
-      orderBy: (prepGroups, { asc }) => [asc(prepGroups.name)],
+      where: buildPrepGroupFilters(filters),
+      orderBy: (pg, { asc }) => [asc(pg.name)],
       with: {
-        company: true,
-        menuItem: true,
         prepItems: true,
       },
     });
@@ -41,15 +36,13 @@ export const prepGroupQueries = {
     const row = await db.query.prepGroups.findFirst({
       where: eq(prepGroups.id, id),
       with: {
-        company: true,
-        menuItem: true,
         prepItems: true,
       },
     });
     return row;
   },
 
-  create: async (input: PrepGroupInsert, executor?: Database): Promise<PrepGroupRow> => {
+  create: async (input: PrepGroupInsert, executor?: Database) => {
     const dbOrTx = executor ?? db;
     const row = await dbOrTx.insert(prepGroups).values(input).returning();
     return row[0];
@@ -57,9 +50,9 @@ export const prepGroupQueries = {
 
   update: async (
     id: string,
-    input: Partial<Omit<PrepGroupInsert, "id" | "companyId" | "createdAt">>,
+    input: Partial<Omit<PrepGroupInsert, "id" | "prepListId" | "createdAt">>,
     executor?: Database,
-  ): Promise<PrepGroupRow> => {
+  ) => {
     const dbOrTx = executor ?? db;
     const updatedAt = new Date();
     const row = await dbOrTx
@@ -70,9 +63,8 @@ export const prepGroupQueries = {
     return row[0];
   },
 
-  delete: async (id: string, executor?: Database): Promise<void> => {
+  delete: async (id: string, executor?: Database) => {
     const dbOrTx = executor ?? db;
     await dbOrTx.delete(prepGroups).where(eq(prepGroups.id, id));
   },
 };
-

@@ -7,20 +7,13 @@ type PrepItemRow = typeof prepItems.$inferSelect;
 type PrepItemInsert = typeof prepItems.$inferInsert;
 
 export interface PrepItemFilters {
-  companyId: string;
-  prepGroupId?: string;
+  prepGroupId: string;
   status?: PrepStatus;
   search?: string;
 }
 
 export function buildPrepItemFilters(filters: PrepItemFilters) {
-  const whereConditions = [];
-
-  whereConditions.push(eq(prepItems.companyId, filters.companyId));
-
-  if (filters.prepGroupId) {
-    whereConditions.push(eq(prepItems.prepGroupId, filters.prepGroupId));
-  }
+  const whereConditions = [eq(prepItems.prepGroupId, filters.prepGroupId)];
 
   if (filters.status) {
     whereConditions.push(eq(prepItems.status, filters.status));
@@ -35,15 +28,10 @@ export function buildPrepItemFilters(filters: PrepItemFilters) {
 
 export const prepItemQueries = {
   getAll: async (filters: PrepItemFilters) => {
-    const whereClauses = buildPrepItemFilters(filters);
     const rows = await db.query.prepItems.findMany({
-      where: whereClauses,
-      orderBy: (prepItems, { asc, desc }) => [
-        desc(prepItems.status),
-        asc(prepItems.createdAt),
-      ],
+      where: buildPrepItemFilters(filters),
+      orderBy: (pi, { desc, asc }) => [desc(pi.status), asc(pi.createdAt)],
       with: {
-        company: true,
         prepGroup: true,
         recipe: true,
       },
@@ -55,7 +43,6 @@ export const prepItemQueries = {
     const row = await db.query.prepItems.findFirst({
       where: eq(prepItems.id, id),
       with: {
-        company: true,
         prepGroup: true,
         recipe: true,
       },
@@ -63,7 +50,7 @@ export const prepItemQueries = {
     return row;
   },
 
-  create: async (input: PrepItemInsert, executor?: Database): Promise<PrepItemRow> => {
+  create: async (input: PrepItemInsert, executor?: Database) => {
     const dbOrTx = executor ?? db;
     const row = await dbOrTx.insert(prepItems).values(input).returning();
     return row[0];
@@ -71,9 +58,9 @@ export const prepItemQueries = {
 
   update: async (
     id: string,
-    input: Partial<Omit<PrepItemInsert, "id" | "companyId" | "createdAt">>,
+    input: Partial<Omit<PrepItemInsert, "id" | "prepGroupId" | "createdAt">>,
     executor?: Database,
-  ): Promise<PrepItemRow> => {
+  ) => {
     const dbOrTx = executor ?? db;
     const updatedAt = new Date();
     const row = await dbOrTx
@@ -84,9 +71,8 @@ export const prepItemQueries = {
     return row[0];
   },
 
-  delete: async (id: string, executor?: Database): Promise<void> => {
+  delete: async (id: string, executor?: Database) => {
     const dbOrTx = executor ?? db;
     await dbOrTx.delete(prepItems).where(eq(prepItems.id, id));
   },
 };
-
