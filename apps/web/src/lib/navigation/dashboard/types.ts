@@ -18,8 +18,8 @@ export const GROUP_KEYS = [
   "group",
 ] as const;
 
-export type GroupKey = typeof GROUP_KEYS[number];
-export type PrepGroup = typeof GROUP_KEYS[number];
+export type GroupKey = (typeof GROUP_KEYS)[number];
+export type PrepGroup = (typeof GROUP_KEYS)[number];
 export type GroupedSection = "preparations" | "menus" | "orders" | "allergies";
 
 /**
@@ -35,7 +35,7 @@ export interface NavItem {
  * Navigation group (top-level navigation section)
  */
 export interface NavGroup {
-  id: "preparations" | "menus" | "recepies" | "allergies" | "orders";
+  id: "preparations" | "menus" | "recipes" | "allergies" | "orders";
   titleKey: string;
   href?: DashboardPath;
   icon: LucideIcon;
@@ -66,4 +66,3 @@ export type ProcessedNavGroup = {
   items?: ProcessedNavItem[];
   activeItem?: ProcessedNavItem;
 };
-

@@ -65,9 +65,9 @@ export const Navigation: NavGroup[] = [
     items: groupNavItems("menus", "Menu"),
   },
   {
-    id: "recepies",
-    titleKey: "recepies",
-    href: dashboardPrefix("recepies"),
+    id: "recipes",
+    titleKey: "recipes",
+    href: dashboardPrefix("recipes"),
     icon: BookText,
     collapsible: false,
   },
