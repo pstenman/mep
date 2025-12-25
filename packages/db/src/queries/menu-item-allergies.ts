@@ -1,6 +1,6 @@
 import { menuItemAllergies } from "@/schema/menus";
 import { db, type Database } from "..";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 type MenuItemAllergyRow = typeof menuItemAllergies.$inferSelect;
 type MenuItemAllergyInsert = typeof menuItemAllergies.$inferInsert;
@@ -11,47 +11,7 @@ export interface MenuItemAllergyFilters {
   allergyId?: string;
 }
 
-export function buildMenuItemAllergyFilters(filters: MenuItemAllergyFilters) {
-  const whereConditions = [];
-
-  whereConditions.push(eq(menuItemAllergies.companyId, filters.companyId));
-
-  if (filters.menuItemId) {
-    whereConditions.push(eq(menuItemAllergies.menuItemId, filters.menuItemId));
-  }
-
-  if (filters.allergyId) {
-    whereConditions.push(eq(menuItemAllergies.allergyId, filters.allergyId));
-  }
-
-  return and(...whereConditions);
-}
-
 export const menuItemAllergyQueries = {
-  getAll: async (filters: MenuItemAllergyFilters) => {
-    const whereClauses = buildMenuItemAllergyFilters(filters);
-    const rows = await db.query.menuItemAllergies.findMany({
-      where: whereClauses,
-      with: {
-        company: true,
-        menuItem: true,
-        allergy: true,
-      },
-    });
-    return rows;
-  },
-
-  getById: async (id: string) => {
-    const row = await db.query.menuItemAllergies.findFirst({
-      where: eq(menuItemAllergies.id, id),
-      with: {
-        company: true,
-        menuItem: true,
-        allergy: true,
-      },
-    });
-    return row;
-  },
 
   create: async (input: MenuItemAllergyInsert, executor?: Database): Promise<MenuItemAllergyRow> => {
     const dbOrTx = executor ?? db;

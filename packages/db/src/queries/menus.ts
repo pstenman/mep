@@ -37,8 +37,22 @@ export const menuQueries = {
         desc(menus.isActive),
         desc(menus.updatedAt),
       ],
+      columns: {
+        id: true,
+        name: true,
+        menuType: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       with: {
-        menuItems: true,
+        menuItems: {
+          columns: {
+            id: true,
+            name: true,
+            category: true,
+          },
+        },
       },
     });
     return rows;
@@ -48,7 +62,15 @@ export const menuQueries = {
     const row = await db.query.menus.findFirst({
       where: eq(menus.id, id),
       with: {
-        menuItems: true,
+        menuItems: {
+          with: {
+            allergies: {
+              with: {
+                allergy: true,
+              },
+            },
+          },
+        },
       },
     });
     return row;
@@ -80,4 +102,3 @@ export const menuQueries = {
     await dbOrTx.delete(menus).where(eq(menus.id, id));
   },
 };
-

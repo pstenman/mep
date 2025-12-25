@@ -1,11 +1,8 @@
 "use client";
 
-import type { GroupKey } from "@/utils/nav-path/types";
+import type { GroupKey } from "@/lib/navigation/dashboard/types";
 import { trpc } from "@/lib/trpc/client";
-import {
-  mapGroupToType,
-  filterGroupsByType,
-} from "@/utils/preparations/group-to-type";
+import { urlGroupToMenuTypeFilter } from "@/utils/filters/url-to-api-filters";
 import { MenusList } from "./list";
 import { Loader2 } from "lucide-react";
 import { EmptyState } from "./empty-state";
@@ -16,11 +13,10 @@ interface MenusViewProps {
 }
 
 export function MenusView({ group }: MenusViewProps) {
-  const type = group === "all" ? "all" : group;
-  const prepType = mapGroupToType("menus", type);
+  const menuTypeFilter = urlGroupToMenuTypeFilter(group);
 
   const { data, isLoading } = trpc.menus.getAll.useQuery({
-    filter: {},
+    filter: menuTypeFilter ? { menuType: menuTypeFilter } : undefined,
   });
 
   if (isLoading) {
@@ -35,22 +31,18 @@ export function MenusView({ group }: MenusViewProps) {
     );
   }
 
-  const filteredGroups = filterGroupsByType(
-    "menus",
-    data?.data.items,
-    prepType,
-  );
+  const menus = data?.data?.items ?? data?.data ?? [];
 
-  const hasGroups = filteredGroups.length > 0;
+  const hasGroups = menus.length > 0;
 
   return (
     <>
       <div className="flex w-full justify-center">
         <div className="w-full px-3 py-4 md:px-6 lg:px-8 max-w-full lg:max-w-[794px]">
           {hasGroups ? (
-            <MenusList type={type} group={group} />
+            <MenusList type={group} />
           ) : (
-            <EmptyState group={type} />
+            <EmptyState group={group} />
           )}
         </div>
       </div>

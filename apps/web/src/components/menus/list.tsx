@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc/client";
-import type { GroupKey } from "@/utils/nav-path/types";
-import { mapGroupToType } from "@/utils/preparations/group-to-type";
+import type { GroupKey } from "@/lib/navigation/dashboard/types";
+import { urlGroupToMenuTypeFilter } from "@/utils/filters/url-to-api-filters";
 import { Text, Button } from "@mep/ui";
 import { Loader2, Trash2, Pencil } from "lucide-react";
 import { useMenusSheet } from "./sheet";
@@ -15,11 +15,10 @@ import { DeleteDialog } from "../ui/delete-dialog";
 
 interface MenusListProps {
   type: GroupKey | "all";
-  group: string;
 }
 
-export function MenusList({ type, group }: MenusListProps) {
-  const menuType = mapGroupToType("menus", type);
+export function MenusList({ type }: MenusListProps) {
+  const menuTypeFilter = urlGroupToMenuTypeFilter(type);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [menuToDelete, setMenuToDelete] = useState<string | null>(null);
   const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
@@ -27,9 +26,9 @@ export function MenusList({ type, group }: MenusListProps) {
   const utils = trpc.useUtils();
 
   const { data, isLoading } = trpc.menus.getAll.useQuery({
-    menuType: menuType ?? undefined,
+    filter: menuTypeFilter ? { menuType: menuTypeFilter } : undefined,
   });
-  const menus = data?.data?.items ?? [];
+  const menus = data?.data?.items ?? data?.data ?? [];
 
   useEffect(() => {
     if (!selectedMenuId && menus.length > 0) {

@@ -28,11 +28,10 @@ export const allergyQueries = {
     const rows = await db.query.allergies.findMany({
       where: whereClauses,
       orderBy: (allergies, { asc }) => [asc(allergies.name)],
-      with: {
-        company: true,
-        createdBy: true,
-        updatedBy: true,
-      },
+      columns: {
+      id: true,
+      name: true,
+    },
     });
     return rows;
   },

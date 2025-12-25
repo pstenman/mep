@@ -1,4 +1,4 @@
-import type { GroupKey } from "@/utils/nav-path/types";
+import type { GroupKey } from "@/lib/navigation/dashboard/types";
 import { Text, Button } from "@mep/ui";
 import { useMenusSheet } from "./sheet";
 import { useTranslations } from "next-intl";
