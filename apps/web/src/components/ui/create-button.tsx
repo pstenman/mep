@@ -7,11 +7,13 @@ import { CreateRouteKeyEnum, createRoutes } from "@/lib/routes/create-routes";
 import { DynamicButton } from "./dynamic-button";
 import { usePreparationsSheet } from "../preparations/sheet";
 import { useMenusSheet } from "../menus/sheet";
+import { useRecipesSheet } from "../recipes/sheet";
 
 export function CreateButton() {
   const { open: openUserSheet } = useUserSheet();
   const { open: openPreparationsSheet } = usePreparationsSheet();
   const { open: openMenusSheet } = useMenusSheet();
+  const { open: openRecipesSheet } = useRecipesSheet();
   const pathname = usePathname();
   const route = createRoutes.find((r) => r.match(pathname));
 
@@ -25,6 +27,9 @@ export function CreateButton() {
         break;
       case CreateRouteKeyEnum.MENU:
         openMenusSheet();
+        break;
+      case CreateRouteKeyEnum.RECIPE:
+        openRecipesSheet();
         break;
       default:
         return;
