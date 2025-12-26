@@ -155,6 +155,13 @@
       "when": 1766704680445,
       "tag": "0021_cloudy_rocket_racer",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1766709144904,
+      "tag": "0022_broken_namor",
+      "breakpoints": true
     }
   ]
 }
