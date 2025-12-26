@@ -2,13 +2,15 @@
 
 import { trpc } from "@/lib/trpc/client";
 import { EmptyState } from "./empty-state";
-import { Loader2, Check } from "lucide-react";
+import { Loader2, Check, ArrowLeft } from "lucide-react";
 import type { PrepType } from "@mep/types";
 import type { PrepGroup } from "@/lib/navigation/dashboard/types";
 import { Button, Badge } from "@mep/ui";
+import { DynamicButton } from "@/components/ui/dynamic-button";
 
 interface TemplatesPrepViewProps {
   prepType: PrepType | null;
+  onBackClick?: () => void;
 }
 
 interface PrepListItem {
@@ -27,7 +29,10 @@ interface PrepListItem {
   }[];
 }
 
-export function TemplatesPrepView({ prepType }: TemplatesPrepViewProps) {
+export function TemplatesPrepView({
+  prepType,
+  onBackClick,
+}: TemplatesPrepViewProps) {
   const utils = trpc.useUtils();
 
   const { data: listsData, isLoading: listsLoading } =
@@ -67,7 +72,24 @@ export function TemplatesPrepView({ prepType }: TemplatesPrepViewProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold">All Lists</h2>
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-lg font-semibold">All Lists</h2>
+          <p className="text-sm text-muted-foreground">
+            View and manage all preparation lists
+          </p>
+        </div>
+        {onBackClick && (
+          <DynamicButton
+            icon={ArrowLeft}
+            tooltip="Back to Active List"
+            size="icon"
+            variant="outline"
+            onClick={onBackClick}
+            buttonClassName="rounded-full w-[32px] h-[32px]"
+          />
+        )}
+      </div>
       <div className="space-y-3">
         {lists.map((list: PrepListItem) => (
           <div

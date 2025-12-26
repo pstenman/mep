@@ -18,10 +18,7 @@ export function PrepGroupColumn({ group, onToggleItem }: PrepGroupColumnProps) {
   return (
     <div
       className="
-        border border-border/60
-        rounded-lg
-        p-3 sm:p-4
-        bg-background
+        rounded-lg bg-background
       "
     >
       <h3
@@ -31,13 +28,13 @@ export function PrepGroupColumn({ group, onToggleItem }: PrepGroupColumnProps) {
           tracking-wide
           uppercase
           text-muted-foreground
-          mb-2 sm:mb-3
+          
         "
       >
         {group.name}
       </h3>
 
-      <ul className="space-y-1.5 sm:space-y-2">
+      <ul>
         {group.items.map((item) => (
           <PrepItemRow key={item.id} item={item} onToggle={onToggleItem} />
         ))}

@@ -3,9 +3,9 @@
 import { useMemo } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { PrepListGrid } from "./list-grid";
-import { Button } from "@mep/ui";
 import type { PrepType, PrepStatus } from "@mep/types";
-import { Loader2 } from "lucide-react";
+import { Loader2, History, Plus } from "lucide-react";
+import { DynamicButton } from "@/components/ui/dynamic-button";
 
 interface PrepGroupWithItems {
   id: string;
@@ -19,9 +19,13 @@ interface PrepGroupWithItems {
 
 interface ActivePrepViewProps {
   prepType: PrepType | null;
+  onHistoryClick?: () => void;
 }
 
-export function ActivePrepView({ prepType }: ActivePrepViewProps) {
+export function ActivePrepView({
+  prepType,
+  onHistoryClick,
+}: ActivePrepViewProps) {
   const utils = trpc.useUtils();
 
   const { data, isLoading } = trpc.preparations.prepLists.getActive.useQuery(
@@ -62,25 +66,67 @@ export function ActivePrepView({ prepType }: ActivePrepViewProps) {
     );
   }
 
+  const renderHeader = () => (
+    <div className="flex justify-between items-center mb-6">
+      <div>
+        {data?.data ? (
+          <>
+            <h2 className="text-lg font-semibold">{data.data.name}</h2>
+            <p className="text-sm text-muted-foreground">
+              {new Date(data.data.date).toLocaleDateString()}
+            </p>
+          </>
+        ) : (
+          <>
+            <h2 className="text-lg font-semibold">No active list</h2>
+            <p className="text-sm text-muted-foreground">
+              Create a new list to get started
+            </p>
+          </>
+        )}
+      </div>
+      <div className="flex items-center gap-2">
+        {onHistoryClick && (
+          <DynamicButton
+            icon={History}
+            tooltip="View History"
+            size="icon"
+            variant="outline"
+            onClick={onHistoryClick}
+            buttonClassName="rounded-full w-[32px] h-[32px]"
+          />
+        )}
+        {prepType && (
+          <DynamicButton
+            icon={Plus}
+            tooltip="Create Next Day"
+            size="icon"
+            variant="outline"
+            onClick={handleCreateNextDay}
+            loading={createFromTemplate.isPending}
+            disabled={createFromTemplate.isPending}
+            buttonClassName="rounded-full w-[32px] h-[32px]"
+          />
+        )}
+      </div>
+    </div>
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="w-6 h-6 animate-spin" />
+      </div>
+    );
+  }
+
   if (!data?.data) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 space-y-4">
-        <p className="text-muted-foreground">No active list found</p>
-        {prepType && (
-          <Button
-            onClick={handleCreateNextDay}
-            disabled={createFromTemplate.isPending}
-          >
-            {createFromTemplate.isPending ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Creating...
-              </>
-            ) : (
-              "Create Next Day"
-            )}
-          </Button>
-        )}
+      <div className="space-y-4">
+        {renderHeader()}
+        <div className="flex flex-col items-center justify-center py-12">
+          <p className="text-muted-foreground">No active list found</p>
+        </div>
       </div>
     );
   }
@@ -99,32 +145,7 @@ export function ActivePrepView({ prepType }: ActivePrepViewProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-lg font-semibold">Active List</h2>
-          {data.data && (
-            <p className="text-sm text-muted-foreground">
-              {new Date(data.data.date).toLocaleDateString()} • {data.data.name}
-            </p>
-          )}
-        </div>
-        {prepType && (
-          <Button
-            variant="outline"
-            onClick={handleCreateNextDay}
-            disabled={createFromTemplate.isPending}
-          >
-            {createFromTemplate.isPending ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Creating...
-              </>
-            ) : (
-              "Create Next Day"
-            )}
-          </Button>
-        )}
-      </div>
+      {renderHeader()}
       {groups.length > 0 ? (
         <PrepListGrid groups={groups} onToggleItem={toggleItem} />
       ) : (

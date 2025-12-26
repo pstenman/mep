@@ -1,4 +1,5 @@
 import type { PrepStatus } from "@mep/types";
+import { Badge } from "@mep/ui";
 
 interface PrepItemRowProps {
   item: {
@@ -16,7 +17,6 @@ export function PrepItemRow({ item, onToggle }: PrepItemRowProps) {
       className="
         flex items-center justify-between
         min-h-[44px]
-        px-2
         rounded-md
         cursor-pointer
         active:bg-muted/70
@@ -26,15 +26,7 @@ export function PrepItemRow({ item, onToggle }: PrepItemRowProps) {
     >
       <span className="text-sm sm:text-[15px] leading-tight">{item.name}</span>
 
-      <span
-        className="
-          h-3 w-3
-          rounded-full
-          border
-          border-muted-foreground/40
-          shrink-0
-        "
-      />
+      <Badge variant="outline">{item.status}</Badge>
     </li>
   );
 }
