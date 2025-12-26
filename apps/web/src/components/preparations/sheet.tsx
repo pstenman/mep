@@ -3,9 +3,9 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@mep/ui";
 import { useParams } from "next/navigation";
 import { parseAsBoolean } from "nuqs";
 import { useQueryState } from "nuqs";
-import { PreparationsForm } from "./form";
+import { PreparationTemplateForm } from "./form";
 
-export const usePreparationsSheet = () => {
+export const usePreparationTemplateSheet = () => {
   const [isOpen, setIsOpen] = useQueryState(
     "preparationsSheetOpen",
     parseAsBoolean.withDefault(false),
@@ -22,8 +22,8 @@ export const usePreparationsSheet = () => {
   return { isOpen, open, close };
 };
 
-export function PreparationsSheet() {
-  const { isOpen, close } = usePreparationsSheet();
+export function PreparationTemplateSheet() {
+  const { isOpen, close } = usePreparationTemplateSheet();
   const params = useParams();
   const group = (params?.group as PrepGroup) || "all";
 
@@ -38,7 +38,7 @@ export function PreparationsSheet() {
           <SheetTitle>Create Preparation</SheetTitle>
         </SheetHeader>
         <div className="flex-1 min-h-0">
-          <PreparationsForm
+          <PreparationTemplateForm
             type={group}
             onSuccess={handleSuccess}
             onCancel={close}

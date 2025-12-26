@@ -15,7 +15,7 @@ export const updatePrepGroupSchema = z.object({
 });
 
 export const prepGroupFiltersSchema = z.object({
-  prepListId: z.uuid(),
+  prepListId: z.uuid().nullish(),
   search: z.string().optional(),
 });
 

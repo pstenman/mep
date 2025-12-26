@@ -1,6 +1,6 @@
 import type { PrepGroup } from "@/lib/navigation/dashboard/types";
 import { Text, Button } from "@mep/ui";
-import { usePreparationsSheet } from "./sheet";
+import { usePreparationTemplateSheet } from "./sheet";
 import { useTranslations } from "next-intl";
 
 interface EmptyStateProps {
@@ -8,7 +8,7 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ group }: EmptyStateProps) {
-  const { open } = usePreparationsSheet();
+  const { open } = usePreparationTemplateSheet();
   const t = useTranslations("preparations");
 
   return (

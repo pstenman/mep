@@ -5,13 +5,13 @@ import { useUserSheet } from "../users/sheet";
 import { usePathname } from "next/navigation";
 import { CreateRouteKeyEnum, createRoutes } from "@/lib/routes/create-routes";
 import { DynamicButton } from "./dynamic-button";
-import { usePreparationsSheet } from "../preparations/sheet";
+import { usePreparationTemplateSheet } from "../preparations/sheet";
 import { useMenusSheet } from "../menus/sheet";
 import { useRecipesSheet } from "../recipes/sheet";
 
 export function CreateButton() {
   const { open: openUserSheet } = useUserSheet();
-  const { open: openPreparationsSheet } = usePreparationsSheet();
+  const { open: openPreparationTemplateSheet } = usePreparationTemplateSheet();
   const { open: openMenusSheet } = useMenusSheet();
   const { open: openRecipesSheet } = useRecipesSheet();
   const pathname = usePathname();
@@ -23,7 +23,7 @@ export function CreateButton() {
         openUserSheet();
         break;
       case CreateRouteKeyEnum.PREPARATION:
-        openPreparationsSheet();
+        openPreparationTemplateSheet();
         break;
       case CreateRouteKeyEnum.MENU:
         openMenusSheet();

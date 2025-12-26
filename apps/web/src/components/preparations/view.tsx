@@ -9,13 +9,15 @@ import {
 import { PreparationsList } from "./list";
 import { EmptyState } from "./empty-state";
 import { Loader2 } from "lucide-react";
-import { PreparationsSheet } from "./sheet";
+import { PreparationTemplateSheet } from "./sheet";
 
-interface PreparationsViewProps {
+interface PreparationTemplateViewProps {
   group: PrepGroup | "all";
 }
 
-export function PreparationsView({ group }: PreparationsViewProps) {
+export function PreparationTemplateView({
+  group,
+}: PreparationTemplateViewProps) {
   const type = group === "all" ? "all" : group;
   const prepType = mapGroupToPrepType("preparations", type);
 
@@ -53,7 +55,7 @@ export function PreparationsView({ group }: PreparationsViewProps) {
           )}
         </div>
       </div>
-      <PreparationsSheet />
+      <PreparationTemplateSheet />
     </>
   );
 }

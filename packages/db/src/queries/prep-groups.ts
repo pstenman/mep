@@ -6,18 +6,27 @@ type PrepGroupRow = typeof prepGroups.$inferSelect;
 type PrepGroupInsert = typeof prepGroups.$inferInsert;
 
 export interface PrepGroupFilters {
-  prepListId: string;
+  prepListId?: string;
+  companyId?: string;
   search?: string;
 }
 
 export function buildPrepGroupFilters(filters: PrepGroupFilters) {
-  const whereConditions = [eq(prepGroups.prepListId, filters.prepListId)];
+  const whereConditions = [];
+
+  if (filters.prepListId) {
+    whereConditions.push(eq(prepGroups.prepListId, filters.prepListId));
+  }
+
+  if (filters.companyId) {
+    whereConditions.push(eq(prepGroups.companyId, filters.companyId));
+  }
 
   if (filters.search?.trim()) {
     whereConditions.push(ilike(prepGroups.name, `%${filters.search}%`));
   }
 
-  return and(...whereConditions);
+  return whereConditions.length > 0 ? and(...whereConditions) : undefined;
 }
 
 export const prepGroupQueries = {

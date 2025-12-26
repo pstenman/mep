@@ -18,22 +18,23 @@ export class PrepGroupService {
     },
   ) {
     const { filter } = params || {};
-    if (!filter?.prepListId) {
-      throw new Error("prepListId is required in filter");
-    }
 
-    const prepList = await prepListQueries.getById(filter.prepListId);
-    if (!prepList) {
-      throw new Error("Prep list not found");
-    }
-    if (prepList.companyId !== companyId) {
-      throw new Error("Prep list does not belong to this company");
+    if (filter?.prepListId) {
+      const prepList = await prepListQueries.getById(filter.prepListId);
+      if (!prepList) {
+        throw new Error("Prep list not found");
+      }
+      if (prepList.companyId !== companyId) {
+        throw new Error("Prep list does not belong to this company");
+      }
     }
 
     const filters: PrepGroupFilters = {
-      prepListId: filter.prepListId,
+      prepListId: filter?.prepListId ?? undefined,
+      companyId: companyId,
       search: filter?.search,
     };
+
     const rows = await prepGroupQueries.getAll(filters);
     return { items: rows };
   }

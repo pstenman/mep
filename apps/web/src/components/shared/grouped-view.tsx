@@ -3,7 +3,7 @@ import type {
   GroupedSection,
   PrepGroup,
 } from "@/lib/navigation/dashboard/types";
-import { PreparationsView } from "../preparations/view";
+import { PreparationTemplateView } from "../preparations/view";
 import { MenusView } from "../menus/view";
 import { AllergiesView } from "../allergies/view";
 
@@ -15,7 +15,7 @@ interface GroupedViewProps {
 export function GroupedView({ section, group }: GroupedViewProps) {
   switch (section) {
     case "preparations":
-      return <PreparationsView group={group as PrepGroup} />;
+      return <PreparationTemplateView group={group as PrepGroup} />;
     case "menus":
       return <MenusView group={group as GroupKey} />;
     case "allergies":

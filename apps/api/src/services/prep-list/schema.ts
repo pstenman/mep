@@ -1,6 +1,17 @@
 import { PrepType } from "@mep/types";
 import { z } from "zod";
 
+const prepItemSchema = z.object({
+  name: z.string().min(1),
+  recipeId: z.uuid().optional(),
+});
+
+const prepGroupSchema = z.object({
+  name: z.string().min(1),
+  note: z.string().optional(),
+  items: z.array(prepItemSchema),
+});
+
 export const createPrepListSchema = z.object({
   name: z.string().min(1),
   menuId: z.uuid().optional(),
@@ -8,6 +19,7 @@ export const createPrepListSchema = z.object({
   date: z.coerce.date(),
   isActive: z.boolean().optional(),
   isTemplate: z.boolean().optional(),
+  groups: z.array(prepGroupSchema).optional(),
 });
 
 export const updatePrepListSchema = z.object({

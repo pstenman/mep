@@ -53,8 +53,6 @@ export class PrepListService {
     companyId: string,
     userId: string,
   ) {
-    const templateGroups = await prepListQueries.getTemplateGroups(companyId);
-
     const fullList = await db.transaction(async (tx) => {
       const prepList = await prepListQueries.create(
         {
@@ -70,34 +68,71 @@ export class PrepListService {
         tx,
       );
 
-      for (const group of templateGroups) {
-        const newGroup = await prepGroupQueries.create(
-          {
-            prepListId: prepList.id,
-            name: group.name,
-            note: group.note,
-            isTemplate: true,
-            companyId,
-            createdBy: userId,
-            updatedBy: userId,
-          },
-          tx,
-        );
-
-        for (const item of group.prepItems ?? []) {
-          await prepItemQueries.create(
+      if (data.groups && data.groups.length > 0) {
+        for (const group of data.groups) {
+          const newGroup = await prepGroupQueries.create(
             {
-              prepGroupId: newGroup.id,
-              name: item.name,
-              recipeId: item.recipeId,
+              prepListId: prepList.id,
+              name: group.name,
+              note: group.note ?? null,
               isTemplate: true,
-              status: PrepStatus.NONE,
               companyId,
               createdBy: userId,
               updatedBy: userId,
             },
             tx,
           );
+
+          if (group.items && group.items.length > 0) {
+            for (const item of group.items) {
+              await prepItemQueries.create(
+                {
+                  prepGroupId: newGroup.id,
+                  name: item.name,
+                  recipeId: item.recipeId ?? null,
+                  isTemplate: true,
+                  status: PrepStatus.NONE,
+                  companyId,
+                  createdBy: userId,
+                  updatedBy: userId,
+                },
+                tx,
+              );
+            }
+          }
+        }
+      } else {
+        const templateGroups =
+          await prepListQueries.getTemplateGroups(companyId);
+        for (const group of templateGroups) {
+          const newGroup = await prepGroupQueries.create(
+            {
+              prepListId: prepList.id,
+              name: group.name,
+              note: group.note ?? null,
+              isTemplate: true,
+              companyId,
+              createdBy: userId,
+              updatedBy: userId,
+            },
+            tx,
+          );
+
+          for (const item of group.prepItems ?? []) {
+            await prepItemQueries.create(
+              {
+                prepGroupId: newGroup.id,
+                name: item.name,
+                recipeId: item.recipeId ?? null,
+                isTemplate: true,
+                status: PrepStatus.NONE,
+                companyId,
+                createdBy: userId,
+                updatedBy: userId,
+              },
+              tx,
+            );
+          }
         }
       }
 
