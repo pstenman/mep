@@ -48,6 +48,16 @@ export class PrepListService {
     return transformPrepList(prepList as RawPrepListWithRelations);
   }
 
+  static async getActive(companyId: string, prepType?: PrepType) {
+    const rawList = await prepListQueries.getActive(
+      companyId,
+      prepType ?? undefined,
+    );
+    if (!rawList) return null;
+
+    return transformPrepList(rawList as RawPrepListWithRelations);
+  }
+
   static async createTemplate(
     data: CreatePrepListSchema,
     companyId: string,
@@ -211,6 +221,37 @@ export class PrepListService {
     return { success: true };
   }
 
+  static async setActive(listId: string, companyId: string, userId: string) {
+    const existing = await prepListQueries.getById(listId);
+    if (!existing) {
+      throw new Error("Prep list not found");
+    }
+    if (existing.companyId !== companyId) {
+      throw new Error("Prep list does not belong to this company");
+    }
+
+    await db.transaction(async (tx) => {
+      await prepListQueries.deactivateByType({
+        companyId,
+        prepType: existing.prepTypes as PrepType,
+        userId,
+        executor: tx,
+      });
+
+      await prepListQueries.update(
+        listId,
+        { isActive: true, updatedBy: userId },
+        tx,
+      );
+    });
+
+    const fullList = await prepListQueries.getById(listId);
+    if (!fullList) {
+      throw new Error("Failed to fetch updated prep list");
+    }
+    return transformPrepList(fullList as RawPrepListWithRelations);
+  }
+
   static async createFromTemplate(
     companyId: string,
     prepType: PrepType,
@@ -218,6 +259,13 @@ export class PrepListService {
     userId: string,
   ) {
     const newList = await db.transaction(async (tx) => {
+      await prepListQueries.deactivateByType({
+        companyId,
+        prepType,
+        userId,
+        executor: tx,
+      });
+
       const createdList = await prepListQueries.create(
         {
           companyId,

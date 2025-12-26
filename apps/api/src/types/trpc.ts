@@ -201,6 +201,12 @@ export type PrepListInput =
 export type PrepListOutput =
   NonNullable<TRPCOutputs>["preparations"]["prepLists"]["getById"];
 
+// Get Active
+export type GetActivePrepListInput =
+  NonNullable<TRPCInputs>["preparations"]["prepLists"]["getActive"];
+export type GetActivePrepListOutput =
+  NonNullable<TRPCOutputs>["preparations"]["prepLists"]["getActive"];
+
 // Create Template
 export type CreatePrepListTemplateInput =
   NonNullable<TRPCInputs>["preparations"]["prepLists"]["createTemplate"];

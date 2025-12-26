@@ -1,11 +1,4 @@
-import {
-  boolean,
-  pgTable,
-  text,
-  timestamp,
-  unique,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { companies } from "./companies";
 import { users } from "./users";
 import { recipes } from "./recipes";
@@ -13,31 +6,25 @@ import { PrepStatus, PrepType } from "@mep/types";
 import { relations } from "drizzle-orm";
 import { menuItems, menus } from "./menus";
 
-export const prepLists = pgTable(
-  "prep_lists",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    companyId: uuid("company_id")
-      .notNull()
-      .references(() => companies.id),
-    menuId: uuid("menu_id").references(() => menus.id),
-    prepTypes: text().$type<PrepType>().notNull().default(PrepType.BREAKFAST),
-    name: text("name").notNull(),
-    date: timestamp("date").notNull(),
-    isActive: boolean("is_active").notNull().default(true),
-    createdBy: uuid("created_by")
-      .notNull()
-      .references(() => users.id),
-    updatedBy: uuid("updated_by")
-      .notNull()
-      .references(() => users.id),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  },
-  (table) => [
-    unique("unique_date_list").on(table.companyId, table.date, table.prepTypes),
-  ],
-);
+export const prepLists = pgTable("prep_lists", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  companyId: uuid("company_id")
+    .notNull()
+    .references(() => companies.id),
+  menuId: uuid("menu_id").references(() => menus.id),
+  prepTypes: text().$type<PrepType>().notNull().default(PrepType.BREAKFAST),
+  name: text("name").notNull(),
+  date: timestamp("date").notNull(),
+  isActive: boolean("is_active").notNull().default(false),
+  createdBy: uuid("created_by")
+    .notNull()
+    .references(() => users.id),
+  updatedBy: uuid("updated_by")
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
 export const prepGroups = pgTable("prep_groups", {
   id: uuid("id").primaryKey().defaultRandom(),

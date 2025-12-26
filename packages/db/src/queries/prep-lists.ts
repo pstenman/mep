@@ -13,6 +13,12 @@ export interface PrepListFilters {
   type?: PrepType;
   isActive?: boolean;
 }
+interface DeactivateByTypeParams {
+  companyId: string;
+  prepType: PrepType;
+  userId: string;
+  executor?: Database;
+}
 
 export function buildPrepListFilters(filters: PrepListFilters) {
   const whereConditions = [];
@@ -102,6 +108,42 @@ export const prepListQueries = {
         },
       },
     });
+    return row;
+  },
+
+  getActive: async (companyId: string, prepType?: PrepType) => {
+    const conditions = [
+      eq(prepLists.companyId, companyId),
+      eq(prepLists.isActive, true),
+    ];
+
+    if (prepType) {
+      conditions.push(eq(prepLists.prepTypes, prepType));
+    }
+
+    const row = await db.query.prepLists.findFirst({
+      where: and(...conditions),
+      with: {
+        prepGroups: {
+          columns: {
+            id: true,
+            name: true,
+            note: true,
+            menuItemId: true,
+          },
+          with: {
+            prepItems: {
+              columns: {
+                id: true,
+                name: true,
+                status: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
     return row;
   },
 
@@ -198,5 +240,25 @@ export const prepListQueries = {
 
       return newList[0];
     });
+  },
+
+  deactivateByType: async (params: DeactivateByTypeParams) => {
+    const { companyId, prepType, userId, executor } = params;
+    const dbOrTx = executor ?? db;
+    const updatedAt = new Date();
+    await dbOrTx
+      .update(prepLists)
+      .set({
+        isActive: false,
+        updatedBy: userId,
+        updatedAt,
+      })
+      .where(
+        and(
+          eq(prepLists.companyId, companyId),
+          eq(prepLists.prepTypes, prepType),
+          eq(prepLists.isActive, true),
+        ),
+      );
   },
 };

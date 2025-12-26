@@ -46,6 +46,22 @@ export const preparationsRouter = createTRPCRouter({
         return { data: prepList };
       }),
 
+    getActive: companyProcedure
+      .input(
+        z
+          .object({
+            prepType: z.enum(Object.values(PrepType)).optional(),
+          })
+          .optional(),
+      )
+      .query(async ({ input, ctx }) => {
+        const prepList = await PrepListService.getActive(
+          ctx.companyId!,
+          input?.prepType,
+        );
+        return { data: prepList };
+      }),
+
     createTemplate: companyProcedure
       .input(createPrepListSchema)
       .mutation(async ({ input, ctx }) => {
@@ -87,6 +103,17 @@ export const preparationsRouter = createTRPCRouter({
           ctx.companyId!,
           input.prepType,
           input.date,
+          ctx.userId!,
+        );
+        return { data: prepList };
+      }),
+
+    setActive: companyProcedure
+      .input(z.object({ id: z.uuid() }))
+      .mutation(async ({ input, ctx }) => {
+        const prepList = await PrepListService.setActive(
+          input.id,
+          ctx.companyId!,
           ctx.userId!,
         );
         return { data: prepList };

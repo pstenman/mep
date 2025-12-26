@@ -1,57 +1,51 @@
 "use client";
 
+import { useState } from "react";
 import type { PrepGroup } from "@/lib/navigation/dashboard/types";
-import { trpc } from "@/lib/trpc/client";
-import {
-  mapGroupToPrepType,
-  filterGroupsByPrepType,
-} from "@/utils/filters/prep-type-helpers";
-import { PreparationsList } from "./list";
-import { EmptyState } from "./empty-state";
-import { Loader2 } from "lucide-react";
+import { mapGroupToPrepType } from "@/utils/filters/prep-type-helpers";
+import { Button } from "@mep/ui";
 import { PreparationTemplateSheet } from "./sheet";
+import { ActivePrepView } from "./active-view";
+import { TemplatesPrepView } from "./templates-view";
 
 interface PreparationTemplateViewProps {
   group: PrepGroup | "all";
 }
 
+type ViewMode = "active" | "old";
+
 export function PreparationTemplateView({
   group,
 }: PreparationTemplateViewProps) {
+  const [viewMode, setViewMode] = useState<ViewMode>("active");
   const type = group === "all" ? "all" : group;
   const prepType = mapGroupToPrepType("preparations", type);
-
-  const { data, isLoading } = trpc.preparations.prepGroups.getAll.useQuery({
-    filter: {},
-  });
-
-  if (isLoading) {
-    return (
-      <div className="flex w-full justify-center">
-        <div className="w-full px-3 py-4 md:px-6 lg:px-8 max-w-full lg:max-w-[794px]">
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="w-6 h-6 animate-spin" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const filteredGroups = filterGroupsByPrepType(
-    "preparations",
-    data?.data.items,
-    prepType ? String(prepType) : null,
-  );
-  const hasGroups = filteredGroups.length > 0;
 
   return (
     <>
       <div className="flex w-full justify-center">
         <div className="w-full px-3 py-4 md:px-6 lg:px-8 max-w-full lg:max-w-[794px]">
-          {hasGroups ? (
-            <PreparationsList type={type} />
+          <div className="flex gap-2 mb-6">
+            <Button
+              type="button"
+              variant={viewMode === "active" ? "default" : "outline"}
+              onClick={() => setViewMode("active")}
+            >
+              Active
+            </Button>
+            <Button
+              type="button"
+              variant={viewMode === "old" ? "default" : "outline"}
+              onClick={() => setViewMode("old")}
+            >
+              Old List
+            </Button>
+          </div>
+
+          {viewMode === "active" ? (
+            <ActivePrepView prepType={prepType} />
           ) : (
-            type !== "all" && <EmptyState group={type} />
+            <TemplatesPrepView prepType={prepType} />
           )}
         </div>
       </div>
