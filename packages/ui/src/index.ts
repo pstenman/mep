@@ -27,6 +27,7 @@ export * from "./components/form";
 export * from "./components/command";
 export * from "./components/combobox";
 export * from "./components/checkbox";
+export * from "./components/table";
 
 // HOOKS
 export * from "./hooks/use-mobile";
