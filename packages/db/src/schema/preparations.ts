@@ -48,6 +48,7 @@ export const prepGroups = pgTable("prep_groups", {
   prepListId: uuid("prep_list_id").references(() => prepLists.id),
   name: text("name").notNull(),
   note: text("note"),
+  isTemplate: boolean("is_template").notNull().default(false),
   createdBy: uuid("created_by")
     .notNull()
     .references(() => users.id),
@@ -67,6 +68,7 @@ export const prepItems = pgTable("prep_items", {
   recipeId: uuid("recipe_id").references(() => recipes.id),
   name: text("name").notNull(),
   status: text("status").$type<PrepStatus>().notNull().default(PrepStatus.NONE),
+  isTemplate: boolean("is_template").notNull().default(false),
   createdBy: uuid("created_by")
     .notNull()
     .references(() => users.id),

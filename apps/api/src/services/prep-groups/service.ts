@@ -1,4 +1,8 @@
-import { prepGroupQueries, type PrepGroupFilters } from "@mep/db";
+import {
+  prepGroupQueries,
+  prepListQueries,
+  type PrepGroupFilters,
+} from "@mep/db";
 import type {
   CreatePrepGroupSchema,
   UpdatePrepGroupSchema,
@@ -14,41 +18,78 @@ export class PrepGroupService {
     },
   ) {
     const { filter } = params || {};
+    if (!filter?.prepListId) {
+      throw new Error("prepListId is required in filter");
+    }
+
+    const prepList = await prepListQueries.getById(filter.prepListId);
+    if (!prepList) {
+      throw new Error("Prep list not found");
+    }
+    if (prepList.companyId !== companyId) {
+      throw new Error("Prep list does not belong to this company");
+    }
+
     const filters: PrepGroupFilters = {
-      companyId,
+      prepListId: filter.prepListId,
       search: filter?.search,
     };
     const rows = await prepGroupQueries.getAll(filters);
     return { items: rows };
   }
 
-  static async getById(id: string) {
-    return await prepGroupQueries.getById(id);
+  static async getById(id: string, companyId: string) {
+    const prepGroup = await prepGroupQueries.getById(id);
+    if (!prepGroup) {
+      throw new Error("Prep group not found");
+    }
+    if (prepGroup.companyId !== companyId) {
+      throw new Error("Prep group does not belong to this company");
+    }
+    return prepGroup;
   }
 
-  static async create(input: CreatePrepGroupSchema, companyId: string, userId: string) {
+  static async create(
+    input: CreatePrepGroupSchema,
+    companyId: string,
+    userId: string,
+  ) {
+    const prepList = await prepListQueries.getById(input.prepListId);
+    if (!prepList) {
+      throw new Error("Prep list not found");
+    }
+    if (prepList.companyId !== companyId) {
+      throw new Error("Prep list does not belong to this company");
+    }
+
     const prepGroup = await prepGroupQueries.create({
-      companyId,
+      companyId: prepList.companyId,
+      prepListId: input.prepListId,
       name: input.name,
-      menuItemId: input.menuItemId,
-      prepTypes: input.prepTypes,
-      note: input.note,
+      menuItemId: input.menuItemId ?? null,
+      note: input.note ?? null,
       createdBy: userId,
       updatedBy: userId,
     });
     return prepGroup;
   }
 
-  static async update(input: UpdatePrepGroupSchema, userId: string) {
+  static async update(
+    input: UpdatePrepGroupSchema,
+    companyId: string,
+    userId: string,
+  ) {
     const existing = await prepGroupQueries.getById(input.id);
     if (!existing) {
       throw new Error("Prep group not found");
+    }
+    if (existing.companyId !== companyId) {
+      throw new Error("Prep group does not belong to this company");
     }
 
     const updateData: Partial<{
       name: string;
       menuItemId: string | null;
-      prepTypes: string | null;
       note: string | null;
       updatedBy: string;
     }> = {
@@ -61,10 +102,6 @@ export class PrepGroupService {
 
     if (input.menuItemId !== undefined) {
       updateData.menuItemId = input.menuItemId;
-    }
-
-    if (input.prepTypes !== undefined) {
-      updateData.prepTypes = input.prepTypes;
     }
 
     if (input.note !== undefined) {
@@ -88,4 +125,3 @@ export class PrepGroupService {
     return { success: true };
   }
 }
-
