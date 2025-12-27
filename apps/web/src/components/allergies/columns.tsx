@@ -1,37 +1,39 @@
 "use client";
 import type { FormattedMenuItem } from "@mep/api";
 import type { Allergen } from "@mep/types";
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, Row } from "@tanstack/react-table";
 import { MenuItemActions } from "../ui/action-menu";
+import { AllergiesCell } from "./cell";
 
 interface AllergiesColumnsProps {
-  allAllergies: Allergen[];
+  allergies: Allergen[];
   onEditMenuItem: (id: string) => void;
   onDeleteMenuItem: (id: string) => void;
+  menuId: string;
 }
 
 export const getAllergiesColumns = ({
-  allAllergies,
+  allergies,
   onEditMenuItem,
   onDeleteMenuItem,
+  menuId,
 }: AllergiesColumnsProps): ColumnDef<FormattedMenuItem>[] => [
   {
     accessorKey: "name",
+    id: "name",
     header: "Dish",
-    enableSorting: true,
-    enableResizing: true,
+    enableResizing: false,
     size: 150,
-    meta: { pinned: "left", className: "text-left" },
   },
-  ...allAllergies.map((allergy) => ({
+  ...allergies.map((allergy) => ({
+    accessorKey: allergy,
     id: allergy,
     header: allergy,
-    accessorFn: (row: FormattedMenuItem) =>
-      row.allergies.includes(allergy) ? "✔️" : "",
+    size: 64,
     enableSorting: false,
-    enableResizing: true,
-    size: 150,
-    meta: { className: "text-center" },
+    cell: ({ row }: { row: Row<FormattedMenuItem> }) => (
+      <AllergiesCell row={row} allergy={allergy} menuId={menuId} />
+    ),
   })),
   {
     id: "actions",
@@ -39,7 +41,6 @@ export const getAllergiesColumns = ({
     enableSorting: false,
     enableResizing: false,
     size: 50,
-    meta: { pinned: "right", className: "text-center" },
     cell: ({ row }) => (
       <div className="flex gap-1 justify-center">
         <MenuItemActions

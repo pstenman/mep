@@ -4,7 +4,7 @@ import type { GroupKey } from "@/lib/navigation/dashboard/types";
 import { trpc } from "@/lib/trpc/client";
 import { urlGroupToMenuTypeFilter } from "@/utils/filters/url-to-api-filters";
 import { Loader2 } from "lucide-react";
-import { AllergiesTableOne } from "./tables";
+import { AllergiesTable } from "./table";
 import { AllergiesEmptyState } from "./empty-state";
 import { useState, useEffect } from "react";
 import { MenuCombobox } from "../menus/autocomplete";
@@ -73,11 +73,12 @@ export function AllergiesView({ group }: AllergiesViewProps) {
               />
             </div>
             {selectedMenuId && (
-              <AllergiesTableOne
+              <AllergiesTable
                 menuItems={menuItems}
-                allAllergies={allAllergies}
+                allergies={allAllergies}
                 onEditMenuItem={handleEditMenuItem}
                 onDeleteMenuItem={handleDeleteMenuItem}
+                menuId={selectedMenuId}
               />
             )}
           </>
