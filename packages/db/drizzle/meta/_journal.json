@@ -169,6 +169,13 @@
       "when": 1766736842636,
       "tag": "0023_gorgeous_nitro",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1766840730723,
+      "tag": "0024_whole_masque",
+      "breakpoints": true
     }
   ]
 }

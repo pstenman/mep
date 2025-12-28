@@ -14,8 +14,7 @@ export const prepLists = pgTable("prep_lists", {
   menuId: uuid("menu_id").references(() => menus.id),
   prepTypes: text().$type<PrepType>().notNull().default(PrepType.BREAKFAST),
   name: text("name").notNull(),
-  date: timestamp("date").notNull(),
-  isActive: boolean("is_active").notNull().default(false),
+  scheduleFor: timestamp("schedule_for").notNull(),
   createdBy: uuid("created_by")
     .notNull()
     .references(() => users.id),
