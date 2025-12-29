@@ -6,6 +6,7 @@ const STATUS_ORDER = [
   PrepStatus.PREP,
   PrepStatus.PREP2,
   PrepStatus.PRIORITY,
+  PrepStatus.DONE,
 ] as const;
 
 export function getNextPrepStatus(

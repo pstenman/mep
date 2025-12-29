@@ -18,8 +18,26 @@ const getStatusBadgeClassName = (status?: PrepStatus): string => {
       return "bg-orange-500/10 text-orange-700 border-orange-500/30 dark:bg-orange-500/20 dark:text-orange-400 dark:border-orange-500/40";
     case PrepStatus.PRIORITY:
       return "bg-red-500/10 text-red-700 border-red-500/30 dark:bg-red-500/20 dark:text-red-400 dark:border-red-500/40";
+    case PrepStatus.DONE:
+      return "bg-green-500/10 text-green-700 border-green-500/30 dark:bg-green-500/20 dark:text-green-400 dark:border-green-500/40";
     default:
       return "";
+  }
+};
+
+const getStatusNameBadgeClassName = (status?: PrepStatus): string => {
+  switch (status) {
+    case PrepStatus.MARK:
+      return "bg-yellow-500/10 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400";
+    case PrepStatus.PREP:
+    case PrepStatus.PREP2:
+      return "bg-orange-500/10 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400";
+    case PrepStatus.PRIORITY:
+      return "bg-red-500/10 text-red-700 dark:bg-red-500/20 dark:text-red-400";
+    case PrepStatus.DONE:
+      return "bg-green-500/10 text-green-700 dark:bg-green-500/20 dark:text-green-400";
+    default:
+      return "bg-transparent";
   }
 };
 
@@ -44,19 +62,18 @@ export function PrepItemRow({
   return (
     <li
       onClick={() => onToggle?.(item.id)}
-      className="
-        flex items-center justify-between
-        rounded-md
-        cursor-pointer
-        active:bg-muted/70
-        sm:hover:bg-muted/50
-        transition
-      "
+      className="flex items-center justify-between rounded-md cursor-pointer transition"
     >
       <div className="flex items-center gap-2 flex-1 min-w-0">
-        <span className="text-sm sm:text-[15px] leading-tight truncate">
+        <Badge
+          variant="secondary"
+          className={cn(
+            "text-sm sm:text-[15px] leading-tight truncate border-0",
+            getStatusNameBadgeClassName(item.status),
+          )}
+        >
           {item.name}
-        </span>
+        </Badge>
         {item.recipeId && item.recipe && (
           <Button
             variant="ghost"

@@ -1,11 +1,12 @@
 import type { Recipe } from "./recipes";
 
 export enum PrepStatus {
-  NONE = "none",
-  MARK = "mark",
-  PREP = "prep",
-  PREP2 = "prep2",
-  PRIORITY = "priority",
+  NONE = "N",
+  MARK = "M",
+  PREP = "P",
+  PREP2 = "P2",
+  PRIORITY = "P!",
+  DONE = "D",
 }
 
 export enum PrepType {
