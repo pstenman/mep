@@ -1,6 +1,6 @@
 import { users } from "@/schema/users";
 import { db, type Database } from "..";
-import { and, eq, ilike, or } from "drizzle-orm";
+import { and, eq, ilike, or, inArray } from "drizzle-orm";
 import type { Role } from "@mep/types";
 import { memberships } from "@/schema/memberships";
 import { buildOrderByConditions, type PaginationOptions } from "./query-build";
@@ -17,20 +17,14 @@ export interface UserFilters {
 export function buildUserFilters(filters: UserFilters) {
   const whereConditions = [];
 
-  whereConditions.push(eq(memberships.companyId, filters.companyId));
-
   if (filters.search?.trim()) {
     whereConditions.push(
       or(
         ilike(users.email, `%${filters.search}%`),
         ilike(users.firstName, `%${filters.search}%`),
-        ilike(users.lastName, `%${filters.search}%`)
-      )
+        ilike(users.lastName, `%${filters.search}%`),
+      ),
     );
-  }
-
-  if (filters.role) {
-    whereConditions.push(eq(memberships.role, filters.role));
   }
 
   if (filters.isActive !== undefined) {
@@ -41,7 +35,7 @@ export function buildUserFilters(filters: UserFilters) {
 }
 
 export function buildUserSort(
-  sorting: Array<{ id: string; desc: boolean }> = []
+  sorting: Array<{ id: string; desc: boolean }> = [],
 ) {
   const fieldMap = {
     id: users.id,
@@ -50,28 +44,69 @@ export function buildUserSort(
     email: users.email,
     phoneNumber: users.phoneNumber,
     isActive: users.isActive,
+    createdAt: users.createdAt,
+    updatedAt: users.updatedAt,
   } as const;
   return buildOrderByConditions(fieldMap, sorting);
 }
 
 export const userQueries = {
-  
   getAll: async (
-    filters: UserFilters, 
-    pagination?: PaginationOptions, 
+    filters: UserFilters,
+    pagination?: PaginationOptions,
     sorting?: Array<{ id: string; desc: boolean }>,
   ) => {
     const { page = 1, limit = 20 } = pagination || {};
     const offset = (page - 1) * limit;
 
-    const whereClauses = buildUserFilters(filters);
+    const membershipFilterConditions = [
+      eq(memberships.companyId, filters.companyId),
+    ];
+    if (filters.role) {
+      membershipFilterConditions.push(eq(memberships.role, filters.role));
+    }
+
+    const membershipSubquery = db
+      .select({ userId: memberships.userId })
+      .from(memberships)
+      .where(and(...membershipFilterConditions));
+
+    const userIds = await membershipSubquery;
+    const userIdArray = userIds.map((m) => m.userId);
+    if (userIds.length === 0) {
+      return [];
+    }
+
+    const whereConditions = [];
+
+    whereConditions.push(inArray(users.id, userIdArray));
+
+    if (filters.search?.trim()) {
+      whereConditions.push(
+        or(
+          ilike(users.email, `%${filters.search}%`),
+          ilike(users.firstName, `%${filters.search}%`),
+          ilike(users.lastName, `%${filters.search}%`),
+        ),
+      );
+    }
+
+    if (filters.isActive !== undefined) {
+      whereConditions.push(eq(users.isActive, filters.isActive));
+    }
+
+    const whereClauses =
+      whereConditions.length > 1 ? and(...whereConditions) : whereConditions[0];
+
     const rows = await db.query.users.findMany({
       with: {
-        memberships: true,
+        memberships: {
+          where: (m) => eq(m.companyId, filters.companyId),
+        },
       },
       where: whereClauses,
       orderBy: buildUserSort(
-        sorting?.length ? sorting : [{ id: "createdAt", desc: false }]
+        sorting?.length ? sorting : [{ id: "createdAt", desc: false }],
       ),
       limit,
       offset,
@@ -84,7 +119,7 @@ export const userQueries = {
     const row = await dbOrTx.insert(users).values(input).returning();
     return row[0];
   },
-  
+
   getById: async (id: string) => {
     const row = await db.query.users.findFirst({
       where: eq(users.id, id),
@@ -108,7 +143,6 @@ export const userQueries = {
   activate: async (userId: string, db: Database) => {
     return db.update(users).set({ isActive: true }).where(eq(users.id, userId));
   },
-
 
   getSupabaseIdByUserId: async (userId: string, db: Database) => {
     const row = await db.query.users.findFirst({

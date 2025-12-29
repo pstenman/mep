@@ -1,5 +1,6 @@
 "use client";
 
+import { dashboardPrefix } from "@/lib/navigation/paths";
 import {
   Accordion,
   AccordionContent,
@@ -11,6 +12,7 @@ import {
   useSidebar,
 } from "@mep/ui";
 import { LogOut, Settings } from "lucide-react";
+import Link from "next/link";
 
 export function UserMenu() {
   const { state } = useSidebar();
@@ -36,9 +38,13 @@ export function UserMenu() {
             variant="ghost"
             className="flex items-center gap-2 text-xs w-full justify-start"
           >
-            <Settings size={16} />
-            {/* Todo fix settings page and route */}
-            <span>Settings</span>
+            <Link
+              href={dashboardPrefix("settings")}
+              className="flex items-center gap-2"
+            >
+              <Settings size={16} />
+              Settings
+            </Link>
           </Button>
           <Button
             variant="ghost"

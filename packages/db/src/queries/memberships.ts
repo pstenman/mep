@@ -23,18 +23,14 @@ export const membershipQueries = {
       .where(eq(memberships.id, membershipId));
   },
 
-  findCompanyByUserId: async (
-    userId: string,
-    executor?: Database,
-  ) => {
+  findCompanyByUserId: async (userId: string, executor?: Database) => {
     const dbOrTx = executor ?? db;
     const row = await dbOrTx.query.memberships.findFirst({
       where: eq(memberships.userId, userId),
     });
-  
+
     return row ?? null;
   },
-  
 
   findByUserAndCompany: async (
     userId: string,
@@ -51,5 +47,28 @@ export const membershipQueries = {
     });
 
     return row ?? null;
+  },
+
+  update: async (
+    userId: string,
+    companyId: string,
+    updates: Partial<Pick<MembershipRow, "role">>,
+    executor?: Database,
+  ): Promise<MembershipRow> => {
+    const dbOrTx = executor ?? db;
+    const rows = await dbOrTx
+      .update(memberships)
+      .set(updates)
+      .where(
+        and(
+          eq(memberships.userId, userId),
+          eq(memberships.companyId, companyId),
+        ),
+      )
+      .returning();
+    if (!rows[0]) {
+      throw new Error("Membership not found");
+    }
+    return rows[0];
   },
 };

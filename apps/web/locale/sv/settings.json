@@ -28,7 +28,16 @@
   },
   "users": {
     "title": "Anställda",
-    "description": "Anställda"
+    "description": "Hantera användarroller i ditt företag.",
+    "loading": "Laddar användare...",
+    "empty": "Inga användare hittades.",
+    "updateSuccess": "Roll uppdaterades",
+    "updateError": "Kunde inte uppdatera roll",
+    "columns": {
+      "name": "Namn",
+      "email": "E-post",
+      "role": "Roll"
+    }
   },
   "personal": {
     "title": "Användarinställningar",

@@ -1,5 +1,6 @@
 import { membershipQueries, db, type Database } from "@mep/db";
 import type { CreateMembershipSchema } from "./schema";
+import type { Role } from "@mep/types";
 
 export class MembershipService {
   static async create(input: CreateMembershipSchema, executor?: Database) {
@@ -12,11 +13,24 @@ export class MembershipService {
   }
 
   static async findByUserAndCompany(userId: string, companyId: string) {
-    if (!userId || !companyId) throw new Error("User ID and company ID are required");
+    if (!userId || !companyId)
+      throw new Error("User ID and company ID are required");
     return await membershipQueries.findByUserAndCompany(userId, companyId);
   }
   static async findCompanyByUserId(userId: string) {
     if (!userId) throw new Error("User ID is required");
     return await membershipQueries.findCompanyByUserId(userId);
+  }
+
+  static async update(
+    userId: string,
+    companyId: string,
+    updates: { role?: Role },
+    executor?: Database,
+  ) {
+    if (!userId || !companyId) {
+      throw new Error("User ID and company ID are required");
+    }
+    return await membershipQueries.update(userId, companyId, updates, executor);
   }
 }

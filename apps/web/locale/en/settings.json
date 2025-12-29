@@ -28,7 +28,16 @@
   },
   "users": {
     "title": "Users",
-    "description": "User settings"
+    "description": "Manage user roles in your company.",
+    "loading": "Loading users...",
+    "empty": "No users found.",
+    "updateSuccess": "Role updated successfully",
+    "updateError": "Failed to update role",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role"
+    }
   },
   "personal": {
     "title": "Personal",
