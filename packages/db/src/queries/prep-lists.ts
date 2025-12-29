@@ -64,6 +64,17 @@ export const prepListQueries = {
                 id: true,
                 name: true,
                 status: true,
+                recipeId: true,
+              },
+              with: {
+                recipe: {
+                  columns: {
+                    id: true,
+                    name: true,
+                    instructions: true,
+                    ingredients: true,
+                  },
+                },
               },
             },
           },
@@ -98,6 +109,17 @@ export const prepListQueries = {
                 id: true,
                 name: true,
                 status: true,
+                recipeId: true,
+              },
+              with: {
+                recipe: {
+                  columns: {
+                    id: true,
+                    name: true,
+                    instructions: true,
+                    ingredients: true,
+                  },
+                },
               },
             },
           },
