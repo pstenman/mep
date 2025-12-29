@@ -10,6 +10,7 @@ import { menusRouter } from "@/routers/menus";
 import { menuItemsRouter } from "@/routers/menu-items";
 import { ordersRouter } from "@/routers/orders";
 import { preparationsRouter } from "@/routers/preparations";
+import { companySettingsRouter } from "@/routers/company-settings";
 
 export const appRouter = createTRPCRouter({
   stripe: stripeRouter,
@@ -22,6 +23,7 @@ export const appRouter = createTRPCRouter({
   menuItems: menuItemsRouter,
   orders: ordersRouter,
   preparations: preparationsRouter,
+  companySettings: companySettingsRouter,
 });
 
 export type AppRouter = typeof appRouter;
