@@ -12,10 +12,15 @@ import {
 import { PrepItemService } from "@/services/prep-items/service";
 import {
   prepListFiltersSchema,
-  createPrepListSchema,
   updatePrepListSchema,
 } from "@/services/prep-list/schema";
 import { PrepListService } from "@/services/prep-list/service";
+import {
+  createTemplateSchema,
+  updateTemplateSchema,
+  templateFiltersSchema,
+} from "@/services/templates/schema";
+import { TemplateService } from "@/services/templates/service";
 import { companyProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
 import { PrepType } from "@mep/types";
@@ -62,17 +67,6 @@ export const preparationsRouter = createTRPCRouter({
         return { data: prepList };
       }),
 
-    createTemplate: companyProcedure
-      .input(createPrepListSchema)
-      .mutation(async ({ input, ctx }) => {
-        const prepList = await PrepListService.createTemplate(
-          input,
-          ctx.companyId!,
-          ctx.userId!,
-        );
-        return { data: prepList };
-      }),
-
     update: companyProcedure
       .input(updatePrepListSchema)
       .mutation(async ({ input, ctx }) => {
@@ -94,27 +88,33 @@ export const preparationsRouter = createTRPCRouter({
     createFromTemplate: companyProcedure
       .input(
         z.object({
-          prepType: z.enum(Object.values(PrepType)),
-          date: z.coerce.date(),
+          templateId: z.uuid(),
+          scheduleFor: z.coerce.date(),
         }),
       )
       .mutation(async ({ input, ctx }) => {
         const prepList = await PrepListService.createFromTemplate(
           ctx.companyId!,
-          input.prepType,
-          input.date,
+          input.templateId,
+          input.scheduleFor,
           ctx.userId!,
         );
         return { data: prepList };
       }),
 
     setActive: companyProcedure
-      .input(z.object({ id: z.uuid() }))
+      .input(
+        z.object({
+          id: z.uuid(),
+          scheduleFor: z.coerce.date().optional(),
+        }),
+      )
       .mutation(async ({ input, ctx }) => {
         const prepList = await PrepListService.setActive(
           input.id,
           ctx.companyId!,
           ctx.userId!,
+          input.scheduleFor,
         );
         return { data: prepList };
       }),
@@ -225,6 +225,90 @@ export const preparationsRouter = createTRPCRouter({
       .mutation(async ({ input, ctx }) => {
         const result = await PrepItemService.delete(input.id, ctx.companyId!);
         return { data: result };
+      }),
+  },
+
+  templates: {
+    getAll: companyProcedure
+      .input(
+        z
+          .object({
+            filter: templateFiltersSchema.optional(),
+          })
+          .partial(),
+      )
+      .query(async ({ input, ctx }) => {
+        const result = await TemplateService.getAll(ctx.companyId!, input);
+        return { data: result };
+      }),
+
+    getById: companyProcedure
+      .input(z.object({ id: z.uuid() }))
+      .query(async ({ input, ctx }) => {
+        const template = await TemplateService.getById(
+          input.id,
+          ctx.companyId!,
+        );
+        return { data: template };
+      }),
+
+    getActive: companyProcedure
+      .input(
+        z.object({
+          prepType: z.enum(Object.values(PrepType)),
+        }),
+      )
+      .query(async ({ input, ctx }) => {
+        const template = await TemplateService.getActive(
+          ctx.companyId!,
+          input.prepType,
+        );
+        return { data: template };
+      }),
+
+    create: companyProcedure
+      .input(createTemplateSchema)
+      .mutation(async ({ input, ctx }) => {
+        const template = await TemplateService.createTemplate(
+          input,
+          ctx.companyId!,
+          ctx.userId!,
+        );
+        return { data: template };
+      }),
+
+    update: companyProcedure
+      .input(updateTemplateSchema)
+      .mutation(async ({ input, ctx }) => {
+        const template = await TemplateService.update(
+          input,
+          ctx.companyId!,
+          ctx.userId!,
+        );
+        return { data: template };
+      }),
+
+    delete: companyProcedure
+      .input(z.object({ id: z.uuid() }))
+      .mutation(async ({ input, ctx }) => {
+        const result = await TemplateService.delete(input.id, ctx.companyId!);
+        return { data: result };
+      }),
+
+    setActive: companyProcedure
+      .input(
+        z.object({
+          id: z.uuid(),
+          prepType: z.enum(Object.values(PrepType)),
+        }),
+      )
+      .mutation(async ({ input, ctx }) => {
+        const template = await TemplateService.setActive(
+          input.id,
+          ctx.companyId!,
+          input.prepType,
+        );
+        return { data: template };
       }),
   },
 });
