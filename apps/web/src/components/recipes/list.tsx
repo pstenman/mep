@@ -2,18 +2,23 @@
 
 import { useState } from "react";
 import { trpc } from "@/lib/trpc/client";
-import { Text, Button } from "@mep/ui";
-import { Loader2, Pencil, Trash2 } from "lucide-react";
+import { Text } from "@mep/ui";
+import { Loader2 } from "lucide-react";
 import { useRecipesSheet } from "./sheet";
 import { toast } from "sonner";
 import { DeleteDialog } from "../ui/delete-dialog";
 import type { RecipeOutput, RecipesOutput } from "@mep/api";
 import { Searchbar } from "../ui/searchbar";
 import { useDebouncedSearch } from "@/hooks/search/use-debounce";
+import { RecipesTable } from "./table";
+import { RecipeViewDialog } from "./view-dialog";
+import { RecipeActions } from "./recipe-actions";
 
 export function RecipesList() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [recipeToDelete, setRecipeToDelete] = useState<string | null>(null);
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [recipeToView, setRecipeToView] = useState<RecipeOutput | null>(null);
   const { open: openRecipeSheet } = useRecipesSheet();
   const utils = trpc.useUtils();
 
@@ -55,6 +60,15 @@ export function RecipesList() {
     }
   };
 
+  const handleViewClick = (recipe: RecipeOutput) => {
+    setRecipeToView(recipe);
+    setViewDialogOpen(true);
+  };
+
+  const handleEditClick = (recipeId: string) => {
+    openRecipeSheet(recipeId);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -75,13 +89,35 @@ export function RecipesList() {
         </div>
       </div>
 
-      <div className="w-full h-screen border rounded-lg p-4 shadow-md bg-background flex flex-col">
+      <div className="hidden md:block w-full">
+        {recipes.length > 0 ? (
+          <RecipesTable
+            recipes={recipes}
+            onEdit={handleEditClick}
+            onDelete={handleDeleteClick}
+            onView={handleViewClick}
+          />
+        ) : (
+          <div className="w-full border rounded-lg p-4 shadow-md bg-background">
+            <div className="flex items-center justify-center py-8">
+              <Text className="text-muted-foreground">
+                {debouncedSearch.trim().length > 0
+                  ? "No recipes found"
+                  : "No recipes"}
+              </Text>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="md:hidden w-full h-screen border rounded-lg p-4 shadow-md bg-background flex flex-col">
         <div className="flex-1 overflow-y-auto">
           {recipes.length > 0 ? (
             <div className="space-y-2">
               {recipes.map((recipe: RecipeOutput) => {
-                const ingredients = recipe.ingredients || [];
-                const ingredientCount = ingredients.length;
+                const createdAt = recipe.createdAt
+                  ? new Date(recipe.createdAt).toLocaleDateString()
+                  : "N/A";
 
                 return (
                   <div
@@ -89,38 +125,19 @@ export function RecipesList() {
                     className="flex items-center justify-between py-3 px-4 border-b hover:bg-muted/50 transition-colors"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-col gap-1">
                         <Text className="font-medium">{recipe.name}</Text>
-                        {ingredientCount > 0 && (
-                          <Text className="text-sm text-muted-foreground">
-                            {ingredientCount} ingredient
-                            {ingredientCount !== 1 ? "s" : ""}
-                          </Text>
-                        )}
-                      </div>
-                      {recipe.instructions && (
-                        <Text className="text-sm text-muted-foreground mt-1 line-clamp-1">
-                          {recipe.instructions}
+                        <Text className="text-sm text-muted-foreground">
+                          {createdAt}
                         </Text>
-                      )}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 ml-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full w-[40px] h-[40px]"
-                        onClick={() => openRecipeSheet(recipe.id)}
-                      >
-                        <Pencil size={16} className="text-primary" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full w-[40px] h-[40px]"
-                        onClick={() => handleDeleteClick(recipe.id)}
-                      >
-                        <Trash2 size={16} className="text-destructive" />
-                      </Button>
+                    <div className="flex items-center ml-4">
+                      <RecipeActions
+                        onView={() => handleViewClick(recipe)}
+                        onEdit={() => handleEditClick(recipe.id)}
+                        onDelete={() => handleDeleteClick(recipe.id)}
+                      />
                     </div>
                   </div>
                 );
@@ -143,6 +160,12 @@ export function RecipesList() {
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={handleDeleteConfirm}
         isLoading={deleteRecipe.isPending}
+      />
+
+      <RecipeViewDialog
+        open={viewDialogOpen}
+        onOpenChange={setViewDialogOpen}
+        recipe={recipeToView}
       />
     </div>
   );
