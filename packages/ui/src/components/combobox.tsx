@@ -86,7 +86,7 @@ function Combobox<T>({
       </PopoverTrigger>
 
       <PopoverContent
-        className="w-[var(--radix-popover-trigger-width)] z-[12001] p-0"
+        className="w-[var(--radix-popover-trigger-width)] p-0"
         align="start"
       >
         <Command shouldFilter={false}>
