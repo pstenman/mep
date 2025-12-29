@@ -28,6 +28,8 @@ export * from "./components/command";
 export * from "./components/combobox";
 export * from "./components/checkbox";
 export * from "./components/table";
+export * from "./components/date-picker";
+export * from "./components/calendar";
 
 // HOOKS
 export * from "./hooks/use-mobile";

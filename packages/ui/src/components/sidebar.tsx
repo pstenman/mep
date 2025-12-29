@@ -234,7 +234,7 @@ function Sidebar({
             ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
             : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
           variant === "floating" || variant === "inset"
-            ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
+            ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+var(--spacing-4)+2px)]"
             : "group-data-[collapsible=icon]:w-[--sidebar-width-icon]",
           "border-0 transition-all duration-200",
 
@@ -250,7 +250,7 @@ function Sidebar({
             "group-data-[state=expanded]:bg-[var(--sidebar-bg-light-expanded)]",
             "group-data-[state=collapsed]:bg-[var(--sidebar-bg-light-collapsed)]",
             "dark:group-data-[state=expanded]:bg-[var(--sidebar-bg-dark)]",
-            "dark:group-data-[state=collapsed]:bg-[var(--sidebar-bg-dark)]"
+            "dark:group-data-[state=collapsed]:bg-[var(--sidebar-bg-dark)]",
           )}
         >
           {children}
