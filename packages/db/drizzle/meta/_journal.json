@@ -176,6 +176,34 @@
       "when": 1766840730723,
       "tag": "0024_whole_masque",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1766956243804,
+      "tag": "0025_abandoned_zuras",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1766956579778,
+      "tag": "0026_supreme_clea",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1766957561262,
+      "tag": "0027_oval_shard",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1766957703556,
+      "tag": "0028_glossy_hellfire_club",
+      "breakpoints": true
     }
   ]
 }

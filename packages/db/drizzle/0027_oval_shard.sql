@@ -1,0 +1,1 @@
+ALTER TABLE "prep_lists" ALTER COLUMN "schedule_for" DROP NOT NULL;
