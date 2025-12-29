@@ -1,3 +1,5 @@
+import type { Recipe } from "./recipes";
+
 export enum PrepStatus {
   NONE = "none",
   MARK = "mark",
@@ -13,4 +15,18 @@ export enum PrepType {
   ALACARTE = "al-a-carte",
   SET = "set",
   GROUP = "group",
+}
+
+export interface PrepListItem {
+  id: string;
+  name: string;
+  status?: PrepStatus;
+  recipeId?: string | null;
+  recipe?: Recipe | null;
+}
+
+export interface PrepListGroup {
+  id: string;
+  name: string;
+  items: PrepListItem[];
 }
