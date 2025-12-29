@@ -6,6 +6,17 @@ export interface FormattedPrepItem {
   id: string;
   name: string;
   status: PrepStatus;
+  recipeId?: string | null;
+  recipe?: {
+    id: string;
+    name: string;
+    instructions?: string | null;
+    ingredients?: Array<{
+      name: string;
+      quantity: number;
+      unit: string;
+    }> | null;
+  } | null;
 }
 
 export interface FormattedPrepGroup {
@@ -26,7 +37,18 @@ export interface FormattedPrepList {
   prepGroups: FormattedPrepGroup[];
 }
 
-export type RawPrepItemWithRelations = InferSelectModel<typeof prepItems>;
+export type RawPrepItemWithRelations = InferSelectModel<typeof prepItems> & {
+  recipe?: {
+    id: string;
+    name: string;
+    instructions?: string | null;
+    ingredients?: Array<{
+      name: string;
+      quantity: number;
+      unit: string;
+    }> | null;
+  } | null;
+};
 
 export type RawPrepGroupWithRelations = InferSelectModel<typeof prepGroups> & {
   prepItems?: RawPrepItemWithRelations[];
@@ -49,6 +71,15 @@ export const transformPrepItem = (
     id: prepItem.id,
     name: prepItem.name,
     status: prepItem.status as PrepStatus,
+    recipeId: prepItem.recipeId ?? null,
+    recipe: prepItem.recipe
+      ? {
+          id: prepItem.recipe.id,
+          name: prepItem.recipe.name,
+          instructions: prepItem.recipe.instructions ?? null,
+          ingredients: prepItem.recipe.ingredients ?? null,
+        }
+      : null,
   };
 };
 
