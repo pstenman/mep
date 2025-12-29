@@ -3,15 +3,16 @@
 import { useState } from "react";
 import type { PrepGroup } from "@/lib/navigation/dashboard/types";
 import { mapGroupToPrepType } from "@/utils/filters/prep-type-helpers";
-import { PreparationTemplateSheet } from "./sheet";
-import { ActivePrepView } from "./active-view";
-import { TemplatesPrepView } from "./templates-view";
+import { PreparationTemplateSheet } from "./prep-templates/sheet";
+import { ActivePrepView } from "./prep-lists/active-view";
+import { TemplatesPrepView } from "./prep-templates/templates-view";
+import { ListsHistoryView } from "./prep-lists/lists-history-view";
 
 interface PreparationTemplateViewProps {
   group: PrepGroup | "all";
 }
 
-type ViewMode = "active" | "old";
+type ViewMode = "active" | "templates" | "history";
 
 export function PreparationTemplateView({
   group,
@@ -21,7 +22,11 @@ export function PreparationTemplateView({
   const prepType = mapGroupToPrepType("preparations", type);
 
   const handleHistoryClick = () => {
-    setViewMode("old");
+    setViewMode("history");
+  };
+
+  const handleTemplatesClick = () => {
+    setViewMode("templates");
   };
 
   const handleBackClick = () => {
@@ -36,9 +41,15 @@ export function PreparationTemplateView({
             <ActivePrepView
               prepType={prepType}
               onHistoryClick={handleHistoryClick}
+              onTemplatesClick={handleTemplatesClick}
+            />
+          ) : viewMode === "templates" ? (
+            <TemplatesPrepView
+              prepType={prepType}
+              onBackClick={handleBackClick}
             />
           ) : (
-            <TemplatesPrepView
+            <ListsHistoryView
               prepType={prepType}
               onBackClick={handleBackClick}
             />

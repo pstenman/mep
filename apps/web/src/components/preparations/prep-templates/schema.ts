@@ -20,3 +20,4 @@ export const templateFormSchema = (t: (key: string) => string) =>
   });
 
 export type TemplateFormSchema = z.infer<ReturnType<typeof templateFormSchema>>;
+

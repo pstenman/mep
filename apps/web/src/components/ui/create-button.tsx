@@ -5,7 +5,7 @@ import { useUserSheet } from "../users/sheet";
 import { usePathname } from "next/navigation";
 import { CreateRouteKeyEnum, createRoutes } from "@/lib/routes/create-routes";
 import { DynamicButton } from "./dynamic-button";
-import { usePreparationTemplateSheet } from "../preparations/sheet";
+import { usePreparationTemplateSheet } from "../preparations/prep-templates/sheet";
 import { useMenusSheet } from "../menus/sheet";
 import { useRecipesSheet } from "../recipes/sheet";
 

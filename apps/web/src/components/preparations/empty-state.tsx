@@ -1,6 +1,6 @@
 import type { PrepGroup } from "@/lib/navigation/dashboard/types";
 import { Text, Button } from "@mep/ui";
-import { usePreparationTemplateSheet } from "./sheet";
+import { usePreparationTemplateSheet } from "./prep-templates/sheet";
 import { useTranslations } from "next-intl";
 
 interface EmptyStateProps {
