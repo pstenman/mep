@@ -41,6 +41,12 @@
   },
   "personal": {
     "title": "Personal",
-    "description": "Personal settings"
+    "description": "Update your personal information.",
+    "loading": "Loading user information...",
+    "updateSuccess": "Profile updated successfully",
+    "updateError": "Failed to update profile",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "error": "Failed to load user information."
   }
 }

@@ -7,6 +7,7 @@ import {
 import { SubscriptionPanel } from "./subscription-panel";
 import { CompanyPanel } from "./company-panel";
 import { UsersPanel } from "./users-panel";
+import { PersonalPanel } from "./personal-panel";
 import { useTranslations } from "next-intl";
 
 export function SettingsDisplay() {
@@ -33,7 +34,9 @@ export function SettingsDisplay() {
       </AccordionItem>
       <AccordionItem value="Personal">
         <AccordionTrigger>{t("personal.title")}</AccordionTrigger>
-        <AccordionContent>{t("personal.description")}</AccordionContent>
+        <AccordionContent>
+          <PersonalPanel />
+        </AccordionContent>
       </AccordionItem>
     </Accordion>
   );

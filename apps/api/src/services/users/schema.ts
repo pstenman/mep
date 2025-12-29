@@ -31,7 +31,10 @@ export const updateUserSchema = z.object({
   role: z.enum(Object.values(Role)).optional(),
 });
 
+export const updateCurrentUserSchema = updateUserSchema.omit({ role: true });
+
 export type UserSchema = z.infer<typeof userSchema>;
 export type CreateUserSchema = z.infer<typeof createUserSchema>;
 export type UserFiltersSchema = z.infer<typeof userFiltersSchema>;
 export type UpdateUserSchema = z.infer<typeof updateUserSchema>;
+export type UpdateCurrentUserSchema = z.infer<typeof updateCurrentUserSchema>;

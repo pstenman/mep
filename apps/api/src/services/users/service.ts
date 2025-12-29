@@ -3,6 +3,7 @@ import type {
   CreateUserSchema,
   userFiltersSchema,
   UpdateUserSchema,
+  UpdateCurrentUserSchema,
 } from "./schema";
 import type { z } from "zod";
 import type { paginationSchema, sortingSchema } from "@/lib/schemas";
@@ -37,6 +38,10 @@ export class UserService {
 
   static async getByEmail(email: string) {
     return await userQueries.getByEmail(email);
+  }
+
+  static async getCurrentUser(userId: string) {
+    return await userQueries.getById(userId);
   }
 
   static async createUser(input: CreateUserSchema, companyId: string) {
@@ -132,6 +137,51 @@ export class UserService {
           memberships: {
             where: (m) => eq(m.companyId, companyId),
           },
+        },
+      });
+
+      return finalUser!;
+    });
+  }
+
+  static async updateCurrentUser(
+    userId: string,
+    input: UpdateCurrentUserSchema,
+  ) {
+    const existingUser = await userQueries.getById(userId);
+    if (!existingUser) {
+      throw new Error("User not found");
+    }
+
+    return await db.transaction(async (tx) => {
+      const userUpdates: Partial<{
+        firstName: string;
+        lastName: string;
+        email: string;
+        phoneNumber: string | null;
+      }> = {};
+
+      if (input.firstName !== undefined) {
+        userUpdates.firstName = input.firstName;
+      }
+      if (input.lastName !== undefined) {
+        userUpdates.lastName = input.lastName;
+      }
+      if (input.email !== undefined) {
+        userUpdates.email = input.email;
+      }
+      if (input.phoneNumber !== undefined) {
+        userUpdates.phoneNumber = input.phoneNumber || null;
+      }
+
+      if (Object.keys(userUpdates).length > 0) {
+        await tx.update(users).set(userUpdates).where(eq(users.id, userId));
+      }
+
+      const finalUser = await tx.query.users.findFirst({
+        where: eq(users.id, userId),
+        with: {
+          memberships: true,
         },
       });
 

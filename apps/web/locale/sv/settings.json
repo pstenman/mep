@@ -41,6 +41,12 @@
   },
   "personal": {
     "title": "Användarinställningar",
-    "description": "Användarinställningar"
+    "description": "Uppdatera din personliga information.",
+    "loading": "Laddar användarinformation...",
+    "updateSuccess": "Profil uppdaterades",
+    "updateError": "Kunde inte uppdatera profil",
+    "save": "Spara ändringar",
+    "saving": "Sparar...",
+    "error": "Kunde inte ladda användarinformation."
   }
 }

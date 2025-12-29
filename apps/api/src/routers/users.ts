@@ -3,9 +3,14 @@ import {
   createUserSchema,
   userFiltersSchema,
   updateUserSchema,
+  updateCurrentUserSchema,
 } from "@/services/users/schema";
 import { UserService } from "@/services/users/service";
-import { companyProcedure, ownerProcedure } from "@/trpc/procedures";
+import {
+  companyProcedure,
+  ownerProcedure,
+  protectedProcedure,
+} from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
 import { z } from "zod";
 
@@ -58,6 +63,18 @@ export const userRouter = createTRPCRouter({
         ctx.companyId,
         input.data,
       );
+      return { data: user };
+    }),
+
+  getCurrentUser: protectedProcedure.query(async ({ ctx }) => {
+    const user = await UserService.getCurrentUser(ctx.userId);
+    return { data: user };
+  }),
+
+  updateCurrentUser: protectedProcedure
+    .input(updateCurrentUserSchema)
+    .mutation(async ({ input, ctx }) => {
+      const user = await UserService.updateCurrentUser(ctx.userId, input);
       return { data: user };
     }),
 });
