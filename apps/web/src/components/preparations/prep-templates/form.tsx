@@ -6,6 +6,7 @@ import type { PrepGroupTemplate, PrepItemTemplate } from "@mep/api";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo } from "react";
 import {
   Button,
   Form,
@@ -45,6 +46,18 @@ export function PreparationTemplateForm({
   const utils = trpc.useUtils();
   const t = useTranslations("preparations.form");
 
+  const { data: settingsData } = trpc.companySettings.get.useQuery();
+  const enabledPrepTypes = useMemo<PrepType[]>(() => {
+    return (
+      (settingsData?.data?.enabledPrepTypes as PrepType[]) ||
+      Object.values(PrepType)
+    );
+  }, [settingsData]);
+
+  const defaultPrepType = useMemo(() => {
+    return enabledPrepTypes[0] || PrepType.BREAKFAST;
+  }, [enabledPrepTypes]);
+
   const { data: templateData, isLoading: isLoadingTemplate } =
     trpc.preparations.templates.getById.useQuery(
       { id: templateId! },
@@ -55,7 +68,7 @@ export function PreparationTemplateForm({
     resolver: zodResolver(templateFormSchema(t)),
     defaultValues: {
       name: "",
-      prepTypes: PrepType.BREAKFAST,
+      prepTypes: defaultPrepType,
       groups: [
         {
           name: "",
@@ -71,7 +84,7 @@ export function PreparationTemplateForm({
       const template = templateData.data;
       form.reset({
         name: template.name || "",
-        prepTypes: template.prepTypes || PrepType.BREAKFAST,
+        prepTypes: template.prepTypes || defaultPrepType,
         groups: template.prepGroupTemplates?.map(
           (group: PrepGroupTemplate) => ({
             name: group.name || "",
@@ -198,7 +211,7 @@ export function PreparationTemplateForm({
                       <SelectValue placeholder="Select prep type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.values(PrepType).map((type) => (
+                      {enabledPrepTypes.map((type: PrepType) => (
                         <SelectItem key={type} value={type}>
                           {type}
                         </SelectItem>

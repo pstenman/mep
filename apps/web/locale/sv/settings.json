@@ -11,7 +11,20 @@
   },
   "company": {
     "title": "Företagsinställningar",
-    "description": "Företagssättningar"
+    "description": "Välj vilka prep-typer som ska vara tillgängliga i din app.",
+    "loading": "Laddar inställningar...",
+    "save": "Spara ändringar",
+    "saving": "Sparar...",
+    "updateSuccess": "Inställningar uppdaterades",
+    "updateError": "Kunde inte uppdatera inställningar",
+    "prepTypes": {
+      "main": "Huvudrätt",
+      "breakfast": "Frukost",
+      "lunch": "Lunch",
+      "al-a-carte": "À la Carte",
+      "set": "Meny",
+      "group": "Grupp"
+    }
   },
   "users": {
     "title": "Anställda",

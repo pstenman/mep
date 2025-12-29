@@ -11,7 +11,20 @@
   },
   "company": {
     "title": "Company",
-    "description": "Company settings"
+    "description": "Select which prep types should be available in your app.",
+    "loading": "Loading settings...",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "updateSuccess": "Settings updated successfully",
+    "updateError": "Failed to update settings",
+    "prepTypes": {
+      "main": "Main",
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "al-a-carte": "À la Carte",
+      "set": "Set",
+      "group": "Group"
+    }
   },
   "users": {
     "title": "Users",

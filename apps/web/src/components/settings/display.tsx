@@ -5,6 +5,7 @@ import {
   AccordionTrigger,
 } from "@mep/ui";
 import { SubscriptionPanel } from "./subscription-panel";
+import { CompanyPanel } from "./company-panel";
 import { useTranslations } from "next-intl";
 
 export function SettingsDisplay() {
@@ -19,7 +20,9 @@ export function SettingsDisplay() {
       </AccordionItem>
       <AccordionItem value="company">
         <AccordionTrigger>{t("company.title")}</AccordionTrigger>
-        <AccordionContent>{t("company.description")}</AccordionContent>
+        <AccordionContent>
+          <CompanyPanel />
+        </AccordionContent>
       </AccordionItem>
       <AccordionItem value="Users">
         <AccordionTrigger>{t("users.title")}</AccordionTrigger>

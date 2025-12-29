@@ -3,9 +3,10 @@
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
+import { trpc } from "@/lib/trpc/client";
 import type { ProcessedNavGroup } from "./types";
 import type { DashboardPath } from "../paths";
-import { Navigation } from "./config";
+import { createNavigation } from "./config";
 import { applyNavSettings } from "./settings";
 
 /**
@@ -15,6 +16,14 @@ import { applyNavSettings } from "./settings";
 export function useDashboardNavigation(): ProcessedNavGroup[] {
   const pathname = usePathname();
   const t = useTranslations("pages");
+
+  const { data: settingsData } = trpc.companySettings.get.useQuery();
+  const enabledPrepTypes = settingsData?.data?.enabledPrepTypes;
+
+  const Navigation = useMemo(
+    () => createNavigation(enabledPrepTypes),
+    [enabledPrepTypes],
+  );
 
   const visibleNavigation = applyNavSettings(Navigation, []);
 
