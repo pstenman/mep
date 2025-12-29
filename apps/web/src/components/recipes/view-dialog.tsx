@@ -13,7 +13,19 @@ import { Dot } from "lucide-react";
 interface RecipeViewDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  recipe: RecipeOutput | null;
+  recipe:
+    | RecipeOutput
+    | {
+        id: string;
+        name: string;
+        instructions?: string | null;
+        ingredients?: Array<{
+          name: string;
+          quantity: number;
+          unit: string;
+        }> | null;
+      }
+    | null;
 }
 
 interface Ingredient {

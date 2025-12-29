@@ -3,30 +3,27 @@
 import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { PrepListGrid } from "./list-grid";
-import { type PrepType, PrepStatus } from "@mep/types";
+import {
+  type PrepType,
+  PrepStatus,
+  type PrepListItem,
+  type PrepListGroup,
+  type Recipe,
+} from "@mep/types";
 import { Loader2, Plus, FileText } from "lucide-react";
 import { DynamicButton } from "@/components/ui/dynamic-button";
 import { DatePicker } from "@mep/ui";
 import { getNextPrepStatus } from "@/utils/filters/prep-status-helpers";
 import { CreateListDialog } from "./create-list-dialog";
+import { RecipeViewDialog } from "@/components/recipes/view-dialog";
 
 interface PrepGroupWithItems {
   id: string;
   name: string;
-  prepItems: {
-    id: string;
-    name: string;
-    status: PrepStatus;
-  }[];
+  prepItems: PrepListItem[];
 }
 
-interface PrepItem {
-  id: string;
-  name: string;
-  status: PrepStatus;
-}
-
-interface PrepListItem {
+interface PrepList {
   id: string;
   name: string;
   prepTypes: PrepType;
@@ -45,6 +42,8 @@ export function ActivePrepView({
 }: ActivePrepViewProps) {
   const utils = trpc.useUtils();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [recipeDialogOpen, setRecipeDialogOpen] = useState(false);
 
   const today = useMemo(() => {
     const date = new Date();
@@ -82,7 +81,7 @@ export function ActivePrepView({
     const normalizedSelectedDate = new Date(selectedDate);
     normalizedSelectedDate.setHours(0, 0, 0, 0);
 
-    return listsData.data.items.find((list: PrepListItem) => {
+    return listsData.data.items.find((list: PrepList) => {
       if (!list.scheduleFor) return false;
       const listDate = new Date(list.scheduleFor);
       listDate.setHours(0, 0, 0, 0);
@@ -105,7 +104,7 @@ export function ActivePrepView({
     const allItems = (selectedList.prepGroups || []).flatMap(
       (group: PrepGroupWithItems) => group.prepItems || [],
     );
-    const item = allItems.find((item: PrepItem) => item.id === itemId);
+    const item = allItems.find((item: PrepListItem) => item.id === itemId);
     if (!item) return;
 
     const nextStatus = getNextPrepStatus(item?.status || PrepStatus.NONE);
@@ -218,7 +217,7 @@ export function ActivePrepView({
     );
   }
 
-  const groups = (selectedList.prepGroups || []).map(
+  const groups: PrepListGroup[] = (selectedList.prepGroups || []).map(
     (group: PrepGroupWithItems) => ({
       id: group.id,
       name: group.name,
@@ -226,9 +225,16 @@ export function ActivePrepView({
         id: item.id,
         name: item.name,
         status: item.status,
+        recipeId: item.recipeId,
+        recipe: item.recipe,
       })),
     }),
   );
+
+  const handleRecipeClick = (recipe: Recipe) => {
+    setSelectedRecipe(recipe);
+    setRecipeDialogOpen(true);
+  };
 
   return (
     <>
@@ -251,7 +257,11 @@ export function ActivePrepView({
         </div>
         {renderHeader()}
         {groups.length > 0 ? (
-          <PrepListGrid groups={groups} onStatusToggle={handleStatusToggle} />
+          <PrepListGrid
+            groups={groups}
+            onStatusToggle={handleStatusToggle}
+            onRecipeClick={handleRecipeClick}
+          />
         ) : (
           <div className="text-center py-8 text-muted-foreground">
             <p>No groups found in this list</p>
@@ -265,6 +275,11 @@ export function ActivePrepView({
           prepType={prepType}
         />
       )}
+      <RecipeViewDialog
+        open={recipeDialogOpen}
+        onOpenChange={setRecipeDialogOpen}
+        recipe={selectedRecipe}
+      />
     </>
   );
 }

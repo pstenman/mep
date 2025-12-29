@@ -1,14 +1,12 @@
-import { PrepStatus } from "@mep/types";
-import { Badge, cn } from "@mep/ui";
+import { PrepStatus, type PrepListItem, type Recipe } from "@mep/types";
+import { Badge, Button, cn } from "@mep/ui";
+import { BookText } from "lucide-react";
 
 interface PrepItemRowProps {
-  item: {
-    id: string;
-    name: string;
-    status?: PrepStatus;
-  };
+  item: PrepListItem;
   onToggle?: (id: string) => void;
   onStatusToggle?: (id: string) => void;
+  onRecipeClick?: (recipe: Recipe) => void;
 }
 
 const getStatusBadgeClassName = (status?: PrepStatus): string => {
@@ -29,10 +27,18 @@ export function PrepItemRow({
   item,
   onToggle,
   onStatusToggle,
+  onRecipeClick,
 }: PrepItemRowProps) {
   const handleBadgeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onStatusToggle?.(item.id);
+  };
+
+  const handleRecipeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (item.recipe && onRecipeClick) {
+      onRecipeClick(item.recipe);
+    }
   };
 
   return (
@@ -47,12 +53,30 @@ export function PrepItemRow({
         transition
       "
     >
-      <span className="text-sm sm:text-[15px] leading-tight">{item.name}</span>
+      <div className="flex items-center gap-2 flex-1 min-w-0">
+        <span className="text-sm sm:text-[15px] leading-tight truncate">
+          {item.name}
+        </span>
+        {item.recipeId && item.recipe && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleRecipeClick}
+            className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+            title={`View recipe: ${item.recipe.name}`}
+          >
+            <BookText className="w-4 h-4" />
+          </Button>
+        )}
+      </div>
 
       <Badge
         variant="outline"
         onClick={handleBadgeClick}
-        className={cn("cursor-pointer", getStatusBadgeClassName(item.status))}
+        className={cn(
+          "cursor-pointer shrink-0",
+          getStatusBadgeClassName(item.status),
+        )}
       >
         {item.status}
       </Badge>

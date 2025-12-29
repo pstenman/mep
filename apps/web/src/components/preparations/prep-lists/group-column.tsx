@@ -1,24 +1,18 @@
-import type { PrepStatus } from "@mep/types";
+import type { PrepListGroup, Recipe } from "@mep/types";
 import { PrepItemRow } from "./item-row";
 
 interface PrepGroupColumnProps {
-  group: {
-    id: string;
-    name: string;
-    items: {
-      id: string;
-      name: string;
-      status?: PrepStatus;
-    }[];
-  };
+  group: PrepListGroup;
   onToggleItem?: (itemId: string) => void;
   onStatusToggle?: (itemId: string) => void;
+  onRecipeClick?: (recipe: Recipe) => void;
 }
 
 export function PrepGroupColumn({
   group,
   onToggleItem,
   onStatusToggle,
+  onRecipeClick,
 }: PrepGroupColumnProps) {
   return (
     <div
@@ -46,10 +40,10 @@ export function PrepGroupColumn({
             item={item}
             onToggle={onToggleItem}
             onStatusToggle={onStatusToggle}
+            onRecipeClick={onRecipeClick}
           />
         ))}
       </ul>
     </div>
   );
 }
-
