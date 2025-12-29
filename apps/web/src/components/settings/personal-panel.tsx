@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -17,8 +17,10 @@ import {
   Input,
   Text,
   useForm,
+  Separator,
 } from "@mep/ui";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 function createPersonalSchema(t: (key: string) => string) {
   return z.object({
@@ -29,16 +31,34 @@ function createPersonalSchema(t: (key: string) => string) {
   });
 }
 
+function createPasswordSchema(t: (key: string) => string) {
+  return z
+    .object({
+      newPassword: z.string().min(6, t("password.newPassword.minLength")),
+      confirmPassword: z
+        .string()
+        .min(1, t("password.confirmPassword.required")),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t("password.confirmPassword.mismatch"),
+      path: ["confirmPassword"],
+    });
+}
+
 type PersonalFormData = z.infer<ReturnType<typeof createPersonalSchema>>;
+type PasswordFormData = z.infer<ReturnType<typeof createPasswordSchema>>;
 
 export function PersonalPanel() {
   const t = useTranslations("settings.personal");
   const tUsers = useTranslations("users");
+  const { supabase } = useAuth();
   const utils = trpc.useUtils();
 
   const { data: userData, isLoading } = trpc.users.getCurrentUser.useQuery();
 
-  const form = useForm<PersonalFormData>({
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const personalForm = useForm<PersonalFormData>({
     resolver: zodResolver(createPersonalSchema(tUsers)),
     mode: "onChange",
     defaultValues: {
@@ -49,18 +69,26 @@ export function PersonalPanel() {
     },
   });
 
-  // Update form when user data loads
+  const passwordForm = useForm<PasswordFormData>({
+    resolver: zodResolver(createPasswordSchema(t)),
+    mode: "onChange",
+    defaultValues: {
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
   React.useEffect(() => {
     if (userData?.data) {
       const user = userData.data;
-      form.reset({
+      personalForm.reset({
         firstName: user.firstName || "",
         lastName: user.lastName || "",
         email: user.email || "",
         phoneNumber: user.phoneNumber || "",
       });
     }
-  }, [userData, form]);
+  }, [userData, personalForm]);
 
   const updateUser = trpc.users.updateCurrentUser.useMutation({
     onSuccess: () => {
@@ -74,7 +102,7 @@ export function PersonalPanel() {
     },
   });
 
-  const onSubmit = async (data: PersonalFormData) => {
+  const onSubmitPersonal = async (data: PersonalFormData) => {
     await updateUser.mutateAsync({
       firstName: data.firstName,
       lastName: data.lastName,
@@ -83,7 +111,35 @@ export function PersonalPanel() {
     });
   };
 
-  const isLoadingForm = updateUser.isPending;
+  const onSubmitPassword = async (data: PasswordFormData) => {
+    try {
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: data.newPassword,
+      });
+
+      if (updateError) {
+        toast.error(
+          updateError.message ||
+            t("password.error.updateFailed") ||
+            "Failed to update password",
+        );
+        return;
+      }
+
+      toast.success(t("password.success") || "Password updated successfully");
+      passwordForm.reset();
+      setIsChangingPassword(false);
+    } catch (error: any) {
+      toast.error(
+        error.message ||
+          t("password.error.updateFailed") ||
+          "Failed to update password",
+      );
+    }
+  };
+
+  const isLoadingPersonalForm = updateUser.isPending;
+  const isLoadingPasswordForm = passwordForm.formState.isSubmitting;
 
   if (isLoading) {
     return (
@@ -108,17 +164,20 @@ export function PersonalPanel() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <Text className="text-sm text-muted-foreground">
         {t("description") || "Update your personal information."}
       </Text>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <Form {...personalForm}>
+        <form
+          onSubmit={personalForm.handleSubmit(onSubmitPersonal)}
+          className="space-y-4"
+        >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               name="firstName"
-              control={form.control}
+              control={personalForm.control}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{tUsers("form.label.firstName")}</FormLabel>
@@ -126,7 +185,7 @@ export function PersonalPanel() {
                     <Input
                       {...field}
                       placeholder={tUsers("form.label.firstName")}
-                      disabled={isLoadingForm}
+                      disabled={isLoadingPersonalForm}
                     />
                   </FormControl>
                   <FormMessage />
@@ -135,7 +194,7 @@ export function PersonalPanel() {
             />
             <FormField
               name="lastName"
-              control={form.control}
+              control={personalForm.control}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{tUsers("form.label.lastName")}</FormLabel>
@@ -143,7 +202,7 @@ export function PersonalPanel() {
                     <Input
                       {...field}
                       placeholder={tUsers("form.label.lastName")}
-                      disabled={isLoadingForm}
+                      disabled={isLoadingPersonalForm}
                     />
                   </FormControl>
                   <FormMessage />
@@ -154,7 +213,7 @@ export function PersonalPanel() {
 
           <FormField
             name="email"
-            control={form.control}
+            control={personalForm.control}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{tUsers("form.label.email")}</FormLabel>
@@ -163,7 +222,7 @@ export function PersonalPanel() {
                     {...field}
                     type="email"
                     placeholder={tUsers("form.label.email")}
-                    disabled={isLoadingForm}
+                    disabled={isLoadingPersonalForm}
                   />
                 </FormControl>
                 <FormMessage />
@@ -173,7 +232,7 @@ export function PersonalPanel() {
 
           <FormField
             name="phoneNumber"
-            control={form.control}
+            control={personalForm.control}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{tUsers("form.label.phoneNumber")}</FormLabel>
@@ -181,7 +240,7 @@ export function PersonalPanel() {
                   <Input
                     {...field}
                     placeholder={tUsers("form.label.phoneNumber")}
-                    disabled={isLoadingForm}
+                    disabled={isLoadingPersonalForm}
                   />
                 </FormControl>
                 <FormMessage />
@@ -189,8 +248,8 @@ export function PersonalPanel() {
             )}
           />
 
-          <Button type="submit" disabled={isLoadingForm}>
-            {isLoadingForm ? (
+          <Button type="submit" disabled={isLoadingPersonalForm}>
+            {isLoadingPersonalForm ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 {t("saving") || "Saving..."}
@@ -201,6 +260,111 @@ export function PersonalPanel() {
           </Button>
         </form>
       </Form>
+
+      <Separator />
+
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <Text className="font-medium">
+              {t("password.title") || "Change Password"}
+            </Text>
+            <Text className="text-sm text-muted-foreground">
+              {t("password.description") || "Update your account password."}
+            </Text>
+          </div>
+          {!isChangingPassword && (
+            <Button
+              variant="outline"
+              onClick={() => setIsChangingPassword(true)}
+            >
+              {t("password.button.change") || "Change Password"}
+            </Button>
+          )}
+        </div>
+
+        {isChangingPassword && (
+          <Form {...passwordForm}>
+            <form
+              onSubmit={passwordForm.handleSubmit(onSubmitPassword)}
+              className="space-y-4"
+            >
+              <FormField
+                name="newPassword"
+                control={passwordForm.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t("password.newPassword.label") || "New Password"}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder={
+                          t("password.newPassword.placeholder") ||
+                          "Enter new password"
+                        }
+                        disabled={isLoadingPasswordForm}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name="confirmPassword"
+                control={passwordForm.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t("password.confirmPassword.label") ||
+                        "Confirm New Password"}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder={
+                          t("password.confirmPassword.placeholder") ||
+                          "Confirm new password"
+                        }
+                        disabled={isLoadingPasswordForm}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex gap-2">
+                <Button type="submit" disabled={isLoadingPasswordForm}>
+                  {isLoadingPasswordForm ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {t("password.saving") || "Updating..."}
+                    </>
+                  ) : (
+                    t("password.save") || "Update Password"
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsChangingPassword(false);
+                    passwordForm.reset();
+                  }}
+                  disabled={isLoadingPasswordForm}
+                >
+                  {t("password.cancel") || "Cancel"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        )}
+      </div>
     </div>
   );
 }

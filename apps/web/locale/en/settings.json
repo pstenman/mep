@@ -47,6 +47,38 @@
     "updateError": "Failed to update profile",
     "save": "Save Changes",
     "saving": "Saving...",
-    "error": "Failed to load user information."
+    "error": "Failed to load user information.",
+    "password": {
+      "title": "Change Password",
+      "description": "Update your account password.",
+      "button": {
+        "change": "Change Password"
+      },
+      "currentPassword": {
+        "label": "Current Password",
+        "placeholder": "Enter current password",
+        "required": "Current password is required"
+      },
+      "newPassword": {
+        "label": "New Password",
+        "placeholder": "Enter new password",
+        "minLength": "Password must be at least 6 characters"
+      },
+      "confirmPassword": {
+        "label": "Confirm New Password",
+        "placeholder": "Confirm new password",
+        "required": "Please confirm your new password",
+        "mismatch": "Passwords do not match"
+      },
+      "save": "Update Password",
+      "saving": "Updating...",
+      "cancel": "Cancel",
+      "success": "Password updated successfully",
+      "error": {
+        "noSession": "No active session found",
+        "invalidCurrent": "Current password is incorrect",
+        "updateFailed": "Failed to update password"
+      }
+    }
   }
 }

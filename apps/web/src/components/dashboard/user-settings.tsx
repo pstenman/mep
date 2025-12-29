@@ -13,9 +13,26 @@ import {
 } from "@mep/ui";
 import { LogOut, Settings } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/auth/useAuth";
 
 export function UserMenu() {
   const { state } = useSidebar();
+  const { supabase } = useAuth();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Error signing out:", error);
+        return;
+      }
+      router.push("/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   if (state === "collapsed") {
     return (
@@ -49,10 +66,9 @@ export function UserMenu() {
           <Button
             variant="ghost"
             className="flex items-center gap-2 text-xs w-full justify-start"
-            onClick={() => console.log("Sign out")}
+            onClick={handleSignOut}
           >
             <LogOut size={16} />
-            {/* todo fix sign-out and redirect */}
             <span>Logout</span>
           </Button>
         </AccordionContent>
