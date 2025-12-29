@@ -208,16 +208,31 @@ export type GetActivePrepListOutput =
   NonNullable<TRPCOutputs>["preparations"]["prepLists"]["getActive"];
 
 // Create Template
-export type CreatePrepListTemplateInput =
-  NonNullable<TRPCInputs>["preparations"]["prepLists"]["createTemplate"];
-export type CreatePrepListTemplateOutput =
-  NonNullable<TRPCOutputs>["preparations"]["prepLists"]["createTemplate"];
+export type CreateTemplateInput =
+  NonNullable<TRPCInputs>["preparations"]["templates"]["create"];
+export type CreateTemplateOutput =
+  NonNullable<TRPCOutputs>["preparations"]["templates"]["create"];
+
+// Get Template By Id
+export type TemplateGetByIdInput =
+  NonNullable<TRPCInputs>["preparations"]["templates"]["getById"];
+export type TemplateGetByIdOutput =
+  NonNullable<TRPCOutputs>["preparations"]["templates"]["getById"];
+
+// Template Data Type
+export type TemplateData = NonNullable<TemplateGetByIdOutput["data"]>;
+export type PrepGroupTemplate = NonNullable<
+  TemplateData["prepGroupTemplates"]
+>[number];
+export type PrepItemTemplate = NonNullable<
+  PrepGroupTemplate["prepItemsTemplates"]
+>[number];
 
 // Update
 export type UpdatePrepListInput =
-  NonNullable<TRPCInputs>["preparations"]["prepLists"]["update"];
+  NonNullable<TRPCInputs>["preparations"]["templates"]["update"];
 export type UpdatePrepListOutput =
-  NonNullable<TRPCOutputs>["preparations"]["prepLists"]["update"];
+  NonNullable<TRPCOutputs>["preparations"]["templates"]["update"];
 
 // Delete
 export type DeletePrepListInput =
