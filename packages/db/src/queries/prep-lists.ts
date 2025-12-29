@@ -1,23 +1,20 @@
-import { prepGroups, prepItems, prepLists } from "@/schema/preparations";
+import {
+  prepGroups,
+  prepItems,
+  prepLists,
+  prepListTemplates,
+} from "@/schema/preparations";
 import { db, type Database } from "..";
 import { PrepStatus, type PrepType } from "@mep/types";
-import { and, eq, ilike } from "drizzle-orm";
+import { and, eq, ilike, sql } from "drizzle-orm";
 
-type PrepListRow = typeof prepLists.$inferSelect;
 type PrepListInsert = typeof prepLists.$inferInsert;
 
 export interface PrepListFilters {
   companyId: string;
   search?: string;
-  date?: Date;
-  type?: PrepType;
-  isActive?: boolean;
-}
-interface DeactivateByTypeParams {
-  companyId: string;
-  prepType: PrepType;
-  userId: string;
-  executor?: Database;
+  scheduleFor?: Date;
+  prepType?: PrepType;
 }
 
 export function buildPrepListFilters(filters: PrepListFilters) {
@@ -29,16 +26,8 @@ export function buildPrepListFilters(filters: PrepListFilters) {
     whereConditions.push(ilike(prepLists.name, `%${filters.search}%`));
   }
 
-  if (filters.date) {
-    whereConditions.push(eq(prepLists.date, filters.date));
-  }
-
-  if (filters.type) {
-    whereConditions.push(eq(prepLists.prepTypes, filters.type));
-  }
-
-  if (filters.isActive !== undefined) {
-    whereConditions.push(eq(prepLists.isActive, filters.isActive));
+  if (filters.scheduleFor) {
+    whereConditions.push(eq(prepLists.scheduleFor, filters.scheduleFor));
   }
 
   return and(...whereConditions);
@@ -50,19 +39,18 @@ export const prepListQueries = {
     const rows = await db.query.prepLists.findMany({
       where: whereClauses,
       orderBy: (lists, { desc }) => [
-        desc(lists.isActive),
+        desc(lists.scheduleFor),
         desc(lists.updatedAt),
       ],
-      columns: {
-        id: true,
-        name: true,
-        prepTypes: true,
-        date: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      },
       with: {
+        prepListTemplate: {
+          columns: {
+            id: true,
+            name: true,
+            prepTypes: true,
+            isActive: true,
+          },
+        },
         prepGroups: {
           columns: {
             id: true,
@@ -89,6 +77,14 @@ export const prepListQueries = {
     const row = await db.query.prepLists.findFirst({
       where: eq(prepLists.id, id),
       with: {
+        prepListTemplate: {
+          columns: {
+            id: true,
+            name: true,
+            prepTypes: true,
+            isActive: true,
+          },
+        },
         prepGroups: {
           columns: {
             id: true,
@@ -112,39 +108,59 @@ export const prepListQueries = {
   },
 
   getActive: async (companyId: string, prepType?: PrepType) => {
-    const conditions = [
-      eq(prepLists.companyId, companyId),
-      eq(prepLists.isActive, true),
-    ];
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayISO = today.toISOString();
 
-    if (prepType) {
-      conditions.push(eq(prepLists.prepTypes, prepType));
-    }
+      const conditions = [
+        eq(prepLists.companyId, companyId),
+        sql`${prepLists.scheduleFor} <= ${todayISO}::timestamp`,
+      ];
 
-    const row = await db.query.prepLists.findFirst({
-      where: and(...conditions),
-      with: {
-        prepGroups: {
-          columns: {
-            id: true,
-            name: true,
-            note: true,
-            menuItemId: true,
+      const whereClause = and(...conditions);
+
+      const row = await db.query.prepLists.findFirst({
+        where: whereClause,
+        orderBy: (lists, { desc }) => [desc(lists.scheduleFor)],
+        with: {
+          prepListTemplate: {
+            columns: {
+              id: true,
+              name: true,
+              prepTypes: true,
+              isActive: true,
+            },
           },
-          with: {
-            prepItems: {
-              columns: {
-                id: true,
-                name: true,
-                status: true,
+          prepGroups: {
+            columns: {
+              id: true,
+              name: true,
+              note: true,
+              menuItemId: true,
+            },
+            with: {
+              prepItems: {
+                columns: {
+                  id: true,
+                  name: true,
+                  status: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    return row;
+      if (prepType && row?.prepListTemplate?.prepTypes !== prepType) {
+        return null;
+      }
+
+      return row;
+    } catch (error) {
+      console.error("Error in prepListQueries.getActive:", error);
+      throw error;
+    }
   },
 
   create: async (input: Omit<PrepListInsert, "id">, executor?: Database) => {
@@ -173,92 +189,63 @@ export const prepListQueries = {
     await dbOrTx.delete(prepLists).where(eq(prepLists.id, id));
   },
 
-  getTemplateGroups: async (companyId: string) => {
-    const rows = await db.query.prepGroups.findMany({
-      where: and(
-        eq(prepGroups.companyId, companyId),
-        eq(prepGroups.isTemplate, true),
-      ),
-      with: {
-        prepItems: {
-          where: eq(prepItems.isTemplate, true),
-        },
-      },
-    });
-    return rows;
-  },
-
   createFromTemplate: async (
     companyId: string,
-    prepType: PrepType,
-    date: Date,
+    templateId: string,
+    scheduleFor: Date,
     userId: string,
   ) => {
     return await db.transaction(async (tx) => {
+      const template = await tx.query.prepListTemplates.findFirst({
+        where: eq(prepListTemplates.id, templateId),
+        with: {
+          prepGroupTemplates: {
+            with: {
+              prepItemsTemplates: true,
+            },
+          },
+        },
+      });
+
+      if (!template) {
+        throw new Error("Template not found");
+      }
+
       const newList = await tx
         .insert(prepLists)
         .values({
           companyId,
-          name: `Prep ${prepType} ${date.toISOString().slice(0, 10)}`,
-          prepTypes: prepType,
-          date,
-          isActive: true,
+          prepListTemplateId: templateId,
+          name: `Prep ${template.prepTypes} ${scheduleFor.toISOString().slice(0, 10)}`,
+          scheduleFor,
           createdBy: userId,
           updatedBy: userId,
         })
         .returning();
 
-      const templateGroups = await prepListQueries.getTemplateGroups(companyId);
-
-      for (const group of templateGroups) {
+      for (const groupTemplate of template.prepGroupTemplates || []) {
         const newGroup = await tx
           .insert(prepGroups)
           .values({
             companyId,
             prepListId: newList[0].id,
-            name: group.name,
-            note: group.note,
-            isTemplate: false,
-            createdBy: userId,
-            updatedBy: userId,
+            name: groupTemplate.name,
+            note: groupTemplate.note,
           })
           .returning();
 
-        for (const item of group.prepItems) {
+        for (const itemTemplate of groupTemplate.prepItemsTemplates || []) {
           await tx.insert(prepItems).values({
             companyId,
             prepGroupId: newGroup[0].id,
-            name: item.name,
-            recipeId: item.recipeId,
+            name: itemTemplate.name,
+            recipeId: itemTemplate.recipeId,
             status: PrepStatus.NONE,
-            isTemplate: false,
-            createdBy: userId,
-            updatedBy: userId,
           });
         }
       }
 
       return newList[0];
     });
-  },
-
-  deactivateByType: async (params: DeactivateByTypeParams) => {
-    const { companyId, prepType, userId, executor } = params;
-    const dbOrTx = executor ?? db;
-    const updatedAt = new Date();
-    await dbOrTx
-      .update(prepLists)
-      .set({
-        isActive: false,
-        updatedBy: userId,
-        updatedAt,
-      })
-      .where(
-        and(
-          eq(prepLists.companyId, companyId),
-          eq(prepLists.prepTypes, prepType),
-          eq(prepLists.isActive, true),
-        ),
-      );
   },
 };
