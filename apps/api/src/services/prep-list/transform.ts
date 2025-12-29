@@ -1,4 +1,4 @@
-import type { PrepStatus, PrepType } from "@mep/types";
+import { type PrepStatus, PrepType } from "@mep/types";
 import type { InferSelectModel } from "drizzle-orm";
 import type { prepGroups, prepItems, prepLists } from "@mep/db";
 
@@ -20,8 +20,8 @@ export interface FormattedPrepList {
   id: string;
   name: string;
   prepTypes: PrepType;
-  date: Date;
-  isActive: boolean;
+  isTemplate: boolean;
+  scheduleFor: Date | null;
   menuId: string | null;
   prepGroups: FormattedPrepGroup[];
 }
@@ -34,6 +34,12 @@ export type RawPrepGroupWithRelations = InferSelectModel<typeof prepGroups> & {
 
 export type RawPrepListWithRelations = InferSelectModel<typeof prepLists> & {
   prepGroups?: RawPrepGroupWithRelations[];
+  prepListTemplate?: {
+    id: string;
+    name: string;
+    prepTypes: string;
+    isActive: boolean;
+  } | null;
 };
 
 export const transformPrepItem = (
@@ -80,9 +86,10 @@ export const transformPrepList = (
   return {
     id: prepList.id,
     name: prepList.name,
-    prepTypes: prepList.prepTypes as PrepType,
-    date: prepList.date,
-    isActive: prepList.isActive,
+    prepTypes: (prepList.prepListTemplate?.prepTypes ??
+      PrepType.BREAKFAST) as PrepType,
+    isTemplate: false,
+    scheduleFor: prepList.scheduleFor ?? null,
     menuId: prepList.menuId ?? null,
     prepGroups: prepList.prepGroups
       ? transformPrepGroups(prepList.prepGroups)

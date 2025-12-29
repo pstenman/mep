@@ -1,17 +1,7 @@
-import {
-  db,
-  prepListQueries,
-  type PrepListFilters,
-  prepItemQueries,
-  prepGroupQueries,
-} from "@mep/db";
-import type {
-  CreatePrepListSchema,
-  UpdatePrepListSchema,
-  prepListFiltersSchema,
-} from "./schema";
+import { prepListQueries, type PrepListFilters } from "@mep/db";
+import type { UpdatePrepListSchema, prepListFiltersSchema } from "./schema";
 import type { z } from "zod";
-import { PrepStatus, type PrepType } from "@mep/types";
+import type { PrepType } from "@mep/types";
 import {
   transformPrepList,
   transformPrepLists,
@@ -29,12 +19,19 @@ export class PrepListService {
     const filters: PrepListFilters = {
       companyId,
       search: filter?.search,
-      date: filter?.date,
-      type: filter?.type,
-      isActive: filter?.isActive,
+      scheduleFor: filter?.scheduleFor,
+      prepType: filter?.type,
     };
     const rows = await prepListQueries.getAll(filters);
-    return { items: transformPrepLists(rows as RawPrepListWithRelations[]) };
+    let filteredRows = rows;
+    if (filter?.type) {
+      filteredRows = rows.filter(
+        (row) => row.prepListTemplate?.prepTypes === filter?.type,
+      );
+    }
+    return {
+      items: transformPrepLists(filteredRows as RawPrepListWithRelations[]),
+    };
   }
 
   static async getById(id: string, companyId: string) {
@@ -49,111 +46,21 @@ export class PrepListService {
   }
 
   static async getActive(companyId: string, prepType?: PrepType) {
-    const rawList = await prepListQueries.getActive(
-      companyId,
-      prepType ?? undefined,
-    );
-    if (!rawList) return null;
-
-    return transformPrepList(rawList as RawPrepListWithRelations);
-  }
-
-  static async createTemplate(
-    data: CreatePrepListSchema,
-    companyId: string,
-    userId: string,
-  ) {
-    const fullList = await db.transaction(async (tx) => {
-      const prepList = await prepListQueries.create(
-        {
-          companyId,
-          name: data.name,
-          menuId: data.menuId ?? null,
-          prepTypes: data.prepTypes,
-          date: data.date,
-          isActive: data.isActive ?? true,
-          createdBy: userId,
-          updatedBy: userId,
-        },
-        tx,
+    try {
+      const rawList = await prepListQueries.getActive(
+        companyId,
+        prepType ?? undefined,
       );
+      if (!rawList) return null;
 
-      if (data.groups && data.groups.length > 0) {
-        for (const group of data.groups) {
-          const newGroup = await prepGroupQueries.create(
-            {
-              prepListId: prepList.id,
-              name: group.name,
-              note: group.note ?? null,
-              isTemplate: true,
-              companyId,
-              createdBy: userId,
-              updatedBy: userId,
-            },
-            tx,
-          );
-
-          if (group.items && group.items.length > 0) {
-            for (const item of group.items) {
-              await prepItemQueries.create(
-                {
-                  prepGroupId: newGroup.id,
-                  name: item.name,
-                  recipeId: item.recipeId ?? null,
-                  isTemplate: true,
-                  status: PrepStatus.NONE,
-                  companyId,
-                  createdBy: userId,
-                  updatedBy: userId,
-                },
-                tx,
-              );
-            }
-          }
-        }
-      } else {
-        const templateGroups =
-          await prepListQueries.getTemplateGroups(companyId);
-        for (const group of templateGroups) {
-          const newGroup = await prepGroupQueries.create(
-            {
-              prepListId: prepList.id,
-              name: group.name,
-              note: group.note ?? null,
-              isTemplate: true,
-              companyId,
-              createdBy: userId,
-              updatedBy: userId,
-            },
-            tx,
-          );
-
-          for (const item of group.prepItems ?? []) {
-            await prepItemQueries.create(
-              {
-                prepGroupId: newGroup.id,
-                name: item.name,
-                recipeId: item.recipeId ?? null,
-                isTemplate: true,
-                status: PrepStatus.NONE,
-                companyId,
-                createdBy: userId,
-                updatedBy: userId,
-              },
-              tx,
-            );
-          }
-        }
-      }
-
-      return prepList;
-    });
-
-    const listWithRelations = await prepListQueries.getById(fullList.id);
-    if (!listWithRelations)
-      throw new Error("Failed to fetch created prep list template");
-
-    return transformPrepList(listWithRelations as RawPrepListWithRelations);
+      const transformed = transformPrepList(
+        rawList as RawPrepListWithRelations,
+      );
+      return transformed;
+    } catch (error) {
+      console.error("Error in getActive:", error);
+      throw error;
+    }
   }
 
   static async update(
@@ -172,9 +79,7 @@ export class PrepListService {
     const updateData: Partial<{
       name: string;
       menuId: string | null;
-      prepTypes: PrepType;
-      date: Date;
-      isActive: boolean;
+      scheduleFor: Date;
       updatedBy: string;
     }> = {
       updatedBy: userId,
@@ -188,16 +93,8 @@ export class PrepListService {
       updateData.menuId = input.menuId;
     }
 
-    if (input.prepTypes !== undefined) {
-      updateData.prepTypes = input.prepTypes;
-    }
-
-    if (input.date !== undefined) {
-      updateData.date = input.date;
-    }
-
-    if (input.isActive !== undefined) {
-      updateData.isActive = input.isActive;
+    if (input.scheduleFor !== undefined) {
+      updateData.scheduleFor = input.scheduleFor as Date;
     }
 
     await prepListQueries.update(input.id, updateData);
@@ -221,7 +118,12 @@ export class PrepListService {
     return { success: true };
   }
 
-  static async setActive(listId: string, companyId: string, userId: string) {
+  static async setActive(
+    listId: string,
+    companyId: string,
+    userId: string,
+    scheduleFor?: Date,
+  ) {
     const existing = await prepListQueries.getById(listId);
     if (!existing) {
       throw new Error("Prep list not found");
@@ -230,19 +132,12 @@ export class PrepListService {
       throw new Error("Prep list does not belong to this company");
     }
 
-    await db.transaction(async (tx) => {
-      await prepListQueries.deactivateByType({
-        companyId,
-        prepType: existing.prepTypes as PrepType,
-        userId,
-        executor: tx,
-      });
+    const targetDate = scheduleFor ?? new Date();
+    targetDate.setHours(0, 0, 0, 0);
 
-      await prepListQueries.update(
-        listId,
-        { isActive: true, updatedBy: userId },
-        tx,
-      );
+    await prepListQueries.update(listId, {
+      scheduleFor: targetDate,
+      updatedBy: userId,
     });
 
     const fullList = await prepListQueries.getById(listId);
@@ -254,66 +149,16 @@ export class PrepListService {
 
   static async createFromTemplate(
     companyId: string,
-    prepType: PrepType,
-    date: Date,
+    templateId: string,
+    scheduleFor: Date,
     userId: string,
   ) {
-    const newList = await db.transaction(async (tx) => {
-      await prepListQueries.deactivateByType({
-        companyId,
-        prepType,
-        userId,
-        executor: tx,
-      });
-
-      const createdList = await prepListQueries.create(
-        {
-          companyId,
-          name: `Prep ${prepType} ${date.toISOString().slice(0, 10)}`,
-          prepTypes: prepType,
-          date,
-          isActive: true,
-          createdBy: userId,
-          updatedBy: userId,
-        },
-        tx,
-      );
-
-      const templateGroups = await prepListQueries.getTemplateGroups(companyId);
-
-      for (const group of templateGroups) {
-        const newGroup = await prepGroupQueries.create(
-          {
-            companyId,
-            prepListId: createdList.id,
-            name: group.name,
-            note: group.note,
-            isTemplate: false,
-            createdBy: userId,
-            updatedBy: userId,
-          },
-          tx,
-        );
-
-        for (const item of group.prepItems) {
-          await prepItemQueries.create(
-            {
-              companyId,
-              prepGroupId: newGroup.id,
-              name: item.name,
-              recipeId: item.recipeId,
-              status: PrepStatus.NONE,
-              isTemplate: false,
-              createdBy: userId,
-              updatedBy: userId,
-            },
-            tx,
-          );
-        }
-      }
-
-      return createdList;
-    });
+    const newList = await prepListQueries.createFromTemplate(
+      companyId,
+      templateId,
+      scheduleFor,
+      userId,
+    );
 
     const fullList = await prepListQueries.getById(newList.id);
     if (!fullList) {
