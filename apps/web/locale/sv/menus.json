@@ -5,10 +5,86 @@
     "button": "Skapa Meny"
   },
   "group": {
+    "main": "Huvudrätt",
     "breakfast": "Frukost",
     "lunch": "Lunch",
     "alACarte": "À la Carte",
     "set": "Set Meny",
     "group": "Grupp Meny"
+  },
+  "list": {
+    "noDescription": "Ingen beskrivning",
+    "noItems": "Inga rader i denna meny."
+  },
+  "table": {
+    "title": "Alla Menyer",
+    "description": "Hantera dina menyer. Markera den aktiva menyn för att använda när du visar den aktiva menyn.",
+    "backToActive": "Tillbaka till Aktiv Meny",
+    "viewAll": "Visa Alla Menyer",
+    "columns": {
+      "active": "Aktiv",
+      "menuName": "Meny Namn",
+      "menuType": "Meny Typ"
+    }
+  },
+  "active": {
+    "badge": "Aktiv",
+    "noMenu": "Ingen aktiv meny tillgänglig. Aktivera en meny från tabellvyn.",
+    "viewAll": "Visa Alla Menyer",
+    "deleteSuccess": "Meny raderad framgångsrikt",
+    "deleteError": "Kunde inte radera meny"
+  },
+  "form": {
+    "title": {
+      "create": "Skapa Meny",
+      "edit": "Redigera Meny"
+    },
+    "menuType": {
+      "breakfast": "Frukost",
+      "lunch": "Lunch",
+      "alACarte": "À la Carte",
+      "set": "Set Meny",
+      "group": "Grupp Meny"
+    },
+    "label": {
+      "name": "Meny Namn",
+      "menuType": "Service",
+      "isActive": "Aktiv Meny",
+      "itemName": "Namn",
+      "category": "Kategori",
+      "description": "Beskrivning",
+      "allergies": "Allergier"
+    },
+    "placeholder": {
+      "name": "Ange meny namn",
+      "menuType": "Välj servicetyp",
+      "itemName": "Namn",
+      "category": "Välj kategori",
+      "description": "Beskrivning",
+      "allergies": "Välj allergier"
+    },
+    "button": {
+      "create": "Skapa",
+      "update": "Uppdatera",
+      "saving": "Sparar...",
+      "addDish": "Lägg till Rätt",
+      "selected": "{count} valda"
+    },
+    "toast": {
+      "createSuccess": "Meny skapad framgångsrikt",
+      "updateSuccess": "Meny uppdaterad framgångsrikt"
+    },
+    "description": {
+      "isActive": "Markera denna meny som aktiv meny för att visa som standard"
+    },
+    "fieldArray": {
+      "dish": "Rätt {index}",
+      "emptyState": "Inga menyrader. Klicka på \"Lägg till Rätt\" för att komma igång."
+    },
+    "validation": {
+      "name": {
+        "required": "Namn krävs"
+      }
+    }
   }
 }

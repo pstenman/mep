@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/lib/trpc/client";
-import { MenuType, type MenuCategory } from "@mep/types";
+import { MenuType, type MenuCategory, PrepType } from "@mep/types";
 import { toast } from "sonner";
 import { menuFormSchema, type MenuFormSchema } from "./schema";
 import { useTranslations } from "next-intl";
@@ -23,35 +23,73 @@ import {
   Button,
   SheetFooter,
   Checkbox,
+  Text,
 } from "@mep/ui";
 import type { MenuItemOutput, AllergyOutput } from "@mep/api";
 import { useMenusSheet } from "./sheet";
 import { MenuFieldArray } from "./field-array";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 interface MenuFormProps {
   onSuccess?: () => void;
   onCancel: () => void;
 }
 
-export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
+const prepTypeToMenuType = (prepType: PrepType): MenuType | null => {
+  const mapping: Partial<Record<PrepType, MenuType>> = {
+    [PrepType.BREAKFAST]: MenuType.BREAKFAST,
+    [PrepType.LUNCH]: MenuType.LUNCH,
+    [PrepType.ALACARTE]: MenuType.ALACARTE,
+    [PrepType.SET]: MenuType.SET,
+    [PrepType.GROUP]: MenuType.GROUP,
+  };
+  return mapping[prepType] || null;
+};
+
+export function MenuForm({ onSuccess, onCancel: _onCancel }: MenuFormProps) {
   const t = useTranslations("menus");
   const utils = trpc.useUtils();
   const { menuId } = useMenusSheet();
 
   const { data: allergies } = trpc.allergies.getAll.useQuery({});
+  const { data: companySettings } = trpc.companySettings.get.useQuery();
 
   const { data: menuData } = trpc.menus.getById.useQuery(
     { id: menuId! },
     { enabled: !!menuId },
   );
 
+  const allowedMenuTypes = useMemo(() => {
+    if (!companySettings?.data?.enabledPrepTypes) {
+      return Object.values(MenuType);
+    }
+
+    const enabledMenuTypes = companySettings.data.enabledPrepTypes
+      .map(prepTypeToMenuType)
+      .filter((type: MenuType | null) => type !== null);
+
+    const types =
+      enabledMenuTypes.length > 0 ? enabledMenuTypes : Object.values(MenuType);
+
+    if (
+      menuId &&
+      menuData?.data?.menuType &&
+      !types.includes(menuData.data.menuType)
+    ) {
+      return [...types, menuData.data.menuType];
+    }
+
+    return types;
+  }, [companySettings, menuId, menuData]);
+
   const schema = menuFormSchema(t);
+  const defaultMenuType = allowedMenuTypes[0] || MenuType.BREAKFAST;
+
   const form = useForm<MenuFormSchema>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
-      menuType: MenuType.ALACARTE,
+      menuType: defaultMenuType,
       isActive: false,
       menuItems: [],
     },
@@ -78,7 +116,7 @@ export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
 
   const createMenu = trpc.menus.create.useMutation({
     onSuccess: () => {
-      toast.success("Menu created successfully");
+      toast.success(t("form.toast.createSuccess"));
       utils.menus.getAll.invalidate();
       onSuccess?.();
     },
@@ -86,7 +124,7 @@ export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
 
   const updateMenu = trpc.menus.update.useMutation({
     onSuccess: () => {
-      toast.success("Menu updated successfully");
+      toast.success(t("form.toast.updateSuccess"));
       utils.menus.getAll.invalidate();
       onSuccess?.();
     },
@@ -134,9 +172,12 @@ export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Menu Name</FormLabel>
+                  <FormLabel>{t("form.label.name")}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter menu name" />
+                    <Input
+                      {...field}
+                      placeholder={t("form.placeholder.name")}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,16 +188,18 @@ export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Menu Type</FormLabel>
+                  <FormLabel>{t("form.label.menuType")}</FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select menu type" />
+                        <SelectValue
+                          placeholder={t("form.placeholder.menuType")}
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        {Object.values(MenuType).map((type) => (
+                        {allowedMenuTypes.map((type: MenuType) => (
                           <SelectItem key={type} value={type}>
-                            {type}
+                            {t(`form.menuType.${type}`)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -178,10 +221,10 @@ export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>Active Menu</FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      Mark this menu as the active menu to display by default
-                    </p>
+                    <FormLabel>{t("form.label.isActive")}</FormLabel>
+                    <Text className="text-sm text-muted-foreground">
+                      {t("form.description.isActive")}
+                    </Text>
                   </div>
                 </FormItem>
               )}
@@ -192,7 +235,11 @@ export function MenuForm({ onSuccess, onCancel }: MenuFormProps) {
         </div>
         <SheetFooter className="shrink-0 px-6 pb-4 pt-4 border-t">
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : menuId ? "Update" : "Create"}
+            {isLoading
+              ? t("form.button.saving")
+              : menuId
+                ? t("form.button.update")
+                : t("form.button.create")}
           </Button>
         </SheetFooter>
       </form>

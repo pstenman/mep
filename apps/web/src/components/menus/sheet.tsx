@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@mep/ui";
 import { parseAsBoolean, parseAsString } from "nuqs";
 import { useQueryState } from "nuqs";
 import { MenuForm } from "./form";
+import { useTranslations } from "next-intl";
 
 export const useMenusSheet = () => {
   const [isOpen, setIsOpen] = useQueryState(
@@ -29,6 +30,7 @@ export const useMenusSheet = () => {
 };
 
 export function MenusSheet() {
+  const t = useTranslations("menus");
   const { isOpen, close, menuId } = useMenusSheet();
 
   const handleSuccess = () => {
@@ -39,7 +41,9 @@ export function MenusSheet() {
     <Sheet open={isOpen} onOpenChange={(open) => !open && close()}>
       <SheetContent className="flex flex-col p-0">
         <SheetHeader className="px-6 pt-6 pb-4 border-b shrink-0">
-          <SheetTitle>{menuId ? "Edit Menu" : "Create Menu"}</SheetTitle>
+          <SheetTitle>
+            {menuId ? t("form.title.edit") : t("form.title.create")}
+          </SheetTitle>
         </SheetHeader>
         <div className="flex-1 min-h-0">
           <MenuForm onSuccess={handleSuccess} onCancel={close} />

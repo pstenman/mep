@@ -11,5 +11,80 @@
     "alACarte": "À la Carte",
     "set": "Set Menu",
     "group": "Group Menu"
+  },
+  "list": {
+    "noDescription": "No description",
+    "noItems": "No items in this menu."
+  },
+  "table": {
+    "title": "All Menus",
+    "description": "Manage your menus. Check the active menu to use when viewing the active menu.",
+    "backToActive": "Back to Active Menu",
+    "viewAll": "View All Menus",
+    "columns": {
+      "active": "Active",
+      "menuName": "Menu Name",
+      "menuType": "Menu Type"
+    }
+  },
+  "active": {
+    "badge": "Active",
+    "noMenu": "No active menu available. Activate a menu from the table view.",
+    "viewAll": "View All Menus",
+    "deleteSuccess": "Menu deleted successfully",
+    "deleteError": "Failed to delete menu"
+  },
+  "form": {
+    "title": {
+      "create": "Create Menu",
+      "edit": "Edit Menu"
+    },
+    "menuType": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "alACarte": "À la Carte",
+      "set": "Set Menu",
+      "group": "Group Menu"
+    },
+    "label": {
+      "name": "Menu Name",
+      "menuType": "Service Type",
+      "isActive": "Active Menu",
+      "itemName": "Name",
+      "category": "Category",
+      "description": "Description",
+      "allergies": "Allergies"
+    },
+    "placeholder": {
+      "name": "Enter menu name",
+      "menuType": "Select service type",
+      "itemName": "Item name",
+      "category": "Select category",
+      "description": "Item description",
+      "allergies": "Select allergies"
+    },
+    "button": {
+      "create": "Create",
+      "update": "Update",
+      "saving": "Saving...",
+      "addDish": "Add Dish",
+      "selected": "{count} selected"
+    },
+    "toast": {
+      "createSuccess": "Menu created successfully",
+      "updateSuccess": "Menu updated successfully"
+    },
+    "description": {
+      "isActive": "Mark this menu as the active menu to display by default"
+    },
+    "fieldArray": {
+      "dish": "Dish {index}",
+      "emptyState": "No menu items. Click \"Add Dish\" to get started."
+    },
+    "validation": {
+      "name": {
+        "required": "Name is required"
+      }
+    }
   }
 }
