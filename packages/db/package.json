@@ -15,8 +15,6 @@
   },
   "dependencies": {
     "@mep/types": "workspace:*",
-    "@mep/api": "workspace:*",
-    "@supabase/supabase-js": "2.87.1",
     "postgres": "^3.4.7",
     "drizzle-orm": "^0.44.1"
   }

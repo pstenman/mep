@@ -32,7 +32,9 @@
     "noMenu": "No active menu available. Activate a menu from the table view.",
     "viewAll": "View All Menus",
     "deleteSuccess": "Menu deleted successfully",
-    "deleteError": "Failed to delete menu"
+    "deleteError": "Failed to delete menu",
+    "delete": "Delete Menu",
+    "edit": "Edit Menu"
   },
   "form": {
     "title": {
@@ -68,7 +70,9 @@
       "update": "Update",
       "saving": "Saving...",
       "addDish": "Add Dish",
-      "selected": "{count} selected"
+      "selected": "{count} selected",
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "toast": {
       "createSuccess": "Menu created successfully",

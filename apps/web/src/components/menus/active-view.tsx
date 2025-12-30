@@ -107,22 +107,22 @@ export function ActiveMenuView({
               buttonClassName="rounded-full w-[40px] h-[40px]"
             />
           )}
-          <Button
+          <DynamicButton
+            icon={Pencil}
+            tooltip={t("active.edit")}
+            size="icon"
             variant="outline"
-            className="rounded-full w-[40px] h-[40px]"
-            size="sm"
             onClick={() => openMenuSheet(activeMenu.id)}
-          >
-            <Pencil size={16} className="text-primary" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-full w-[40px] h-[40px]"
+            buttonClassName="rounded-full w-[40px] h-[40px]"
+          />
+          <DynamicButton
+            icon={Trash2}
+            tooltip={t("active.delete")}
+            variant="destructive"
+            size="icon"
             onClick={handleDeleteClick}
-          >
-            <Trash2 size={16} className="text-destructive" />
-          </Button>
+            buttonClassName="rounded-full w-[40px] h-[40px]"
+          />
         </div>
       </div>
 

@@ -32,7 +32,9 @@
     "noMenu": "Ingen aktiv meny tillgänglig. Aktivera en meny från tabellvyn.",
     "viewAll": "Visa Alla Menyer",
     "deleteSuccess": "Meny raderad framgångsrikt",
-    "deleteError": "Kunde inte radera meny"
+    "deleteError": "Kunde inte radera meny",
+    "delete": "Radera Meny",
+    "edit": "Redigera Meny"
   },
   "form": {
     "title": {
@@ -68,7 +70,9 @@
       "update": "Uppdatera",
       "saving": "Sparar...",
       "addDish": "Lägg till Rätt",
-      "selected": "{count} valda"
+      "selected": "{count} valda",
+      "edit": "Redigera",
+      "delete": "Radera"
     },
     "toast": {
       "createSuccess": "Meny skapad framgångsrikt",
