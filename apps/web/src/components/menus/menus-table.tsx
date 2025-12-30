@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { getMenusColumns } from "./menus-columns";
 import { DataTable } from "@/components/ui/data-tables";
 import type { MenuType } from "@mep/types";
+import { useTranslations } from "next-intl";
 
 interface MenuItem {
   id: string;
@@ -26,14 +27,16 @@ export function MenusTable({
   onEdit,
   onDelete,
 }: MenusTableProps) {
+  const t = useTranslations("menus");
   const columns = useMemo(
     () =>
       getMenusColumns({
         menuType,
         onEdit,
         onDelete,
+        t,
       }),
-    [menuType, onEdit, onDelete],
+    [menuType, onEdit, onDelete, t],
   );
 
   return (

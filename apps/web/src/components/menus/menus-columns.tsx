@@ -17,18 +17,20 @@ interface MenusColumnsProps {
   menuType: MenuType | null;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  t: (key: string) => string;
 }
 
 export const getMenusColumns = ({
   menuType,
   onEdit,
   onDelete,
+  t,
 }: MenusColumnsProps): ColumnDef<MenuItem>[] => {
   return [
     {
       accessorKey: "isActive",
       id: "isActive",
-      header: "Active",
+      header: t("table.columns.active"),
       enableSorting: false,
       size: 80,
       cell: ({ row }: { row: Row<MenuItem> }) => (
@@ -38,14 +40,14 @@ export const getMenusColumns = ({
     {
       accessorKey: "name",
       id: "name",
-      header: "Menu Name",
+      header: t("table.columns.menuName"),
       enableResizing: false,
       size: 200,
     },
     {
       accessorKey: "menuType",
       id: "menuType",
-      header: "Menu Type",
+      header: t("table.columns.menuType"),
       size: 120,
     },
     {
