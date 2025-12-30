@@ -147,22 +147,14 @@ export const preparationsRouter = createTRPCRouter({
     create: companyProcedure
       .input(createPrepGroupSchema)
       .mutation(async ({ input, ctx }) => {
-        const prepGroup = await PrepGroupService.create(
-          input,
-          ctx.companyId!,
-          ctx.userId!,
-        );
+        const prepGroup = await PrepGroupService.create(input, ctx.companyId!);
         return { data: prepGroup };
       }),
 
     update: companyProcedure
       .input(updatePrepGroupSchema)
       .mutation(async ({ input, ctx }) => {
-        const prepGroup = await PrepGroupService.update(
-          input,
-          ctx.companyId!,
-          ctx.userId!,
-        );
+        const prepGroup = await PrepGroupService.update(input, ctx.companyId!);
         return { data: prepGroup };
       }),
 
@@ -201,22 +193,14 @@ export const preparationsRouter = createTRPCRouter({
     create: companyProcedure
       .input(createPrepItemSchema)
       .mutation(async ({ input, ctx }) => {
-        const prepItem = await PrepItemService.create(
-          input,
-          ctx.companyId!,
-          ctx.userId!,
-        );
+        const prepItem = await PrepItemService.create(input, ctx.companyId!);
         return { data: prepItem };
       }),
 
     update: companyProcedure
       .input(updatePrepItemSchema)
       .mutation(async ({ input, ctx }) => {
-        const prepItem = await PrepItemService.update(
-          input,
-          ctx.companyId!,
-          ctx.userId!,
-        );
+        const prepItem = await PrepItemService.update(input, ctx.companyId!);
         return { data: prepItem };
       }),
 
