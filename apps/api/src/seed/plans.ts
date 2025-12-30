@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { logger, PlanService } from "@mep/api";
+import { logger, PlanService } from "../index";
 import { PlanInterval } from "@mep/types";
 
 async function seedPlans() {
@@ -23,3 +23,4 @@ async function seedPlans() {
 }
 
 seedPlans();
+

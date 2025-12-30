@@ -72,4 +72,6 @@ logger.info(
   "🚀API server starting",
 );
 
-export default Bun.serve(server);
+if (import.meta.main) {
+  Bun.serve(server);
+}

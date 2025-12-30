@@ -50,11 +50,7 @@ export class PrepGroupService {
     return prepGroup;
   }
 
-  static async create(
-    input: CreatePrepGroupSchema,
-    companyId: string,
-    userId: string,
-  ) {
+  static async create(input: CreatePrepGroupSchema, companyId: string) {
     const prepList = await prepListQueries.getById(input.prepListId);
     if (!prepList) {
       throw new Error("Prep list not found");
@@ -69,17 +65,11 @@ export class PrepGroupService {
       name: input.name,
       menuItemId: input.menuItemId ?? null,
       note: input.note ?? null,
-      createdBy: userId,
-      updatedBy: userId,
     });
     return prepGroup;
   }
 
-  static async update(
-    input: UpdatePrepGroupSchema,
-    companyId: string,
-    userId: string,
-  ) {
+  static async update(input: UpdatePrepGroupSchema, companyId: string) {
     const existing = await prepGroupQueries.getById(input.id);
     if (!existing) {
       throw new Error("Prep group not found");
@@ -92,10 +82,7 @@ export class PrepGroupService {
       name: string;
       menuItemId: string | null;
       note: string | null;
-      updatedBy: string;
-    }> = {
-      updatedBy: userId,
-    };
+    }> = {};
 
     if (input.name !== undefined) {
       updateData.name = input.name;

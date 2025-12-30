@@ -50,11 +50,7 @@ export class PrepItemService {
     return prepItem;
   }
 
-  static async create(
-    input: CreatePrepItemSchema,
-    companyId: string,
-    userId: string,
-  ) {
+  static async create(input: CreatePrepItemSchema, companyId: string) {
     const prepGroup = await prepGroupQueries.getById(input.prepGroupId);
     if (!prepGroup) {
       throw new Error("Prep group not found");
@@ -69,17 +65,11 @@ export class PrepItemService {
       name: input.name,
       recipeId: input.recipeId ?? null,
       status: input.status || PrepStatus.NONE,
-      createdBy: userId,
-      updatedBy: userId,
     });
     return prepItem;
   }
 
-  static async update(
-    input: UpdatePrepItemSchema,
-    companyId: string,
-    userId: string,
-  ) {
+  static async update(input: UpdatePrepItemSchema, companyId: string) {
     const existing = await prepItemQueries.getById(input.id);
     if (!existing) {
       throw new Error("Prep item not found");
@@ -92,10 +82,7 @@ export class PrepItemService {
       name: string;
       recipeId: string | null;
       status: PrepStatus;
-      updatedBy: string;
-    }> = {
-      updatedBy: userId,
-    };
+    }> = {};
 
     if (input.name !== undefined) {
       updateData.name = input.name;
