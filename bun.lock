@@ -90,9 +90,7 @@
       "name": "@mep/db",
       "version": "0.1.0",
       "dependencies": {
-        "@mep/api": "workspace:*",
         "@mep/types": "workspace:*",
-        "@supabase/supabase-js": "2.87.1",
         "drizzle-orm": "^0.44.1",
         "postgres": "^3.4.7",
       },
@@ -137,6 +135,7 @@
         "clsx": "2.1.1",
         "cmdk": "1.1.1",
         "date-fns": "4.1.0",
+        "js-cookie": "3.0.5",
         "lucide-react": "0.561.0",
         "next": "^16.0.10",
         "next-themes": "0.4.6",
@@ -152,6 +151,7 @@
       },
       "devDependencies": {
         "@mep/tsconfig": "workspace:*",
+        "@types/js-cookie": "3.0.6",
         "@types/node": "^22.15.3",
         "@types/react": "19.2.3",
         "@types/react-dom": "19.2.3",

@@ -4,7 +4,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
-
+import Cookies from "js-cookie";
 import { useIsMobile } from "../hooks/use-mobile";
 import { cn } from "../utils/cn";
 import { Button } from "../components/button";
@@ -82,8 +82,28 @@ function SidebarProvider({
         _setOpen(openState);
       }
 
-      // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      if (
+        typeof document !== "undefined" &&
+        "cookieStore" in document &&
+        typeof (document as any).cookieStore?.set === "function"
+      ) {
+        (document as any).cookieStore
+          .set(SIDEBAR_COOKIE_NAME, String(openState), {
+            path: "/",
+            maxAge: SIDEBAR_COOKIE_MAX_AGE,
+          })
+          .catch(() => {
+            Cookies.set(SIDEBAR_COOKIE_NAME, String(openState), {
+              path: "/",
+              expires: SIDEBAR_COOKIE_MAX_AGE / (24 * 60 * 60), // maxAge i sekunder -> dagar
+            });
+          });
+      } else {
+        Cookies.set(SIDEBAR_COOKIE_NAME, String(openState), {
+          path: "/",
+          expires: SIDEBAR_COOKIE_MAX_AGE / (24 * 60 * 60),
+        });
+      }
     },
     [setOpenProp, open],
   );
