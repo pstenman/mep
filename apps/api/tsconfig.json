@@ -2,7 +2,7 @@
   "extends": "@mep/tsconfig/backend.json",
   "compilerOptions": {
     "composite": true,
-    "rootDir": "../../",
+    "rootDir": "src",
     "outDir": "dist",
     "paths": {
       "@/*": ["./src/*"],
