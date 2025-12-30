@@ -9,8 +9,11 @@ export const mapTheme = (theme: Theme): Appearance => {
 
 export const mapLocale = (locale: string): StripeElementLocale => {
   switch (locale) {
-    case "sv": return "sv";
-    case "en": return "en";
-    default: return "auto";
+    case "sv":
+      return "sv";
+    case "en":
+      return "en";
+    default:
+      return "auto";
   }
-}
+};

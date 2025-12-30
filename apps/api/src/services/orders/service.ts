@@ -1,14 +1,8 @@
 import { orderQueries, type OrderFilters } from "@mep/db";
-import type { CreateOrderSchema, UpdateOrderSchema, orderFiltersSchema } from "./schema";
-import type { z } from "zod";
+import type { CreateOrderSchema, UpdateOrderSchema } from "./schema";
 
 export class OrderService {
-  static async getAll(
-    companyId: string,
-    params?: {
-      filter?: z.infer<typeof orderFiltersSchema>;
-    },
-  ) {
+  static async getAll(companyId: string) {
     const filters: OrderFilters = {
       companyId,
     };
@@ -20,7 +14,11 @@ export class OrderService {
     return await orderQueries.getById(id);
   }
 
-  static async create(input: CreateOrderSchema, companyId: string, userId: string) {
+  static async create(
+    input: CreateOrderSchema,
+    companyId: string,
+    userId: string,
+  ) {
     const order = await orderQueries.create({
       companyId,
       orderItems: input.orderItems,
@@ -64,4 +62,3 @@ export class OrderService {
     return { success: true };
   }
 }
-

@@ -5,7 +5,7 @@ export enum MenuType {
   SET = "set",
   GROUP = "group",
 }
- 
+
 export enum MenuCategory {
   MIDDLE = "middle",
   SNACK = "snack",
@@ -15,4 +15,3 @@ export enum MenuCategory {
   SHARED = "shared",
   SIDE = "side",
 }
-

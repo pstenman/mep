@@ -29,9 +29,9 @@ export const allergyQueries = {
       where: whereClauses,
       orderBy: (allergies, { asc }) => [asc(allergies.name)],
       columns: {
-      id: true,
-      name: true,
-    },
+        id: true,
+        name: true,
+      },
     });
     return rows;
   },
@@ -43,7 +43,10 @@ export const allergyQueries = {
     return row;
   },
 
-  create: async (input: AllergyInsert, executor?: Database): Promise<AllergyRow> => {
+  create: async (
+    input: AllergyInsert,
+    executor?: Database,
+  ): Promise<AllergyRow> => {
     const dbOrTx = executor ?? db;
     const row = await dbOrTx.insert(allergies).values(input).returning();
     return row[0];
@@ -69,4 +72,3 @@ export const allergyQueries = {
     await dbOrTx.delete(allergies).where(eq(allergies.id, id));
   },
 };
-

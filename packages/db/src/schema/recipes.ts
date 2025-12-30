@@ -6,16 +6,25 @@ import { prepItems } from "./preparations";
 
 export const recipes = pgTable("recipes", {
   id: uuid("id").primaryKey().defaultRandom(),
-  companyId: uuid("company_id").notNull().references(() => companies.id),
+  companyId: uuid("company_id")
+    .notNull()
+    .references(() => companies.id),
   name: text("name").notNull(),
   instructions: text("instructions"),
-  createdBy: uuid("created_by").notNull().references(() => users.id),
-  updatedBy: uuid("updated_by").notNull().references(() => users.id),
-  ingredients: jsonb("ingredients").$type<{
-    name: string;
-    quantity: number;
-    unit: string;
-  }[]>(),
+  createdBy: uuid("created_by")
+    .notNull()
+    .references(() => users.id),
+  updatedBy: uuid("updated_by")
+    .notNull()
+    .references(() => users.id),
+  ingredients:
+    jsonb("ingredients").$type<
+      {
+        name: string;
+        quantity: number;
+        unit: string;
+      }[]
+    >(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -51,7 +51,10 @@ export const recipeQueries = {
     return row;
   },
 
-  create: async (input: RecipeInsert, executor?: Database): Promise<RecipeRow> => {
+  create: async (
+    input: RecipeInsert,
+    executor?: Database,
+  ): Promise<RecipeRow> => {
     const dbOrTx = executor ?? db;
     const row = await dbOrTx.insert(recipes).values(input).returning();
     return row[0];
@@ -77,4 +80,3 @@ export const recipeQueries = {
     await dbOrTx.delete(recipes).where(eq(recipes.id, id));
   },
 };
-

@@ -27,7 +27,9 @@ export const companyQueries = {
 };
 
 export const companySettingsQueries = {
-  getByCompanyId: async (companyId: string): Promise<CompanySettingsRow | null> => {
+  getByCompanyId: async (
+    companyId: string,
+  ): Promise<CompanySettingsRow | null> => {
     const row = await db.query.companySettings.findFirst({
       where: eq(companySettings.companyId, companyId),
     });
@@ -47,15 +49,20 @@ export const companySettingsQueries = {
       return existing;
     }
 
-    const row = await dbOrTx.insert(companySettings).values({
-      companyId,
-    }).returning();
+    const row = await dbOrTx
+      .insert(companySettings)
+      .values({
+        companyId,
+      })
+      .returning();
     return row[0];
   },
 
   update: async (
     companyId: string,
-    input: Partial<Omit<CompanySettingsInsert, "id" | "companyId" | "createdAt">>,
+    input: Partial<
+      Omit<CompanySettingsInsert, "id" | "companyId" | "createdAt">
+    >,
     executor?: Database,
   ): Promise<CompanySettingsRow> => {
     const dbOrTx = executor ?? db;

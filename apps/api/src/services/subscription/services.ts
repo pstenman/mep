@@ -54,7 +54,7 @@ export class SubscriptionService {
           membershipId: membership.id,
           userId: user.id,
         });
-      
+
       // TODO: Sync plan with stripe
       const planId = process.env.PLAN_ID;
       if (!planId) throw new Error("PLAN_ID is missing in env");
@@ -120,7 +120,10 @@ export class SubscriptionService {
     );
 
     // TODO: make role helper function
-    if (!membership || membership.role.toUpperCase() !== Role.OWNER.toUpperCase()) {
+    if (
+      !membership ||
+      membership.role.toUpperCase() !== Role.OWNER.toUpperCase()
+    ) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "Not authorized to view subscription",

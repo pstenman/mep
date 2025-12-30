@@ -26,4 +26,3 @@ export const recipeFiltersSchema = z.object({
 export type CreateRecipeSchema = z.infer<typeof createRecipeSchema>;
 export type UpdateRecipeSchema = z.infer<typeof updateRecipeSchema>;
 export type RecipeFiltersSchema = z.infer<typeof recipeFiltersSchema>;
-

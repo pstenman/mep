@@ -7,14 +7,17 @@ export const corsLoggingMiddleware: MiddlewareHandler = async (c, next) => {
   const allowedOrigins = (process.env.ALLOWED_API_ORIGINS || "").split(",");
   const isAllowed = allowedOrigins.includes(origin);
 
-  logger.info({
-    origin,
-    userAgent: ua,
-    path: c.req.path,
-    method: c.req.method,
-    isAllowed,
-    allowedOrigins,
-  }, "🌐 CORS check");
+  logger.info(
+    {
+      origin,
+      userAgent: ua,
+      path: c.req.path,
+      method: c.req.method,
+      isAllowed,
+      allowedOrigins,
+    },
+    "🌐 CORS check",
+  );
 
   return next();
 };

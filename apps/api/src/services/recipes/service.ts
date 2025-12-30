@@ -1,5 +1,9 @@
 import { recipeQueries, type RecipeFilters } from "@mep/db";
-import type { CreateRecipeSchema, UpdateRecipeSchema, recipeFiltersSchema } from "./schema";
+import type {
+  CreateRecipeSchema,
+  UpdateRecipeSchema,
+  recipeFiltersSchema,
+} from "./schema";
 import type { z } from "zod";
 
 export class RecipeService {
@@ -22,7 +26,11 @@ export class RecipeService {
     return await recipeQueries.getById(id);
   }
 
-  static async create(input: CreateRecipeSchema, companyId: string, userId: string) {
+  static async create(
+    input: CreateRecipeSchema,
+    companyId: string,
+    userId: string,
+  ) {
     const recipe = await recipeQueries.create({
       companyId,
       name: input.name,
@@ -43,7 +51,11 @@ export class RecipeService {
     const updateData: Partial<{
       name: string;
       instructions: string | null;
-      ingredients: Array<{ name: string; quantity: number; unit: string }> | null;
+      ingredients: Array<{
+        name: string;
+        quantity: number;
+        unit: string;
+      }> | null;
       updatedBy: string;
     }> = {
       updatedBy: userId,
@@ -78,4 +90,3 @@ export class RecipeService {
     return { success: true };
   }
 }
-

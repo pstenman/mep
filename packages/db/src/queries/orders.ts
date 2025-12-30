@@ -40,7 +40,10 @@ export const orderQueries = {
     return row;
   },
 
-  create: async (input: OrderInsert, executor?: Database): Promise<OrderRow> => {
+  create: async (
+    input: OrderInsert,
+    executor?: Database,
+  ): Promise<OrderRow> => {
     const dbOrTx = executor ?? db;
     const row = await dbOrTx.insert(orders).values(input).returning();
     return row[0];
@@ -66,4 +69,3 @@ export const orderQueries = {
     await dbOrTx.delete(orders).where(eq(orders.id, id));
   },
 };
-

@@ -19,4 +19,3 @@ export const orderFiltersSchema = z.object({});
 export type CreateOrderSchema = z.infer<typeof createOrderSchema>;
 export type UpdateOrderSchema = z.infer<typeof updateOrderSchema>;
 export type OrderFiltersSchema = z.infer<typeof orderFiltersSchema>;
-

@@ -19,4 +19,3 @@ export const companySettingsRouter = createTRPCRouter({
       return { data: settings };
     }),
 });
-

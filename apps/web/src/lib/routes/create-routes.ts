@@ -12,7 +12,7 @@ export type CreateRoutes = {
   label: string;
   key: CreateRouteKeyEnum;
   title?: string;
-}
+};
 
 export const createRoutes: CreateRoutes[] = [
   {

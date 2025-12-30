@@ -10,6 +10,6 @@ export default getRequestConfig(async () => {
   return {
     locale,
     messages,
-    defaultLocale: "en"
-  }
-})
+    defaultLocale: "en",
+  };
+});

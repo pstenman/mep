@@ -1,5 +1,5 @@
 import { SubscriptionService } from "@/services/subscription/services";
-import { ownerProcedure, protectedProcedure, publicProcedure } from "@/trpc/procedures";
+import { ownerProcedure, publicProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
 import z from "zod";
 

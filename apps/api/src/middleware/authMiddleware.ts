@@ -26,7 +26,7 @@ export const authMiddleware: MiddlewareHandler = async (c, next) => {
     if (isLocal) {
       //  LOCAL: Remove when going to production
       payload = JSON.parse(
-        Buffer.from(token.split(".")[1], "base64").toString()
+        Buffer.from(token.split(".")[1], "base64").toString(),
       );
     } else {
       //  PROD: keep when going to production
@@ -59,12 +59,14 @@ export const authMiddleware: MiddlewareHandler = async (c, next) => {
       email: user.email,
     } satisfies AuthUser;
 
-    logger.debug({ authContext: reqAny[AUTH_SYMBOL] }, "✅ Auth context populated");
-
+    logger.debug(
+      { authContext: reqAny[AUTH_SYMBOL] },
+      "✅ Auth context populated",
+    );
   } catch (err) {
     logger.error(
       { error: err instanceof Error ? err.message : String(err) },
-      "❌ Token verification/decoding failed"
+      "❌ Token verification/decoding failed",
     );
     reqAny[AUTH_SYMBOL] = null;
   }

@@ -36,17 +36,17 @@ export const stripeRouter = createTRPCRouter({
       };
     }),
 
-    createBillingPortalSession: ownerProcedure
+  createBillingPortalSession: ownerProcedure
     .input(
       z.object({
         customerId: z.string(),
         returnUrl: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input }) => {
-        const session = await StripeService.createBillingPortalSession(
+      const session = await StripeService.createBillingPortalSession(
         input.customerId,
-        input.returnUrl
+        input.returnUrl,
       );
       return { url: session.url };
     }),

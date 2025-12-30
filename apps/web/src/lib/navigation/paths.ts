@@ -16,4 +16,3 @@ export function dashboardPrefix(path: string): DashboardPath {
   const normalized = path.startsWith("/") ? path : `/${path}`;
   return `${DASHBOARD_PREFIX}${normalized}` as DashboardPath;
 }
-

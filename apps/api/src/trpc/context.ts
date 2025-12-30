@@ -11,18 +11,22 @@ export const createTRPCContext = async (opts: {
   const { auth, req } = opts;
 
   // Log auth info for debugging
-  logger.debug({
-    userId: auth.userId,
-    companyId: auth.companyId,
-    role: auth.role,
-    path: req.path,
-    method: req.method,
-  }, "🛠 TRPC context auth debug");
+  logger.debug(
+    {
+      userId: auth.userId,
+      companyId: auth.companyId,
+      role: auth.role,
+      path: req.path,
+      method: req.method,
+    },
+    "🛠 TRPC context auth debug",
+  );
   return {
-  db,
-  auth: opts.auth,
-  getHeader: (name: string) => opts.req.header(name),
-}};
+    db,
+    auth: opts.auth,
+    getHeader: (name: string) => opts.req.header(name),
+  };
+};
 
 type BaseContext = Awaited<ReturnType<typeof createTRPCContext>>;
 
@@ -33,4 +37,3 @@ export type ProtectedContext = BaseContext & {
 };
 
 export type Context = BaseContext | ProtectedContext;
-

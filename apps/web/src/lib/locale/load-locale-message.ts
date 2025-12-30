@@ -19,4 +19,3 @@ export async function loadLocaleMessages(locale: string) {
 
   return messages;
 }
-

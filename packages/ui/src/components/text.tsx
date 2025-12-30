@@ -19,10 +19,7 @@ export const Text = ({
 
   return (
     <Component
-      className={cn(
-        loading && "skeleton-line self-start block",
-        className
-      )}
+      className={cn(loading && "skeleton-line self-start block", className)}
       {...restProps}
     >
       {children}

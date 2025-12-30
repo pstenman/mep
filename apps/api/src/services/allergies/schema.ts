@@ -17,4 +17,3 @@ export const allergyFiltersSchema = z.object({
 export type CreateAllergySchema = z.infer<typeof createAllergySchema>;
 export type UpdateAllergySchema = z.infer<typeof updateAllergySchema>;
 export type AllergyFiltersSchema = z.infer<typeof allergyFiltersSchema>;
-

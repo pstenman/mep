@@ -7,15 +7,11 @@ export class CompanySettingsService {
     return settings;
   }
 
-  static async update(
-    input: UpdateCompanySettingsSchema,
-    companyId: string,
-  ) {
-    const settings = await companySettingsQueries.getOrCreate(companyId);
+  static async update(input: UpdateCompanySettingsSchema, companyId: string) {
+    await companySettingsQueries.getOrCreate(companyId);
     const updated = await companySettingsQueries.update(companyId, {
       enabledPrepTypes: input.enabledPrepTypes,
     });
     return updated;
   }
 }
-

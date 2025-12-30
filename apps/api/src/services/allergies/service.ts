@@ -3,11 +3,11 @@ import type { CreateAllergySchema, UpdateAllergySchema } from "./schema";
 import type { Allergen } from "@mep/types";
 
 export class AllergyService {
-    static async getAll(companyId: string) {
+  static async getAll(companyId: string) {
     if (!companyId) throw new Error("Company ID is required");
 
     const allergies = await allergyQueries.getAll({ companyId });
-    const rows = allergies.map(a => ({ id: a.id, name: a.name }));
+    const rows = allergies.map((a) => ({ id: a.id, name: a.name }));
     return { items: rows };
   }
 
@@ -15,7 +15,11 @@ export class AllergyService {
     return await allergyQueries.getById(id);
   }
 
-  static async create(input: CreateAllergySchema, companyId: string, userId: string) {
+  static async create(
+    input: CreateAllergySchema,
+    companyId: string,
+    userId: string,
+  ) {
     const allergy = await allergyQueries.create({
       name: input.name,
       companyId,
@@ -31,7 +35,7 @@ export class AllergyService {
       throw new Error("Allergy not found");
     }
 
-    const updateData: Partial<{ name: Allergen, updatedBy: string }> = {
+    const updateData: Partial<{ name: Allergen; updatedBy: string }> = {
       updatedBy: userId,
     };
 
@@ -39,7 +43,11 @@ export class AllergyService {
       updateData.name = input.name;
     }
 
-    const allergy = await allergyQueries.update(input.id, updateData, db as Database);
+    const allergy = await allergyQueries.update(
+      input.id,
+      updateData,
+      db as Database,
+    );
     return allergy;
   }
 
@@ -53,4 +61,3 @@ export class AllergyService {
     return { success: true };
   }
 }
-

@@ -1,4 +1,8 @@
-import { orderFiltersSchema, createOrderSchema, updateOrderSchema } from "@/services/orders/schema";
+import {
+  orderFiltersSchema,
+  createOrderSchema,
+  updateOrderSchema,
+} from "@/services/orders/schema";
 import { OrderService } from "@/services/orders/service";
 import { companyProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
@@ -7,9 +11,11 @@ import { z } from "zod";
 export const ordersRouter = createTRPCRouter({
   getAll: companyProcedure
     .input(
-      z.object({
-        filter: orderFiltersSchema.optional(),
-      }).partial(),
+      z
+        .object({
+          filter: orderFiltersSchema.optional(),
+        })
+        .partial(),
     )
     .query(async ({ input, ctx }) => {
       const result = await OrderService.getAll(ctx.companyId!, input);
@@ -26,7 +32,11 @@ export const ordersRouter = createTRPCRouter({
   create: companyProcedure
     .input(createOrderSchema)
     .mutation(async ({ input, ctx }) => {
-      const order = await OrderService.create(input, ctx.companyId!, ctx.userId!);
+      const order = await OrderService.create(
+        input,
+        ctx.companyId!,
+        ctx.userId!,
+      );
       return { data: order };
     }),
 
@@ -44,4 +54,3 @@ export const ordersRouter = createTRPCRouter({
       return { data: result };
     }),
 });
-

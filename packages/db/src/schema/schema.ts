@@ -8,4 +8,3 @@ export * from "./allergies";
 export * from "./menus";
 export * from "./preparations";
 export * from "./recipes";
-

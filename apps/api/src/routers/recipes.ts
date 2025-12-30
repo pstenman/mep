@@ -1,4 +1,8 @@
-import { recipeFiltersSchema, createRecipeSchema, updateRecipeSchema } from "@/services/recipes/schema";
+import {
+  recipeFiltersSchema,
+  createRecipeSchema,
+  updateRecipeSchema,
+} from "@/services/recipes/schema";
 import { RecipeService } from "@/services/recipes/service";
 import { companyProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
@@ -7,9 +11,11 @@ import { z } from "zod";
 export const recipesRouter = createTRPCRouter({
   getAll: companyProcedure
     .input(
-      z.object({
-        filter: recipeFiltersSchema.optional(),
-      }).partial(),
+      z
+        .object({
+          filter: recipeFiltersSchema.optional(),
+        })
+        .partial(),
     )
     .query(async ({ input, ctx }) => {
       const result = await RecipeService.getAll(ctx.companyId!, input);
@@ -26,7 +32,11 @@ export const recipesRouter = createTRPCRouter({
   create: companyProcedure
     .input(createRecipeSchema)
     .mutation(async ({ input, ctx }) => {
-      const recipe = await RecipeService.create(input, ctx.companyId!, ctx.userId!);
+      const recipe = await RecipeService.create(
+        input,
+        ctx.companyId!,
+        ctx.userId!,
+      );
       return { data: recipe };
     }),
 
@@ -44,4 +54,3 @@ export const recipesRouter = createTRPCRouter({
       return { data: result };
     }),
 });
-

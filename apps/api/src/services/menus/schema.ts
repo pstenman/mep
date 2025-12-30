@@ -30,4 +30,3 @@ export const menuFiltersSchema = z.object({
 export type CreateMenuSchema = z.infer<typeof createMenuSchema>;
 export type UpdateMenuSchema = z.infer<typeof updateMenuSchema>;
 export type MenuFiltersSchema = z.infer<typeof menuFiltersSchema>;
-
