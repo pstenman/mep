@@ -6,6 +6,7 @@ export interface FormattedMenuItem {
   id: string;
   name: string;
   category?: string | null;
+  description?: string | null;
   allergies: Allergen[];
 }
 
@@ -20,6 +21,7 @@ export const transformMenuItem = (
     id: menuItem.id,
     name: menuItem.name,
     category: menuItem.category ?? null,
+    description: menuItem.description ?? null,
     allergies: menuItem.allergies?.map((a) => a.allergy.name as Allergen) ?? [],
   };
 };

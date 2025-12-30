@@ -43,6 +43,14 @@ export class MenuService {
     return transformMenu(menu);
   }
 
+  static async getActive(companyId: string, menuType: MenuType) {
+    const menu = await menuQueries.getActive(companyId, menuType);
+    if (!menu) {
+      return null;
+    }
+    return transformMenu(menu as RawMenuWithRelations);
+  }
+
   static async create(
     input: CreateMenuSchema,
     companyId: string,
@@ -154,5 +162,27 @@ export class MenuService {
 
     await menuQueries.delete(id);
     return { success: true };
+  }
+
+  static async setActive(
+    menuId: string,
+    companyId: string,
+    menuType: MenuType,
+  ): Promise<FormattedMenu> {
+    const existing = await menuQueries.getById(menuId);
+    if (!existing) {
+      throw new Error("Menu not found");
+    }
+    if (existing.companyId !== companyId) {
+      throw new Error("Menu does not belong to this company");
+    }
+
+    await menuQueries.setActive(menuId, companyId, menuType);
+
+    const fullMenu = await menuQueries.getById(menuId);
+    if (!fullMenu) {
+      throw new Error("Failed to fetch updated menu");
+    }
+    return transformMenu(fullMenu);
   }
 }

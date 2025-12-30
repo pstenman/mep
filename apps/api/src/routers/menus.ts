@@ -6,6 +6,7 @@ import {
 import { MenuService } from "@/services/menus/service";
 import { companyProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
+import { MenuType } from "@mep/types";
 import { z } from "zod";
 
 export const menusRouter = createTRPCRouter({
@@ -24,6 +25,17 @@ export const menusRouter = createTRPCRouter({
     .input(z.object({ id: z.uuid() }))
     .query(async ({ input }) => {
       const menu = await MenuService.getById(input.id);
+      return { data: menu };
+    }),
+
+  getActive: companyProcedure
+    .input(
+      z.object({
+        menuType: z.enum(Object.values(MenuType)),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const menu = await MenuService.getActive(ctx.companyId!, input.menuType);
       return { data: menu };
     }),
 
@@ -46,5 +58,21 @@ export const menusRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const result = await MenuService.delete(input.id, ctx.companyId!);
       return { data: result };
+    }),
+
+  setActive: companyProcedure
+    .input(
+      z.object({
+        id: z.uuid(),
+        menuType: z.enum(Object.values(MenuType)),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const menu = await MenuService.setActive(
+        input.id,
+        ctx.companyId!,
+        input.menuType,
+      );
+      return { data: menu };
     }),
 });
