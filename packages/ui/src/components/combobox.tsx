@@ -3,7 +3,7 @@
 import { cn } from "../utils/cn";
 import { useMemo, useState, useEffect } from "react";
 import { Button } from "./button";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import {
   Command,
@@ -94,6 +94,8 @@ function Combobox<T>({
             placeholder={placeholder}
             value={query}
             onValueChange={setQuery}
+            className="border-none focus-visible:ring-0 focus-visible:ring-offset-0
+            focus:outline-none shadow-none"
           />
           <CommandList>
             <CommandEmpty>
