@@ -19,7 +19,10 @@ export class StripeService {
     const stripeCustomer = await stripe.customers.create({
       name: companyName,
       email,
-      metadata,
+      metadata: {
+        ...metadata,
+        companyRegistrationNumber,
+      },
     });
     return stripeCustomer;
   }

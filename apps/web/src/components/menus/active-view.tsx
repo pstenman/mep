@@ -4,7 +4,7 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc/client";
 import { Loader2, FileText, Pencil, Trash2 } from "lucide-react";
 import type { MenuType } from "@mep/types";
-import { Text, Badge, Button } from "@mep/ui";
+import { Text, Badge } from "@mep/ui";
 import { useMenusSheet } from "./sheet";
 import { DynamicButton } from "@/components/ui/dynamic-button";
 import { useTranslations } from "next-intl";

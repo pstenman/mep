@@ -1,4 +1,4 @@
-import { Popover, PopoverTrigger, Button, cn, PopoverContent } from "@mep/ui";
+import { Popover, PopoverTrigger, Button, PopoverContent } from "@mep/ui";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
 interface MenuItemActionsProps {

@@ -18,7 +18,6 @@ export function RecipeCombobox({
   value,
   onChange,
   disabled,
-  onClear,
 }: RecipeComboboxProps) {
   const { data: recipesData, isLoading } = trpc.recipes.getAll.useQuery({});
 

@@ -3,7 +3,6 @@ import { db, type Database } from "..";
 import { and, eq, ilike } from "drizzle-orm";
 import type { PrepStatus } from "@mep/types";
 
-type PrepItemRow = typeof prepItems.$inferSelect;
 type PrepItemInsert = typeof prepItems.$inferInsert;
 
 export interface PrepItemFilters {

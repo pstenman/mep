@@ -3,7 +3,7 @@
 import { cn } from "../utils/cn";
 import { useMemo, useState, useEffect } from "react";
 import { Button } from "./button";
-import { Check, ChevronsUpDown, X } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import {
   Command,

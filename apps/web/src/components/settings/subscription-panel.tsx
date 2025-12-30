@@ -11,7 +11,7 @@ export function SubscriptionPanel() {
   const locale = useLocale();
   const { data: subscription, isLoading } =
     trpc.subscription.getSubscription.useQuery();
-  const [billingUrl, setBillingUrl] = useState<string | null>(null);
+  const [_billingUrl, setBillingUrl] = useState<string | null>(null);
 
   const createPortal = trpc.stripe.createBillingPortalSession.useMutation();
 

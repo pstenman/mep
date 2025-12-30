@@ -2,7 +2,6 @@ import { prepGroups } from "@/schema/preparations";
 import { db, type Database } from "..";
 import { and, eq, ilike } from "drizzle-orm";
 
-type PrepGroupRow = typeof prepGroups.$inferSelect;
 type PrepGroupInsert = typeof prepGroups.$inferInsert;
 
 export interface PrepGroupFilters {
