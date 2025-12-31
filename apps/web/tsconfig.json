@@ -7,11 +7,6 @@
       "~locale/*": ["locale/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "src/index.ts",
-    "../packages/**/*",
-    "../apps/api/**/*"
-  ],
+  "include": ["src/**/*", "app"],
   "exclude": ["node_modules", ".next"]
 }

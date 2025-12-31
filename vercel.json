@@ -1,0 +1,6 @@
+{
+  "rootDirectory": "apps/web",
+  "installCommand": "bun install",
+  "buildCommand": "bun turbo run build --filter=web",
+  "outputDirectory": ".next"
+}
