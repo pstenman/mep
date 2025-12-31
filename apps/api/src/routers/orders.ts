@@ -17,7 +17,7 @@ export const ordersRouter = createTRPCRouter({
         })
         .partial(),
     )
-    .query(async ({ input, ctx }) => {
+    .query(async ({ ctx }) => {
       const result = await OrderService.getAll(ctx.companyId!);
       return { data: result };
     }),
