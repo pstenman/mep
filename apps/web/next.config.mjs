@@ -1,11 +1,9 @@
 import createNextIntlPlugin from "next-intl/plugin";
-import { dirname, resolve } from "node:path";
+import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-const workspaceRoot = resolve(__dirname, "../..");
 
 const nextConfig = {
   reactStrictMode: true,
@@ -13,13 +11,6 @@ const nextConfig = {
 
   typescript: {
     ignoreBuildErrors: true,
-  },
-
-  output: "standalone",
-  outputFileTracingRoot: workspaceRoot,
-
-  outputFileTracingIncludes: {
-    "**/*": ["apps/web/public/locale/**/*"],
   },
 
   transpilePackages: ["@mep/ui", "@mep/types"],
