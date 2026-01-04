@@ -1,0 +1,15 @@
+{
+  "emptyState": {
+    "title": "Inga {group} prepp hittades",
+    "description": "Denna sida visar alla prepp punkter för {group}. För att komma igång tryck antingen på knappen nedanför eller plus knappen i toppen av sidan. .",
+    "button": "Skapa Prepp"
+  },
+  "group": {
+    "main": "Huvud",
+    "breakfast": "Frukost",
+    "lunch": "Lunch",
+    "alACarte": "À la Carte",
+    "set": "Set Meny",
+    "group": "Grupp Meny"
+  }
+}

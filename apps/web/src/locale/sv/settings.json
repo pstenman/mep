@@ -1,0 +1,84 @@
+{
+  "subscription": {
+    "title": "Prenumeration",
+    "loading": "Laddar prenumeration...",
+    "noSubscription": "Ingen prenumeration hittad.",
+    "plan": "Plan",
+    "status": "Status",
+    "currentPeriod": "Aktuell Period",
+    "cancelAtPeriodEnd": "Prenumerationen kommer att avslutas i slutet av perioden.",
+    "manageButtonLabel": "Hantera Prenumeration"
+  },
+  "company": {
+    "title": "Företagsinställningar",
+    "description": "Välj vilka prep-typer som ska vara tillgängliga i din app.",
+    "loading": "Laddar inställningar...",
+    "save": "Spara ändringar",
+    "saving": "Sparar...",
+    "updateSuccess": "Inställningar uppdaterades",
+    "updateError": "Kunde inte uppdatera inställningar",
+    "prepTypes": {
+      "main": "Huvudrätt",
+      "breakfast": "Frukost",
+      "lunch": "Lunch",
+      "al-a-carte": "À la Carte",
+      "set": "Meny",
+      "group": "Grupp"
+    }
+  },
+  "users": {
+    "title": "Anställda",
+    "description": "Hantera användarroller i ditt företag.",
+    "loading": "Laddar användare...",
+    "empty": "Inga användare hittades.",
+    "updateSuccess": "Roll uppdaterades",
+    "updateError": "Kunde inte uppdatera roll",
+    "columns": {
+      "name": "Namn",
+      "email": "E-post",
+      "role": "Roll"
+    }
+  },
+  "personal": {
+    "title": "Användarinställningar",
+    "description": "Uppdatera din personliga information.",
+    "loading": "Laddar användarinformation...",
+    "updateSuccess": "Profil uppdaterades",
+    "updateError": "Kunde inte uppdatera profil",
+    "save": "Spara ändringar",
+    "saving": "Sparar...",
+    "error": "Kunde inte ladda användarinformation.",
+    "password": {
+      "title": "Ändra lösenord",
+      "description": "Uppdatera ditt kontolösenord.",
+      "button": {
+        "change": "Ändra lösenord"
+      },
+      "currentPassword": {
+        "label": "Nuvarande lösenord",
+        "placeholder": "Ange nuvarande lösenord",
+        "required": "Nuvarande lösenord krävs"
+      },
+      "newPassword": {
+        "label": "Nytt lösenord",
+        "placeholder": "Ange nytt lösenord",
+        "minLength": "Lösenordet måste vara minst 6 tecken"
+      },
+      "confirmPassword": {
+        "label": "Bekräfta nytt lösenord",
+        "placeholder": "Bekräfta nytt lösenord",
+        "required": "Vänligen bekräfta ditt nya lösenord",
+        "mismatch": "Lösenorden matchar inte"
+      },
+      "save": "Uppdatera lösenord",
+      "saving": "Uppdaterar...",
+      "cancel": "Avbryt",
+      "success": "Lösenord uppdaterades",
+      "error": {
+        "noSession": "Ingen aktiv session hittades",
+        "invalidCurrent": "Nuvarande lösenord är felaktigt",
+        "updateFailed": "Kunde inte uppdatera lösenord"
+      }
+    }
+  }
+}
