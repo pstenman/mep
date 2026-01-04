@@ -14,13 +14,11 @@ const app = new Hono();
 
 app.route("/webhook/stripe", stripeWebhookRoute);
 
-const api = new Hono();
+app.use("*", secureHeaders());
+app.use("/trpc/*", authMiddleware);
+app.use("*", corsLoggingMiddleware);
 
-api.use(secureHeaders());
-api.use("/trpc/*", authMiddleware);
-api.use("*", corsLoggingMiddleware);
-
-api.use("*", (c, next) => {
+app.use("*", (c, next) => {
   return cors({
     origin: (origin) => {
       if (!origin) return null;
@@ -33,11 +31,11 @@ api.use("*", (c, next) => {
   })(c, next);
 });
 
-api.get("/", (c) => {
+app.get("/", (c) => {
   return c.json({ status: "ok" });
 });
 
-api.all("/trpc/*", async (c, next) => {
+app.all("/trpc/*", async (c, next) => {
   const reqAny = c.req as any;
 
   const ctx = await createTRPCContext({
@@ -55,8 +53,6 @@ api.all("/trpc/*", async (c, next) => {
     createContext: () => ctx,
   })(c, next);
 });
-
-app.route("/", api);
 
 const port = Number(process.env.PORT) || 3001;
 
