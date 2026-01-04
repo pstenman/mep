@@ -3,4 +3,3 @@
   "buildCommand": "bun turbo run build --filter=@mep/web",
   "outputDirectory": ".next"
 }
-

@@ -1,7 +1,14 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const LOCALE_DIR = path.join(process.cwd(), "locale");
+function getLocaleDir() {
+  if (process.env.NODE_ENV === "production") {
+    return path.join(process.cwd(), "apps", "web", "locale");
+  }
+  return path.join(process.cwd(), "locale");
+}
+
+const LOCALE_DIR = getLocaleDir();
 
 export async function loadLocaleMessages(locale: string) {
   const folder = path.join(LOCALE_DIR, locale);
