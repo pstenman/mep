@@ -12,10 +12,6 @@ import { AUTH_SYMBOL } from "@/types/auth";
 
 const app = new Hono();
 
-app.get("/", (c) => {
-  return c.json({ status: "ok" });
-});
-
 app.route("/webhook/stripe", stripeWebhookRoute);
 
 const api = new Hono();
@@ -35,6 +31,10 @@ api.use("*", (c, next) => {
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization", "x-request-id"],
   })(c, next);
+});
+
+api.get("/", (c) => {
+  return c.json({ status: "ok" });
 });
 
 api.all("/trpc/*", async (c, next) => {
