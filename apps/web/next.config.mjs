@@ -22,22 +22,6 @@ const nextConfig = {
     "**/*": ["locale/**/*"],
   },
 
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      const localeSource = resolve(__dirname, "locale");
-      const localeDest = resolve(__dirname, ".next/standalone/apps/web/locale");
-
-      if (existsSync(localeSource) && !existsSync(localeDest)) {
-        try {
-          mkdirSync(localeDest, { recursive: true });
-        } catch (error) {
-          console.warn("Could not create locale directory:", error);
-        }
-      }
-    }
-    return config;
-  },
-
   transpilePackages: ["@mep/ui", "@mep/types"],
 };
 
