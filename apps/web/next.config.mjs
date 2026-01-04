@@ -22,11 +22,11 @@ const nextConfig = {
     "**/*": ["locale/**/*"],
   },
 
-    webpack: (config, { isServer }) => {
+  webpack: (config, { isServer }) => {
     if (isServer) {
       const localeSource = resolve(__dirname, "locale");
       const localeDest = resolve(__dirname, ".next/standalone/apps/web/locale");
-      
+
       if (existsSync(localeSource) && !existsSync(localeDest)) {
         try {
           mkdirSync(localeDest, { recursive: true });
