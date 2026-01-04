@@ -15,9 +15,6 @@ const client = postgres(connectionString!, {
   max: 1,
   idle_timeout: 0,
   connect_timeout: 10,
-  host: connectionString.includes(".supabase.co")
-    ? "db.gsyysdivqgrlgwlvlfgg.supabase.co"
-    : undefined,
 });
 export const db = drizzle(client, { schema });
 
