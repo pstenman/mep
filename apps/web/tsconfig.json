@@ -8,5 +8,5 @@
     }
   },
   "include": ["src/**/*", "app"],
-  "exclude": ["node_modules", ".next"]
+  "exclude": ["node_modules", ".next", "../api/src/**/*"]
 }
