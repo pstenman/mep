@@ -12,6 +12,10 @@ import { AUTH_SYMBOL } from "@/types/auth";
 
 const app = new Hono();
 
+app.get("/", (c) => {
+  return c.json({ status: "ok" });
+});
+
 app.route("/webhook/stripe", stripeWebhookRoute);
 
 const api = new Hono();
