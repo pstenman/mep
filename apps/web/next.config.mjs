@@ -18,6 +18,10 @@ const nextConfig = {
   output: "standalone",
   outputFileTracingRoot: workspaceRoot,
 
+  outputFileTracingIncludes: {
+    "**/*": ["apps/web/public/locale/**/*"],
+  },
+
   transpilePackages: ["@mep/ui", "@mep/types"],
 };
 
