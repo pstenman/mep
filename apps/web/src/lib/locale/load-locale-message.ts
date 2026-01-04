@@ -2,9 +2,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 function getLocaleDir() {
-  if (process.env.NODE_ENV === "production") {
-    return path.join(process.cwd(), "apps", "web", "public", "locale");
-  }
   return path.join(process.cwd(), "public", "locale");
 }
 
