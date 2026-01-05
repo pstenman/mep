@@ -2,7 +2,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema/schema";
 
-let connectionString = process.env.DATABASE_URL!;
+let connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
   throw new Error(
@@ -10,10 +10,9 @@ if (!connectionString) {
   );
 }
 
-const isLocal = connectionString
-  ? connectionString.includes("localhost") ||
-    connectionString.includes("127.0.0.1")
-  : false;
+const isLocal =
+  connectionString.includes("localhost") ||
+  connectionString.includes("127.0.0.1");
 
 if (!isLocal && !connectionString.includes("sslmode=")) {
   const separator = connectionString.includes("?") ? "&" : "?";
@@ -25,7 +24,7 @@ const sslConfig = isLocal ? false : "require";
 if (!isLocal) {
   const url = new URL(connectionString);
   console.log(
-    `🔌 Connecting to database: ${url.hostname}:${url.port || 5432} (SSL: ${sslConfig})`,
+    `🔌 Connecting to database: ${url.hostname}:${url.port || "unknown"} (SSL: ${sslConfig})`,
   );
 }
 
@@ -34,6 +33,10 @@ const client = postgres(connectionString, {
   max: 10,
   idle_timeout: 20,
   connect_timeout: 30,
+  prepare: false,
+  connection: {
+    application_name: "mep",
+  },
   onnotice: () => {},
   transform: {
     undefined: null,
@@ -43,7 +46,7 @@ const client = postgres(connectionString, {
 if (!isLocal) {
   const url = new URL(connectionString);
   console.log(
-    `🔌 Database configured: ${url.hostname}:${url.port || 5432} (SSL: ${sslConfig})`,
+    `✅ Database configured: ${url.hostname}:${url.port || "unknown"} (SSL: ${sslConfig})`,
   );
 }
 
