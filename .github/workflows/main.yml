@@ -35,7 +35,11 @@ jobs:
       - name: Build all apps
         run: bun run build
 
-      # 7. Deploy to Railway
+      # 7. Install Railway CLI
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      # 8. Deploy to Railway
       - name: Deploy to Railway
         run: railway up --environment production
         env:
