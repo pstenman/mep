@@ -27,6 +27,15 @@ export const PublicTRPCProvider = ({
   }
 
   if (!trpcClientRef.current) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL
+      ? `${process.env.NEXT_PUBLIC_API_URL}/trpc`
+      : "/trpc";
+
+    if (typeof window !== "undefined") {
+      console.log("🔍 tRPC API URL:", apiUrl);
+      console.log("🔍 NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
+    }
+
     trpcClientRef.current = trpc.createClient({
       links: [
         loggerLink({
@@ -35,9 +44,7 @@ export const PublicTRPCProvider = ({
             (opts.direction === "down" && opts.result instanceof Error),
         }),
         httpBatchLink({
-          url: process.env.NEXT_PUBLIC_API_URL
-            ? `${process.env.NEXT_PUBLIC_API_URL}/trpc`
-            : "/trpc",
+          url: apiUrl,
         }),
       ],
     });

@@ -23,15 +23,23 @@ export const useProtectedTRPC = (token: string | null) => {
   }
 
   if (!trpcClientRef.current) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL
+      ? `${process.env.NEXT_PUBLIC_API_URL}/trpc`
+      : "/trpc";
+
+    // Debug log (remove after fixing)
+    if (typeof window !== "undefined") {
+      console.log("🔍 Protected tRPC API URL:", apiUrl);
+      console.log("🔍 NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
+    }
+
     trpcClientRef.current = trpc.createClient({
       links: [
         loggerLink({
           enabled: () => process.env.NODE_ENV === "development",
         }),
         httpBatchLink({
-          url: process.env.NEXT_PUBLIC_API_URL
-            ? `${process.env.NEXT_PUBLIC_API_URL}/trpc`
-            : "/trpc",
+          url: apiUrl,
           fetch: (input, init) => {
             const headers = new Headers(init?.headers);
             const currentToken = tokenRef.current;
