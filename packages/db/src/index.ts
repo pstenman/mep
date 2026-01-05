@@ -35,7 +35,18 @@ const client = postgres(connectionString, {
   idle_timeout: 20,
   connect_timeout: 30,
   onnotice: () => {},
+  transform: {
+    undefined: null,
+  },
 });
+
+if (!isLocal) {
+  const url = new URL(connectionString);
+  console.log(
+    `🔌 Database configured: ${url.hostname}:${url.port || 5432} (SSL: ${sslConfig})`,
+  );
+}
+
 export const db = drizzle(client, { schema });
 
 export type DBTransaction = Parameters<typeof db.transaction>[0] extends (
