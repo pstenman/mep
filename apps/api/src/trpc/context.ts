@@ -1,6 +1,6 @@
 import { logger } from "@/utils/logger";
 import { db } from "@mep/db";
-import type { Role } from "@mep/types/src";
+import type { Role } from "@mep/types";
 import type { HonoRequest } from "hono";
 
 export const createTRPCContext = async (opts: {

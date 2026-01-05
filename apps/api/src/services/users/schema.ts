@@ -1,4 +1,4 @@
-import { Role } from "@mep/types/src";
+import { Role } from "@mep/types";
 import { z } from "zod";
 
 export const userSchema = z.object({

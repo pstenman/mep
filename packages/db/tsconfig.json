@@ -1,9 +1,13 @@
 {
-  "extends": "@mep/tsconfig/backend.json",
+  "extends": "../tsconfig/backend.json",
   "compilerOptions": {
     "composite": true,
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    }
   },
   "references": [{ "path": "../types" }],
   "include": ["src"]

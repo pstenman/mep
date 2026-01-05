@@ -1,11 +1,11 @@
-import type { MenuType } from "@mep/types/src";
+import type { MenuType } from "@mep/types";
 import type { InferSelectModel } from "drizzle-orm";
 import {
   transformMenuItems,
   type FormattedMenuItem,
   type RawMenuItemWithRelations,
 } from "../menu-items/transform";
-import type { menus } from "@mep/db/src/schema/menus";
+import type { menus } from "@mep/db";
 
 export interface FormattedMenu {
   id: string;
