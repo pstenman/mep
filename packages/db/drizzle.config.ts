@@ -1,18 +1,15 @@
 import { defineConfig } from "drizzle-kit";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL environment variable is required. Please set it in your .env.local or environment variables.\n" +
-      "Example: DATABASE_URL=postgresql://postgres:username:password@localhost:5432/mep_db",
-  );
+if (!process.env.DATABASE_DIRECT_URL) {
+  throw new Error("DATABASE_DIRECT_URL is required for migrations");
 }
 
 export default defineConfig({
   schema: "./src/schema/schema.ts",
   out: "./drizzle",
-  extensionsFilters: ["postgis"],
   dialect: "postgresql",
+  extensionsFilters: ["postgis"],
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    url: process.env.DATABASE_DIRECT_URL,
   },
 });

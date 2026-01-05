@@ -4,13 +4,12 @@
     "composite": true,
     "rootDir": "src",
     "outDir": "dist",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@mep/db/*": ["../../packages/db/*"],
-      "@mep/types/*": ["../../packages/types/*"]
+      "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "src/index.ts"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"],
   "references": [
     { "path": "../../packages/types" },

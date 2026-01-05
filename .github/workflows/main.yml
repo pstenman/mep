@@ -3,44 +3,46 @@ name: CI/CD
 on:
   push:
     branches: [main]
+    paths:
+      - "apps/api/**"
+      - "packages/db/**"
+      - "packages/types/**"
   pull_request:
     branches: [main]
+    paths:
+      - "apps/api/**"
+      - "packages/db/**"
+      - "packages/types/**"
 
 jobs:
-  build-and-deploy:
+  api:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # 2. Install Bun
-      - name: Install Bun
-        uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v1
 
-      # 3. Install dependencies
       - name: Install dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
 
-      # 4. Lint
       - name: Lint
-        run: bun run lint
+        run: bun turbo run lint --filter=api...
 
-      # 5. Type check
-      - name: Type Check
-        run: bun run typecheck
+      - name: Typecheck
+        run: bun turbo run typecheck --filter=api...
 
-      # 6. Build all apps (Turbo monorepo)
-      - name: Build all apps
-        run: bun run build
+      - name: Build API
+        run: bun turbo run build --filter=api...
 
-      # 7. Install Railway CLI
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
+      - name: Run DB migrations
+        if: github.event_name == 'push'
+        run: bun --cwd packages/db drizzle-kit migrate
+        env:
+          DATABASE_DIRECT_URL: ${{ secrets.DATABASE_DIRECT_URL }}
 
-      # 8. Deploy to Railway
       - name: Deploy to Railway
-        run: railway up --environment production --service 8268af33-e2a5-477c-85a4-8d368902686c
+        if: github.event_name == 'push'
+        run: npx railway up --service api --yes
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
