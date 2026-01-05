@@ -41,6 +41,6 @@ jobs:
 
       # 8. Deploy to Railway
       - name: Deploy to Railway
-        run: railway up --environment production
+        run: railway up --environment production --service vivacious-inspiration
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
