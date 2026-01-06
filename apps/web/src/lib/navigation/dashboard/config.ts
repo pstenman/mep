@@ -4,9 +4,9 @@
  */
 
 import {
-  ListChecks,
-  BookOpenText,
-  BookText,
+  ClipboardList,
+  Utensils,
+  ChefHat,
   WheatOff,
   Truck,
 } from "lucide-react";
@@ -111,7 +111,7 @@ export const createNavigation = (enabledPrepTypes?: string[]): NavGroup[] => {
       id: "preparations",
       titleKey: "preparations",
       href: dashboardPrefix(`preparations/${firstGroup}`),
-      icon: ListChecks,
+      icon: ClipboardList,
       collapsible: true,
       items: groupNavItems("preparations", "", enabledPrepTypes),
     },
@@ -119,7 +119,7 @@ export const createNavigation = (enabledPrepTypes?: string[]): NavGroup[] => {
       id: "menus",
       titleKey: "menus",
       href: dashboardPrefix(`menus/${firstBreakfastGroup}`),
-      icon: BookOpenText,
+      icon: Utensils,
       collapsible: true,
       items: groupNavItems("menus", "Menu", enabledPrepTypes),
     },
@@ -127,7 +127,7 @@ export const createNavigation = (enabledPrepTypes?: string[]): NavGroup[] => {
       id: "recipes",
       titleKey: "recipes",
       href: dashboardPrefix("recipes"),
-      icon: BookText,
+      icon: ChefHat,
       collapsible: false,
     },
     {

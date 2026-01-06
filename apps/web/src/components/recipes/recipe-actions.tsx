@@ -1,5 +1,8 @@
+"use client";
+
 import { Popover, PopoverTrigger, Button, PopoverContent } from "@mep/ui";
 import { MoreHorizontal, Pencil, Trash2, Eye } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface RecipeActionsProps {
   onView: () => void;
@@ -12,6 +15,8 @@ export function RecipeActions({
   onEdit,
   onDelete,
 }: RecipeActionsProps) {
+  const t = useTranslations("recipes");
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -31,7 +36,7 @@ export function RecipeActions({
           onClick={onView}
         >
           <Eye className="mr-2 h-4 w-4" />
-          View
+          {t("actions.view")}
         </Button>
 
         <Button
@@ -40,7 +45,7 @@ export function RecipeActions({
           onClick={onEdit}
         >
           <Pencil className="mr-2 h-4 w-4" />
-          Edit
+          {t("actions.edit")}
         </Button>
 
         <Button
@@ -49,7 +54,7 @@ export function RecipeActions({
           onClick={onDelete}
         >
           <Trash2 className="mr-2 h-4 w-4 text-destructive" />
-          Delete
+          {t("actions.delete")}
         </Button>
       </PopoverContent>
     </Popover>

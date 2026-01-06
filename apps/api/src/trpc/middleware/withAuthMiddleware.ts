@@ -60,7 +60,7 @@ export const requireRole = (roles: Role | Role[]) => {
   );
 
   return t.middleware(({ ctx, next }) => {
-    if (!ctx.auth?.role || !allowed.includes(ctx.auth.role)) {
+    if (!ctx.auth?.role || !allowed.includes(ctx.auth.role.toUpperCase())) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "Insufficient role",

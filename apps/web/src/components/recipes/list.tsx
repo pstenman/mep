@@ -13,8 +13,10 @@ import { useDebouncedSearch } from "@/hooks/search/use-debounce";
 import { RecipesTable } from "./table";
 import { RecipeViewDialog } from "./view-dialog";
 import { RecipeActions } from "./recipe-actions";
+import { useTranslations } from "next-intl";
 
 export function RecipesList() {
+  const t = useTranslations("recipes");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [recipeToDelete, setRecipeToDelete] = useState<string | null>(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -39,13 +41,13 @@ export function RecipesList() {
 
   const deleteRecipe = trpc.recipes.delete.useMutation({
     onSuccess: () => {
-      toast.success("Recipe deleted successfully");
+      toast.success(t("form.toast.deleteSuccess"));
       utils.recipes.getAll.invalidate();
       setDeleteDialogOpen(false);
       setRecipeToDelete(null);
     },
     onError: (error: { message?: string }) => {
-      toast.error(error.message || "Failed to delete recipe");
+      toast.error(error.message || t("form.toast.deleteError"));
     },
   });
 
@@ -84,7 +86,7 @@ export function RecipesList() {
           <Searchbar
             value={rawSearch}
             onChange={setRawSearch}
-            placeholder="Search recipes..."
+            placeholder={t("list.searchPlaceholder")}
           />
         </div>
       </div>
@@ -102,8 +104,8 @@ export function RecipesList() {
             <div className="flex items-center justify-center py-8">
               <Text className="text-muted-foreground">
                 {debouncedSearch.trim().length > 0
-                  ? "No recipes found"
-                  : "No recipes"}
+                  ? t("list.noRecipesFound")
+                  : t("list.noRecipes")}
               </Text>
             </div>
           </div>
@@ -147,8 +149,8 @@ export function RecipesList() {
             <div className="flex items-center justify-center py-8">
               <Text className="text-muted-foreground">
                 {debouncedSearch.trim().length > 0
-                  ? "No recipes found"
-                  : "No recipes"}
+                  ? t("list.noRecipesFound")
+                  : t("list.noRecipes")}
               </Text>
             </div>
           )}
@@ -160,6 +162,10 @@ export function RecipesList() {
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={handleDeleteConfirm}
         isLoading={deleteRecipe.isPending}
+        title={t("delete.title")}
+        description={t("delete.description")}
+        confirmText={t("delete.confirm")}
+        cancelText={t("delete.cancel")}
       />
 
       <RecipeViewDialog

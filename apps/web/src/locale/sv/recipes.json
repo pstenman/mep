@@ -1,0 +1,75 @@
+{
+  "list": {
+    "searchPlaceholder": "Sök recept...",
+    "noRecipes": "Inga recept",
+    "noRecipesFound": "Inga recept hittades",
+    "loading": "Laddar recept..."
+  },
+  "form": {
+    "title": {
+      "create": "Skapa Recept",
+      "edit": "Redigera Recept"
+    },
+    "label": {
+      "name": "Namn",
+      "instructions": "Instruktioner",
+      "ingredients": "Ingredienser"
+    },
+    "placeholder": {
+      "name": "Ange namn",
+      "instructions": "Ange instruktioner",
+      "ingredientName": "Ingrediensnamn",
+      "quantity": "0",
+      "unit": "kg, g, ml, etc."
+    },
+    "button": {
+      "create": "Skapa",
+      "update": "Uppdatera",
+      "saving": "Sparar...",
+      "addIngredient": "Lägg till Ingrediens"
+    },
+    "ingredient": {
+      "title": "Ingrediens {index}",
+      "name": "Namn",
+      "quantity": "Kvantitet",
+      "unit": "Enhet",
+      "empty": "Inga ingredienser. Klicka på \"Lägg till Ingrediens\" för att komma igång."
+    },
+    "toast": {
+      "createSuccess": "Recept skapat",
+      "updateSuccess": "Recept uppdaterat",
+      "deleteSuccess": "Recept borttaget",
+      "error": "Något gick fel. Försök igen.",
+      "deleteError": "Kunde inte ta bort recept"
+    }
+  },
+  "view": {
+    "title": "Receptdetaljer",
+    "instructions": "Instruktioner",
+    "ingredients": "Ingredienser",
+    "noDetails": "Inga detaljer tillgängliga för detta recept."
+  },
+  "columns": {
+    "name": "Namn",
+    "createdBy": "Skapad Av",
+    "updatedBy": "Uppdaterad Av",
+    "createdAt": "Skapad",
+    "updatedAt": "Uppdaterad"
+  },
+  "actions": {
+    "view": "Visa",
+    "edit": "Redigera",
+    "delete": "Ta bort"
+  },
+  "empty": {
+    "title": "Inga recept ännu",
+    "description": "Skapa ditt första recept för att komma igång",
+    "button": "Skapa Recept"
+  },
+  "delete": {
+    "title": "Ta bort Recept",
+    "description": "Är du säker på att du vill ta bort detta recept? Denna åtgärd kan inte ångras.",
+    "confirm": "Ta bort",
+    "cancel": "Avbryt"
+  }
+}

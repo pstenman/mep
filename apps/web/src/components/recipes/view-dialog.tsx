@@ -9,6 +9,7 @@ import {
 } from "@mep/ui";
 import type { RecipeOutput } from "@mep/api";
 import { Dot } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface RecipeViewDialogProps {
   open: boolean;
@@ -39,6 +40,8 @@ export function RecipeViewDialog({
   onOpenChange,
   recipe,
 }: RecipeViewDialogProps) {
+  const t = useTranslations("recipes");
+
   if (!recipe) return null;
 
   const ingredients = recipe.ingredients || [];
@@ -53,7 +56,7 @@ export function RecipeViewDialog({
         <div className="space-y-6">
           {recipe.instructions && (
             <div className="space-y-2">
-              <Text className="font-semibold">Instructions</Text>
+              <Text className="font-semibold">{t("view.instructions")}</Text>
               <Text className="text-muted-foreground whitespace-pre-wrap">
                 {recipe.instructions}
               </Text>
@@ -62,7 +65,7 @@ export function RecipeViewDialog({
 
           {ingredients.length > 0 && (
             <div className="space-y-2">
-              <Text className="font-semibold">Ingredients</Text>
+              <Text className="font-semibold">{t("view.ingredients")}</Text>
               <ul className="space-y-1">
                 {ingredients.map((ingredient: Ingredient, index: number) => (
                   <li key={index} className="text-muted-foreground">
@@ -78,7 +81,7 @@ export function RecipeViewDialog({
 
           {ingredients.length === 0 && !recipe.instructions && (
             <Text className="text-muted-foreground text-center py-4">
-              No details available for this recipe.
+              {t("view.noDetails")}
             </Text>
           )}
         </div>
