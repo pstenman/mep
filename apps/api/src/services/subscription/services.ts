@@ -92,14 +92,19 @@ export class SubscriptionService {
     const supabaseId = await userQueries.getSupabaseIdByUserId(userId, db);
     if (!supabaseId) throw new Error("Supabase ID not found");
 
+    const user = await userQueries.getById(userId);
+    if (!user) throw new Error("User not found");
+    if (!user.email) throw new Error("User email not found");
+
     await db.transaction(async (tx) => {
       await userQueries.activate(userId, tx);
       await companyQueries.activate(companyId, tx);
       await membershipQueries.activate(membershipId, tx);
     });
 
-    const magicLinkData =
-      await AuthService.sendMagicLinkOnPaymentSuccess(supabaseId);
+    const magicLinkData = await AuthService.sendMagicLinkOnPaymentSuccess(
+      user.email,
+    );
     logger.info(
       { userId, companyId, membershipId, magicLink: magicLinkData },
       "Subscription activated and magic link sent",
