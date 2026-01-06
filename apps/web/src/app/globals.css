@@ -155,6 +155,9 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   html,
   body {
     @apply h-full;

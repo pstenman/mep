@@ -6,6 +6,63 @@
     "login": "Logga In",
     "getStarted": "Kom Igång"
   },
+  "hero": {
+    "title": "Effektivisera Ditt Köksarbete",
+    "subtitle": "Hantera recept, menyer, beställningar och prepp på ett och samma ställe. Byggt för professionella kök där effektivitet är avgörande.",
+    "getStarted": "Kom igång",
+    "learnMore": "Läs mer"
+  },
+  "features": {
+    "title": "Allt Du Behöver För Att Driva Köket",
+    "subtitle": "Omfattande verktyg som förenklar kökshantering och ökar produktiviteten",
+    "recipeManagement": {
+      "title": "Recepthantering",
+      "description": "Skapa, organisera och få snabb åtkomst till dina recept. Håll full kontroll över ingredienser och instruktioner."
+    },
+    "menuPlanning": {
+      "title": "Menyplanering",
+      "description": "Planera och hantera menyer enkelt. Sätt ihop menyer från ditt receptbibliotek på bara några minuter."
+    },
+    "orderPrep": {
+      "title": "Beställnings- och prepphantering",
+      "description": "Effektivisera beställningar och prepp-listor. Håll köket organiserat och arbetet i fas."
+    },
+    "allergyTracking": {
+      "title": "Allergenhantering",
+      "description": "Hantera allergener och kostrestriktioner på ett säkert sätt. Ge personal och gäster tydlig och korrekt information."
+    }
+  },
+  "pricing": {
+    "title": "Enkelt och Transparent Pris",
+    "subtitle": "En komplett kökshanteringslösning – allt du behöver för att arbeta smartare.",
+    "badge": "Vår Plan",
+    "error": "Kunde inte ladda prisinformationen.",
+    "features": {
+      "unlimitedRecipes": "Obegränsat antal recept",
+      "advancedMenuPlanning": "Avancerad menyplanering",
+      "fullPrepManagement": "Fullständig prepphantering",
+      "allergyTracking": "Allergenhantering",
+      "prioritySupport": "Prioriterad support"
+    },
+    "getStarted": "Kom igång"
+  },
+  "about": {
+    "title": "Om MeP",
+    "description1": "MeP skapades för att förenkla vardagen i professionella kök. Vi vet hur komplext det är att hantera recept, menyer, beställningar och prepp – därför har vi samlat allt i en och samma lösning.",
+    "description2": "Vårt uppdrag är att ge köksteam möjlighet att fokusera på det de gör bäst – att skapa fantastisk mat – medan vi tar hand om struktur och organisation bakom kulisserna.",
+    "trustedBy": "Används av professionella kök världen över",
+    "stats": {
+      "activeUsers": "Aktiva användare",
+      "recipesManaged": "Hanterade recept",
+      "uptime": "Drifttid",
+      "support": "Support"
+    }
+  },
+  "cta": {
+    "title": "Redo att Ta Ditt Kök till Nästa Nivå?",
+    "subtitle": "Anslut till skaran av professionella kök som använder MeP för ett mer strukturerat och effektivt arbete.",
+    "button": "Starta genom att prenumerera på MeP"
+  },
   "subscribe": {
     "form": {
       "title": "Prenumerera",
