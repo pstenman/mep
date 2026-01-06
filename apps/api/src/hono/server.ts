@@ -19,7 +19,11 @@ app.use("/trpc/*", authMiddleware);
 app.use("*", corsLoggingMiddleware);
 
 app.use("*", (c, next) => {
-  if (c.req.path.startsWith("/webhook/")) {
+  const userAgent = c.req.header("user-agent") ?? "";
+  const isStripeWebhook = userAgent.includes("Stripe/1.0");
+  const isWebhookPath = c.req.path.startsWith("/webhook/");
+
+  if (isWebhookPath || isStripeWebhook) {
     return next();
   }
 
