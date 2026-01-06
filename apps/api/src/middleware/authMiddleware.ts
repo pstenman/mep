@@ -1,10 +1,9 @@
-import { supabaseJWKS } from "@/auth/supabase-jwks";
+import { getSupabase } from "@/lib/supabase";
 import { AUTH_SYMBOL, type AuthUser } from "@/types/auth";
 import { logger } from "@/utils/logger";
 import { db } from "@mep/db";
 import { eq } from "drizzle-orm";
 import type { MiddlewareHandler } from "hono";
-import { jwtVerify } from "jose";
 
 export const authMiddleware: MiddlewareHandler = async (c, next) => {
   const authHeader = c.req.header("authorization") ?? "";
@@ -24,19 +23,25 @@ export const authMiddleware: MiddlewareHandler = async (c, next) => {
 
   try {
     if (isLocal) {
-      //  LOCAL: Remove when going to production
       payload = JSON.parse(
         Buffer.from(token.split(".")[1], "base64").toString(),
       );
     } else {
-      //  PROD: keep when going to production
-      const issuer = `${supabaseUrl}/auth/v1`;
-      const result = await jwtVerify(token, supabaseJWKS!, {
-        audience: "authenticated",
-        issuer,
-      });
-      payload = result.payload;
-      logger.debug({ decodedToken: payload }, "📝 Verified JWT payload");
+      const supabase = getSupabase();
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser(token);
+
+      if (error || !user) {
+        throw new Error(error?.message || "Token verification failed");
+      }
+
+      payload = { sub: user.id };
+      logger.debug(
+        { userId: user.id, email: user.email },
+        "📝 Verified user via Supabase API",
+      );
     }
 
     const supabaseId = payload.sub;
