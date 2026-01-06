@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@mep/ui";
 import { parseAsBoolean, parseAsString } from "nuqs";
 import { useQueryState } from "nuqs";
 import { RecipeForm } from "./form";
+import { useTranslations } from "next-intl";
 
 export const useRecipesSheet = () => {
   const [isOpen, setIsOpen] = useQueryState(
@@ -30,6 +31,7 @@ export const useRecipesSheet = () => {
 
 export function RecipesSheet() {
   const { isOpen, close, recipeId } = useRecipesSheet();
+  const t = useTranslations("recipes");
 
   const handleSuccess = () => {
     close();
@@ -39,7 +41,9 @@ export function RecipesSheet() {
     <Sheet open={isOpen} onOpenChange={(open) => !open && close()}>
       <SheetContent className="flex flex-col p-0">
         <SheetHeader className="px-6 pt-6 pb-4 border-b shrink-0">
-          <SheetTitle>{recipeId ? "Edit Recipe" : "Create Recipe"}</SheetTitle>
+          <SheetTitle>
+            {recipeId ? t("form.title.edit") : t("form.title.create")}
+          </SheetTitle>
         </SheetHeader>
         <div className="flex-1 min-h-0">
           <RecipeForm onSuccess={handleSuccess} onCancel={close} />

@@ -5,6 +5,7 @@ import enMenus from "../../locale/en/menus.json";
 import enPages from "../../locale/en/pages.json";
 import enPreparations from "../../locale/en/preparations.json";
 import enPublic from "../../locale/en/public.json";
+import enRecipes from "../../locale/en/recipes.json";
 import enSettings from "../../locale/en/settings.json";
 import enUsers from "../../locale/en/users.json";
 
@@ -14,6 +15,7 @@ import svMenus from "../../locale/sv/menus.json";
 import svPages from "../../locale/sv/pages.json";
 import svPreparations from "../../locale/sv/preparations.json";
 import svPublic from "../../locale/sv/public.json";
+import svRecipes from "../../locale/sv/recipes.json";
 import svSettings from "../../locale/sv/settings.json";
 import svUsers from "../../locale/sv/users.json";
 
@@ -25,6 +27,7 @@ const localeMessages: Record<string, Record<string, any>> = {
     pages: enPages,
     preparations: enPreparations,
     public: enPublic,
+    recipes: enRecipes,
     settings: enSettings,
     users: enUsers,
   },
@@ -35,6 +38,7 @@ const localeMessages: Record<string, Record<string, any>> = {
     pages: svPages,
     preparations: svPreparations,
     public: svPublic,
+    recipes: svRecipes,
     settings: svSettings,
     users: svUsers,
   },

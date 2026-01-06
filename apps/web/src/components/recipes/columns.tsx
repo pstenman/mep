@@ -8,24 +8,26 @@ interface RecipeColumnsProps {
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onView: (recipe: RecipeOutput) => void;
+  t: (key: string) => string;
 }
 
 export const getRecipeColumns = ({
   onEdit,
   onDelete,
   onView,
+  t,
 }: RecipeColumnsProps): ColumnDef<RecipeOutput>[] => [
   {
     accessorKey: "name",
     id: "name",
-    header: "Name",
+    header: t("columns.name"),
     enableResizing: false,
     size: 200,
   },
   {
     accessorKey: "createdBy",
     id: "createdBy",
-    header: "Created By",
+    header: t("columns.createdBy"),
     enableResizing: false,
     size: 150,
     cell: ({ row }: { row: Row<RecipeOutput> }) => {
@@ -40,7 +42,7 @@ export const getRecipeColumns = ({
   {
     accessorKey: "updatedBy",
     id: "updatedBy",
-    header: "Updated By",
+    header: t("columns.updatedBy"),
     enableResizing: false,
     size: 150,
     cell: ({ row }: { row: Row<RecipeOutput> }) => {
@@ -55,7 +57,7 @@ export const getRecipeColumns = ({
   {
     accessorKey: "createdAt",
     id: "createdAt",
-    header: "Created At",
+    header: t("columns.createdAt"),
     enableResizing: false,
     size: 150,
     cell: ({ row }: { row: Row<RecipeOutput> }) => {
@@ -70,7 +72,7 @@ export const getRecipeColumns = ({
   {
     accessorKey: "updatedAt",
     id: "updatedAt",
-    header: "Updated At",
+    header: t("columns.updatedAt"),
     enableResizing: false,
     size: 150,
     cell: ({ row }: { row: Row<RecipeOutput> }) => {

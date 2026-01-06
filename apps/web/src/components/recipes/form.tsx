@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { recipeFormSchema, type RecipeFormSchema } from "./schema";
+import { useTranslations } from "next-intl";
 import {
   Form,
   FormLabel,
@@ -29,6 +30,7 @@ interface RecipeFormProps {
 export function RecipeForm({ onSuccess }: RecipeFormProps) {
   const utils = trpc.useUtils();
   const { recipeId } = useRecipesSheet();
+  const t = useTranslations("recipes");
 
   const { data: recipeData } = trpc.recipes.getById.useQuery(
     { id: recipeId! },
@@ -57,23 +59,23 @@ export function RecipeForm({ onSuccess }: RecipeFormProps) {
 
   const createRecipe = trpc.recipes.create.useMutation({
     onSuccess: () => {
-      toast.success("Recipe created successfully");
+      toast.success(t("form.toast.createSuccess"));
       utils.recipes.getAll.invalidate();
       onSuccess?.();
     },
     onError: (error: { message?: string }) => {
-      toast.error(error.message || "Failed to create recipe");
+      toast.error(error.message || t("form.toast.error"));
     },
   });
 
   const updateRecipe = trpc.recipes.update.useMutation({
     onSuccess: () => {
-      toast.success("Recipe updated successfully");
+      toast.success(t("form.toast.updateSuccess"));
       utils.recipes.getAll.invalidate();
       onSuccess?.();
     },
     onError: (error: { message?: string }) => {
-      toast.error(error.message || "Failed to update recipe");
+      toast.error(error.message || t("form.toast.error"));
     },
   });
 
@@ -109,9 +111,12 @@ export function RecipeForm({ onSuccess }: RecipeFormProps) {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Recipe Name</FormLabel>
+                  <FormLabel>{t("form.label.name")}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter recipe name" />
+                    <Input
+                      {...field}
+                      placeholder={t("form.placeholder.name")}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -122,11 +127,11 @@ export function RecipeForm({ onSuccess }: RecipeFormProps) {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Instructions</FormLabel>
+                  <FormLabel>{t("form.label.instructions")}</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder="Enter cooking instructions"
+                      placeholder={t("form.placeholder.instructions")}
                       rows={4}
                     />
                   </FormControl>
@@ -140,7 +145,11 @@ export function RecipeForm({ onSuccess }: RecipeFormProps) {
         </div>
         <SheetFooter className="shrink-0 px-6 pb-4 pt-4 border-t">
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : recipeId ? "Update" : "Create"}
+            {isLoading
+              ? t("form.button.saving")
+              : recipeId
+                ? t("form.button.update")
+                : t("form.button.create")}
           </Button>
         </SheetFooter>
       </form>

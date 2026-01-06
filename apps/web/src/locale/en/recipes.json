@@ -1,0 +1,75 @@
+{
+  "list": {
+    "searchPlaceholder": "Search recipes...",
+    "noRecipes": "No recipes",
+    "noRecipesFound": "No recipes found",
+    "loading": "Loading recipes..."
+  },
+  "form": {
+    "title": {
+      "create": "Create Recipe",
+      "edit": "Edit Recipe"
+    },
+    "label": {
+      "name": "Recipe Name",
+      "instructions": "Instructions",
+      "ingredients": "Ingredients"
+    },
+    "placeholder": {
+      "name": "Enter recipe name",
+      "instructions": "Enter cooking instructions",
+      "ingredientName": "Ingredient name",
+      "quantity": "0",
+      "unit": "kg, g, ml, etc."
+    },
+    "button": {
+      "create": "Create",
+      "update": "Update",
+      "saving": "Saving...",
+      "addIngredient": "Add Ingredient"
+    },
+    "ingredient": {
+      "title": "Ingredient {index}",
+      "name": "Name",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "empty": "No ingredients. Click \"Add Ingredient\" to get started."
+    },
+    "toast": {
+      "createSuccess": "Recipe created successfully",
+      "updateSuccess": "Recipe updated successfully",
+      "deleteSuccess": "Recipe deleted successfully",
+      "error": "Something went wrong. Please try again.",
+      "deleteError": "Failed to delete recipe"
+    }
+  },
+  "view": {
+    "title": "Recipe Details",
+    "instructions": "Instructions",
+    "ingredients": "Ingredients",
+    "noDetails": "No details available for this recipe."
+  },
+  "columns": {
+    "name": "Name",
+    "createdBy": "Created By",
+    "updatedBy": "Updated By",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At"
+  },
+  "actions": {
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "empty": {
+    "title": "No recipes yet",
+    "description": "Create your first recipe to get started",
+    "button": "Create Recipe"
+  },
+  "delete": {
+    "title": "Delete Recipe",
+    "description": "Are you sure you want to delete this recipe? This action cannot be undone.",
+    "confirm": "Delete",
+    "cancel": "Cancel"
+  }
+}

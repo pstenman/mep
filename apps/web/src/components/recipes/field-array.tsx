@@ -1,3 +1,5 @@
+"use client";
+
 import type { RecipeFormSchema } from "./schema";
 import {
   Button,
@@ -11,6 +13,7 @@ import {
   type UseFormReturn,
 } from "@mep/ui";
 import { Plus, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface IngredientsFieldArrayProps {
   form: UseFormReturn<RecipeFormSchema>;
@@ -18,6 +21,7 @@ interface IngredientsFieldArrayProps {
 
 export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
   const { control } = form;
+  const t = useTranslations("recipes");
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -33,7 +37,7 @@ export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <FormLabel>Ingredients</FormLabel>
+        <FormLabel>{t("form.label.ingredients")}</FormLabel>
         <Button
           type="button"
           variant="ghost"
@@ -41,7 +45,7 @@ export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
           onClick={() => append(defaultIngredient)}
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add Ingredient
+          {t("form.button.addIngredient")}
         </Button>
       </div>
 
@@ -49,7 +53,7 @@ export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
         <div key={field.id} className="p-4 border rounded-lg space-y-3">
           <div className="flex items-start justify-between">
             <h4 className="text-sm font-medium text-muted-foreground">
-              Ingredient {index + 1}
+              {t("form.ingredient.title", { index: index + 1 })}
             </h4>
             <Button
               type="button"
@@ -67,9 +71,12 @@ export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
               name={`ingredients.${index}.name`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t("form.ingredient.name")}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Ingredient name" />
+                    <Input
+                      {...field}
+                      placeholder={t("form.placeholder.ingredientName")}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -81,12 +88,12 @@ export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
               name={`ingredients.${index}.quantity`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Quantity</FormLabel>
+                  <FormLabel>{t("form.ingredient.quantity")}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       {...field}
-                      placeholder="0"
+                      placeholder={t("form.placeholder.quantity")}
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value) || 0)
                       }
@@ -103,9 +110,12 @@ export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
               name={`ingredients.${index}.unit`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Unit</FormLabel>
+                  <FormLabel>{t("form.ingredient.unit")}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="kg, g, ml, etc." />
+                    <Input
+                      {...field}
+                      placeholder={t("form.placeholder.unit")}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -117,7 +127,7 @@ export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
 
       {fields.length === 0 && (
         <div className="text-center py-8 text-sm text-muted-foreground border border-dashed rounded-lg">
-          No ingredients. Click "Add Ingredient" to get started.
+          {t("form.ingredient.empty")}
         </div>
       )}
     </div>

@@ -88,7 +88,7 @@ const SheetContent = React.forwardRef<
             )}
           >
             {children}
-            <SheetPrimitive.Close className="absolute right-4 sm:right-6 top-4 sm:top-7 rounded-sm transition-opacity focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary">
+            <SheetPrimitive.Close className="absolute right-4 sm:right-6 top-4 sm:top-7 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none">
               <XIcon className="h-5 w-5" />
               <span className="sr-only">Close</span>
             </SheetPrimitive.Close>

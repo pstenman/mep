@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { getRecipeColumns } from "./columns";
 import type { RecipeOutput } from "@mep/api";
 import { DataTable } from "../ui/data-tables";
+import { useTranslations } from "next-intl";
 
 interface RecipesTableProps {
   recipes: RecipeOutput[];
@@ -18,14 +19,16 @@ export function RecipesTable({
   onDelete,
   onView,
 }: RecipesTableProps) {
+  const t = useTranslations("recipes");
   const columns = useMemo(
     () =>
       getRecipeColumns({
         onEdit,
         onDelete,
         onView,
+        t,
       }),
-    [onEdit, onDelete, onView],
+    [onEdit, onDelete, onView, t],
   );
 
   return (
