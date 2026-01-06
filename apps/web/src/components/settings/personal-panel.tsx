@@ -21,6 +21,7 @@ import {
 } from "@mep/ui";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/auth/useAuth";
+import { DeleteDialog } from "../ui/delete-dialog";
 
 function createPersonalSchema(t: (key: string) => string) {
   return z.object({
@@ -57,6 +58,7 @@ export function PersonalPanel() {
   const { data: userData, isLoading } = trpc.users.getCurrentUser.useQuery();
 
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const personalForm = useForm<PersonalFormData>({
     resolver: zodResolver(createPersonalSchema(tUsers)),
@@ -365,6 +367,44 @@ export function PersonalPanel() {
           </Form>
         )}
       </div>
+
+      <Separator />
+
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <Text className="font-medium text-destructive">
+              {t("delete.title") || "Delete Account"}
+            </Text>
+            <Text className="text-sm text-muted-foreground">
+              {t("delete.description") ||
+                "Permanently delete your account. This action cannot be undone."}
+            </Text>
+          </div>
+          <Button
+            variant="destructive"
+            onClick={() => setDeleteDialogOpen(true)}
+          >
+            {t("delete.button") || "Delete Account"}
+          </Button>
+        </div>
+      </div>
+
+      <DeleteDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={() => {
+          // TODO: Implement delete user logic
+          setDeleteDialogOpen(false);
+        }}
+        title={t("delete.dialog.title") || "Delete Account"}
+        description={
+          t("delete.dialog.description") ||
+          "Are you sure you want to delete your account? This action cannot be undone."
+        }
+        confirmText={t("delete.dialog.confirm") || "Delete Account"}
+        cancelText={t("delete.dialog.cancel") || "Cancel"}
+      />
     </div>
   );
 }

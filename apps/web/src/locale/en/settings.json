@@ -79,6 +79,17 @@
         "invalidCurrent": "Current password is incorrect",
         "updateFailed": "Failed to update password"
       }
+    },
+    "delete": {
+      "title": "Delete Account",
+      "description": "Permanently delete your account. This action cannot be undone.",
+      "button": "Delete Account",
+      "dialog": {
+        "title": "Delete Account",
+        "description": "Are you sure you want to delete your account? This action cannot be undone.",
+        "confirm": "Delete Account",
+        "cancel": "Cancel"
+      }
     }
   }
 }

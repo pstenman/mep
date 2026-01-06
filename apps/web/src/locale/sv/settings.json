@@ -79,6 +79,17 @@
         "invalidCurrent": "Nuvarande lösenord är felaktigt",
         "updateFailed": "Kunde inte uppdatera lösenord"
       }
+    },
+    "delete": {
+      "title": "Ta bort konto",
+      "description": "Ta permanent bort ditt konto. Denna åtgärd kan inte ångras.",
+      "button": "Ta bort konto",
+      "dialog": {
+        "title": "Ta bort konto",
+        "description": "Är du säker på att du vill ta bort ditt konto? Denna åtgärd kan inte ångras.",
+        "confirm": "Ta bort konto",
+        "cancel": "Avbryt"
+      }
     }
   }
 }
