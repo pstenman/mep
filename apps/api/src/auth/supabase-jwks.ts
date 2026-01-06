@@ -5,5 +5,5 @@ const isLocal =
   supabaseUrl.includes("127.0.0.1") || supabaseUrl.includes("localhost");
 
 export const supabaseJWKS = !isLocal
-  ? createRemoteJWKSet(new URL(`${supabaseUrl}/auth/v1/keys`))
+  ? createRemoteJWKSet(new URL(`${supabaseUrl}/auth/v1/.well-known/jwks.json`))
   : null;
