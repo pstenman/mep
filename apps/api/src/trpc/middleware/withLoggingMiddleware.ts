@@ -11,8 +11,14 @@ export const withLoggingMiddleware = t.middleware(
     try {
       const result = await next();
       const duration = Date.now() - start;
+
+      const logOutput =
+        result && typeof result === "object" && "data" in result
+          ? { data: (result as { data: unknown }).data }
+          : result;
+
       logger.info(
-        { requestId, path, duration, output: result },
+        { requestId, path, duration, output: logOutput },
         "✅ tRPC procedure end",
       );
       return result;

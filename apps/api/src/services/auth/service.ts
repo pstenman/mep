@@ -58,6 +58,16 @@ export class AuthService {
       },
     });
     if (error) throw error;
+
+    logger.info(
+      {
+        email,
+        link: data.properties?.action_link,
+        hashedToken: data.properties?.hashed_token,
+      },
+      "🔗 Magic link generated",
+    );
+
     return data;
   }
 

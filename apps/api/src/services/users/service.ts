@@ -74,7 +74,7 @@ export class UserService {
       return { user, membership };
     });
 
-    await AuthService.sendMagicLinkOnPaymentSuccess(result.user.supabaseId);
+    await AuthService.sendMagicLinkOnPaymentSuccess(result.user.email);
 
     return result;
   }
