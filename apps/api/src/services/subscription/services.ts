@@ -55,9 +55,11 @@ export class SubscriptionService {
           userId: user.id,
         });
 
-      // TODO: Sync plan with stripe
-      const planId = process.env.PLAN_ID;
-      if (!planId) throw new Error("PLAN_ID is missing in env");
+      const defaultPlan = await planQueries.getDefault();
+      if (!defaultPlan) {
+        throw new Error("No plan found in database. Please seed plans first.");
+      }
+      const planId = defaultPlan.id;
 
       const subscription = await subscriptionQueries.create(
         {

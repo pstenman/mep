@@ -56,7 +56,7 @@ app.all("/trpc/*", async (c, next) => {
 
 const port = Number(process.env.PORT) || 3001;
 
-const server = {
+export const server = {
   port,
   fetch: app.fetch,
   host: "::",
