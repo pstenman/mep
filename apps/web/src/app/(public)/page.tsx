@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PublicView } from "@/components/public/view";
 
 export const metadata: Metadata = {
   title: {
@@ -11,9 +12,5 @@ export const metadata: Metadata = {
 };
 
 export default function PublicPage() {
-  return (
-    <div>
-      <h2 className="text-2xl font-bold">Testing Layout</h2>
-    </div>
-  );
+  return <PublicView />;
 }

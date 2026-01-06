@@ -6,6 +6,63 @@
     "login": "Log in",
     "getStarted": "Get Started"
   },
+  "hero": {
+    "title": "Streamline Your Kitchen Operations",
+    "subtitle": "Manage recipes, menus, orders, and preparations all in one place. Built for professional kitchens that demand efficiency.",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More"
+  },
+  "features": {
+    "title": "Everything You Need to Run Your Kitchen",
+    "subtitle": "Comprehensive tools designed to simplify kitchen management and boost productivity",
+    "recipeManagement": {
+      "title": "Recipe Management",
+      "description": "Create, organize, and access your recipes with ease. Track ingredients and instructions efficiently."
+    },
+    "menuPlanning": {
+      "title": "Menu Planning",
+      "description": "Plan and manage your menus seamlessly. Build menus from your recipe library in minutes."
+    },
+    "orderPrep": {
+      "title": "Order & Prep Management",
+      "description": "Streamline orders and preparation lists. Keep your kitchen organized and on schedule."
+    },
+    "allergyTracking": {
+      "title": "Allergy Tracking",
+      "description": "Safely manage allergens and dietary restrictions. Keep your customers safe and informed."
+    }
+  },
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "All-in-one kitchen management solution. Everything you need to streamline your operations.",
+    "badge": "Our Plan",
+    "error": "Unable to load pricing information.",
+    "features": {
+      "unlimitedRecipes": "Unlimited recipes",
+      "advancedMenuPlanning": "Advanced menu planning",
+      "fullPrepManagement": "Full prep management",
+      "allergyTracking": "Allergy tracking",
+      "prioritySupport": "Priority support"
+    },
+    "getStarted": "Get Started"
+  },
+  "about": {
+    "title": "About MeP",
+    "description1": "MeP was born from the need to simplify kitchen operations for professional chefs and restaurant managers. We understand the complexities of managing recipes, menus, orders, and preparations, and we've built a solution that brings it all together.",
+    "description2": "Our mission is to empower kitchen teams to focus on what they do best—creating exceptional food—while we handle the organizational complexity behind the scenes.",
+    "trustedBy": "Trusted by professional kitchens worldwide",
+    "stats": {
+      "activeUsers": "Active Users",
+      "recipesManaged": "Recipes Managed",
+      "uptime": "Uptime",
+      "support": "Support"
+    }
+  },
+  "cta": {
+    "title": "Ready to Transform Your Kitchen?",
+    "subtitle": "Join professional kitchens already using MeP to streamline their operations and boost efficiency.",
+    "button": "Start by subscribing to MeP"
+  },
   "subscribe": {
     "form": {
       "title": "Subscribe",
