@@ -1,4 +1,5 @@
 import { getSupabase } from "@/lib/supabase";
+import { logger } from "@/utils/logger";
 
 export class AuthService {
   static async createUser({
@@ -31,13 +32,29 @@ export class AuthService {
 
   static async sendMagicLink(email: string) {
     const supabase = getSupabase();
+
+    const redirectUrl = process.env.SUPABASE_MAGICLINK_REDIRECT;
+    if (!redirectUrl) {
+      throw new Error(
+        "SUPABASE_MAGICLINK_REDIRECT environment variable is not set",
+      );
+    }
+
+    logger.info(
+      {
+        redirectUrl,
+        envVar: process.env.SUPABASE_MAGICLINK_REDIRECT,
+        hasEnvVar: !!process.env.SUPABASE_MAGICLINK_REDIRECT,
+        envVarLength: process.env.SUPABASE_MAGICLINK_REDIRECT?.length,
+      },
+      "🔗 Magic link redirect URL configuration",
+    );
+
     const { data, error } = await supabase.auth.admin.generateLink({
       type: "magiclink",
       email,
       options: {
-        redirectTo:
-          process.env.SUPABASE_MAGICLINK_REDIRECT ||
-          "http://localhost:3000/auth/callback",
+        redirectTo: redirectUrl,
       },
     });
     if (error) throw error;
