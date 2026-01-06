@@ -1,1 +1,0 @@
-ALTER TABLE "menus" ADD COLUMN "is_active" boolean DEFAULT false NOT NULL;
