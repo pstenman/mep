@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { logger, PlanService } from "../index";
 import { PlanInterval } from "@mep/types";
 import { planQueries } from "@mep/db";

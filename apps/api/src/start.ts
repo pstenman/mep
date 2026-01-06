@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { seedPlans } from "./seed/plans";
 import { logger } from "./utils/logger";
 import { server } from "./hono/server";

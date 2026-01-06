@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { db } from "@mep/db";
 import { allergyQueries } from "@mep/db/queries/allergies.js";
 import { allergies } from "@mep/db/schema/allergies.js";
