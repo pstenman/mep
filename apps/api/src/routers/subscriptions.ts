@@ -30,4 +30,17 @@ export const subscriptionRouter = createTRPCRouter({
       userId: ctx.userId,
     });
   }),
+
+  cleanupFailedSubscription: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        companyId: z.string(),
+        membershipId: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      await SubscriptionService.cleanupFailedSubscription(input);
+      return { success: true };
+    }),
 });

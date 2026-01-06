@@ -1,1 +1,0 @@
-ALTER TABLE "prep_groups" ALTER COLUMN "prepTypes" SET NOT NULL;

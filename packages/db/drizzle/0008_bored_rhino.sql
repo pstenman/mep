@@ -1,2 +1,0 @@
-ALTER TABLE "companies" ADD COLUMN "company_registration_number" text NOT NULL;--> statement-breakpoint
-ALTER TABLE "companies" ADD CONSTRAINT "companies_company_registration_number_unique" UNIQUE("company_registration_number");
