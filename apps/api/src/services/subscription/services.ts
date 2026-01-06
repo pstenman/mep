@@ -5,6 +5,10 @@ import {
   planQueries,
   subscriptionQueries,
   userQueries,
+  subscriptions,
+  memberships,
+  companies,
+  users,
 } from "@mep/db";
 import { CompanyStatus, Role, type SubscriptionStatus } from "@mep/types";
 import { StripeSubscriptionService } from "../stripe-subscriptions/service";
@@ -12,6 +16,8 @@ import { AuthService } from "../auth/service";
 import type { SubscriptionActivateSchema, SubscriptionSchema } from "./schema";
 import { logger } from "@/utils/logger";
 import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
+import { getSupabase } from "@/lib/supabase";
 
 export class SubscriptionService {
   static async createSubscription(input: SubscriptionSchema) {
@@ -21,8 +27,8 @@ export class SubscriptionService {
       lastName: input.lastName,
     });
 
-    const result = await db.transaction(async (tx) => {
-      const user = await userQueries.create(
+    const { user, company, membership } = await db.transaction(async (tx) => {
+      const createdUser = await userQueries.create(
         {
           supabaseId: supabaseUserId,
           email: input.email,
@@ -32,7 +38,7 @@ export class SubscriptionService {
         },
         tx,
       );
-      const company = await companyQueries.create(
+      const createdCompany = await companyQueries.create(
         {
           name: input.companyName,
           stripeCustomerId: null,
@@ -41,11 +47,26 @@ export class SubscriptionService {
         },
         tx,
       );
-      const membership = await membershipQueries.create(
-        { userId: user.id, companyId: company.id, role: Role.OWNER },
+      const createdMembership = await membershipQueries.create(
+        {
+          userId: createdUser.id,
+          companyId: createdCompany.id,
+          role: Role.OWNER,
+        },
         tx,
       );
-      const subscriptionInfo =
+      return {
+        user: createdUser,
+        company: createdCompany,
+        membership: createdMembership,
+      };
+    });
+
+    let subscriptionInfo: Awaited<
+      ReturnType<typeof StripeSubscriptionService.createStripeSubscription>
+    >;
+    try {
+      subscriptionInfo =
         await StripeSubscriptionService.createStripeSubscription({
           email: input.email,
           companyName: input.companyName,
@@ -54,14 +75,23 @@ export class SubscriptionService {
           membershipId: membership.id,
           userId: user.id,
         });
+    } catch (error) {
+      await SubscriptionService.cleanupFailedSubscription({
+        userId: user.id,
+        companyId: company.id,
+        membershipId: membership.id,
+      });
+      throw error;
+    }
 
+    const subscription = await db.transaction(async (tx) => {
       const defaultPlan = await planQueries.getDefault();
       if (!defaultPlan) {
         throw new Error("No plan found in database. Please seed plans first.");
       }
       const planId = defaultPlan.id;
 
-      const subscription = await subscriptionQueries.create(
+      return await subscriptionQueries.create(
         {
           companyId: company.id,
           stripeSubscriptionId: subscriptionInfo.subscriptionId,
@@ -77,11 +107,9 @@ export class SubscriptionService {
         },
         tx,
       );
-
-      return { user, company, membership, subscription };
     });
 
-    return result;
+    return { user, company, membership, subscription };
   }
 
   static async activateSubscriptionFromStripe({
@@ -158,5 +186,56 @@ export class SubscriptionService {
       stripeCustomerId: subscription.stripeCustomerId,
       plan,
     };
+  }
+
+  static async cleanupFailedSubscription({
+    userId,
+    companyId,
+    membershipId,
+  }: {
+    userId: string;
+    companyId: string;
+    membershipId: string;
+  }) {
+    const user = await userQueries.getById(userId);
+    if (!user) {
+      logger.warn({ userId }, "User not found for cleanup");
+      return;
+    }
+
+    await db.transaction(async (tx) => {
+      const subscription = await subscriptionQueries.findByCompanyId(
+        companyId,
+        tx,
+      );
+      if (subscription) {
+        await tx
+          .delete(subscriptions)
+          .where(eq(subscriptions.id, subscription.id));
+      }
+
+      await tx.delete(memberships).where(eq(memberships.id, membershipId));
+
+      await tx.delete(companies).where(eq(companies.id, companyId));
+
+      await tx.delete(users).where(eq(users.id, userId));
+    });
+
+    try {
+      const supabase = getSupabase();
+      if (user.supabaseId) {
+        await supabase.auth.admin.deleteUser(user.supabaseId);
+      }
+    } catch (error) {
+      logger.error(
+        { error, userId },
+        "Failed to delete Supabase user during cleanup",
+      );
+    }
+
+    logger.info(
+      { userId, companyId, membershipId },
+      "Cleaned up failed subscription",
+    );
   }
 }

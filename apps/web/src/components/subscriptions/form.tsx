@@ -25,7 +25,7 @@ import { mapLocale, mapTheme } from "@/utils/stripe/stripe";
 import { Elements, PaymentElement } from "@stripe/react-stripe-js";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { StripeConfirmButton } from "@/components/subscriptions/confirm-button";
 import { ConfirmationCard } from "./confirmation-card";
 import { useCompanySubscription } from "@/hooks/subscriptions/use-company-subscriptions";
@@ -61,6 +61,7 @@ export function SubscribeForm({ prefillEmail }: SubscribeFormProps) {
     loading,
     authError,
     stripeError,
+    cleanup,
   } = useCompanySubscription();
 
   const [openStep, setOpenStep] = useState<string | undefined>("details");
@@ -70,6 +71,27 @@ export function SubscribeForm({ prefillEmail }: SubscribeFormProps) {
   useEffect(() => {
     setPaymentReady(false);
   }, [clientSecret, locale, currentTheme]);
+
+  const cleanupRef = useRef(cleanup);
+  const paymentSuccessRef = useRef(false);
+
+  useEffect(() => {
+    cleanupRef.current = cleanup;
+  }, [cleanup]);
+
+  useEffect(() => {
+    if (paymentSuccess) {
+      paymentSuccessRef.current = true;
+    }
+  }, [paymentSuccess]);
+
+  useEffect(() => {
+    return () => {
+      if (!paymentSuccessRef.current && cleanupRef.current) {
+        cleanupRef.current();
+      }
+    };
+  }, []);
 
   if (paymentSuccess) {
     return (

@@ -1,4 +1,5 @@
-import { logger, PlanService } from "../index";
+import { logger } from "../utils/logger";
+import { PlanService } from "../services/plans/service";
 import { PlanInterval } from "@mep/types";
 import { planQueries } from "@mep/db";
 

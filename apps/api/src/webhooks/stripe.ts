@@ -53,6 +53,65 @@ stripeWebhookRoute.post("/", async (c) => {
       companyId,
       membershipId,
     });
+    return c.text("Activation completed", 200);
   }
-  return c.text("Activation completed", 200);
+
+  if (event.type === "invoice.payment_failed") {
+    const invoice = event.data.object as Stripe.Invoice;
+    const subscriptionId = (invoice as any).subscription as string | null;
+
+    if (!subscriptionId || typeof subscriptionId !== "string") {
+      logger.warn(
+        { invoiceId: invoice.id },
+        "Missing subscription ID in invoice",
+      );
+      return c.text("Missing subscription ID", 200);
+    }
+
+    const stripeSubscription =
+      await stripe.subscriptions.retrieve(subscriptionId);
+    const metadata = stripeSubscription.metadata ?? {};
+
+    const { userId, companyId, membershipId } = metadata;
+
+    if (userId && companyId && membershipId) {
+      await SubscriptionService.cleanupFailedSubscription({
+        userId,
+        companyId,
+        membershipId,
+      });
+      logger.info(
+        { userId, companyId, subscriptionId },
+        "Cleaned up failed payment subscription",
+      );
+    }
+    return c.text("Cleanup completed", 200);
+  }
+
+  if (event.type === "customer.subscription.deleted") {
+    const subscription = event.data.object as Stripe.Subscription;
+    const metadata = subscription.metadata ?? {};
+
+    const { userId, companyId, membershipId } = metadata;
+
+    if (
+      userId &&
+      companyId &&
+      membershipId &&
+      subscription.status === "incomplete"
+    ) {
+      await SubscriptionService.cleanupFailedSubscription({
+        userId,
+        companyId,
+        membershipId,
+      });
+      logger.info(
+        { userId, companyId, subscriptionId: subscription.id },
+        "Cleaned up incomplete subscription",
+      );
+    }
+    return c.text("Webhook processed", 200);
+  }
+
+  return c.text("Webhook processed", 200);
 });
