@@ -19,6 +19,10 @@ app.use("/trpc/*", authMiddleware);
 app.use("*", corsLoggingMiddleware);
 
 app.use("*", (c, next) => {
+  if (c.req.path.startsWith("/webhook/")) {
+    return next();
+  }
+
   return cors({
     origin: (origin) => {
       if (!origin) return null;
