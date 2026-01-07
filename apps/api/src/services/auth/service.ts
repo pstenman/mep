@@ -1,4 +1,5 @@
 import { getSupabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 import { logger } from "@/utils/logger";
 
 export class AuthService {
@@ -31,8 +32,6 @@ export class AuthService {
   }
 
   static async sendMagicLink(email: string) {
-    const supabase = getSupabase();
-
     const redirectUrl = process.env.SUPABASE_MAGICLINK_REDIRECT;
     if (!redirectUrl) {
       throw new Error(
@@ -40,32 +39,46 @@ export class AuthService {
       );
     }
 
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error(
+        "SUPABASE_URL or SUPABASE_ANON_KEY environment variables are not set",
+      );
+    }
+
     logger.info(
       {
         redirectUrl,
-        envVar: process.env.SUPABASE_MAGICLINK_REDIRECT,
-        hasEnvVar: !!process.env.SUPABASE_MAGICLINK_REDIRECT,
-        envVarLength: process.env.SUPABASE_MAGICLINK_REDIRECT?.length,
+        email,
       },
-      "🔗 Magic link redirect URL configuration",
+      "🔗 Sending magic link via signInWithOtp",
     );
 
-    const { data, error } = await supabase.auth.admin.generateLink({
-      type: "magiclink",
-      email,
-      options: {
-        redirectTo: redirectUrl,
+    // Create a regular Supabase client (not admin) to use signInWithOtp
+    // This will automatically send the email via configured SMTP (Resend)
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
       },
     });
+
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: redirectUrl,
+      },
+    });
+
     if (error) throw error;
 
     logger.info(
       {
         email,
-        link: data.properties?.action_link,
-        hashedToken: data.properties?.hashed_token,
       },
-      "🔗 Magic link generated",
+      "🔗 Magic link sent via SMTP (Resend)",
     );
 
     return data;
