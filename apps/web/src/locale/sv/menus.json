@@ -8,6 +8,7 @@
     "main": "Huvudrätt",
     "breakfast": "Frukost",
     "lunch": "Lunch",
+    "al-a-carte": "À la Carte",
     "alACarte": "À la Carte",
     "set": "Set Meny",
     "group": "Grupp Meny"
@@ -44,7 +45,7 @@
     "menuType": {
       "breakfast": "Frukost",
       "lunch": "Lunch",
-      "alACarte": "À la Carte",
+      "alacarte": "À la Carte",
       "set": "Set Meny",
       "group": "Grupp Meny"
     },

@@ -12,6 +12,7 @@ import {
   DialogDescription,
 } from "@mep/ui";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc/client";
 
 interface ForgotPasswordProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export function ForgotPasswordModal({
   onSuccess,
 }: ForgotPasswordProps) {
   const t = useTranslations("auth");
+  const sendMagicLink = trpc.auth.sendMagicLink.useMutation();
 
   const {
     handleSubmit,
@@ -39,15 +41,12 @@ export function ForgotPasswordModal({
 
   const onSubmit = async (data: ResetPasswordFormValues) => {
     try {
-      // TODO: implement supabase password reset, mocking for now
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      console.log("Mock reset email sent for:", data.email);
-
+      await sendMagicLink.mutateAsync({ email: data.email });
       toast.success(t("resetPasswordForm.toast.success"));
       onSuccess();
       onClose();
     } catch (err: any) {
-      toast.error(err?.message || t("resetPasswordForm.toast.success"));
+      toast.error(err?.message || t("resetPasswordForm.toast.error"));
     }
   };
 
@@ -70,7 +69,7 @@ export function ForgotPasswordModal({
                 {...field}
                 type="email"
                 placeholder={t("form.placeholder.email")}
-                disabled={isSubmitting}
+                disabled={isSubmitting || sendMagicLink.isPending}
                 className={errors.email ? "border-destructive" : ""}
               />
             )}
@@ -79,8 +78,11 @@ export function ForgotPasswordModal({
             <p className="text-sm text-destructive">{errors.email.message}</p>
           )}
 
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting
+          <Button
+            type="submit"
+            disabled={isSubmitting || sendMagicLink.isPending}
+          >
+            {isSubmitting || sendMagicLink.isPending
               ? t("resetPasswordForm.button.sending")
               : t("resetPasswordForm.button.sendReset")}
           </Button>

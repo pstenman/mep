@@ -11,5 +11,152 @@
     "alACarte": "À la Carte",
     "set": "Set Menu",
     "group": "Group Menu"
+  },
+  "form": {
+    "validation": {
+      "required": "This field is required"
+    },
+    "toast": {
+      "createSuccess": "Template created successfully",
+      "updateSuccess": "Template updated successfully",
+      "error": "Failed to save template"
+    },
+    "label": {
+      "templateName": "Name",
+      "prepType": "Type"
+    },
+    "placeholder": {
+      "templateName": "Template name",
+      "prepType": "Select prep type"
+    },
+    "button": {
+      "cancel": "Cancel",
+      "update": "Update Template",
+      "save": "Save Template",
+      "updating": "Updating...",
+      "creating": "Creating..."
+    },
+    "group": {
+      "label": "Dish or Group",
+      "placeholder": "Dish or Group name",
+      "button": {
+        "add": "Add dish/group"
+      }
+    },
+    "item": {
+      "placeholder": "Enter item",
+      "selectRecipe": "Select recipe",
+      "button": {
+        "add": "Add"
+      }
+    }
+  },
+  "templates": {
+    "title": "Templates",
+    "description": "Manage your preparation templates. Check the active template to use when creating new lists.",
+    "empty": {
+      "title": "No templates found",
+      "description": "No templates found. Create one to get started."
+    },
+    "toast": {
+      "deleteSuccess": "Template deleted successfully",
+      "deleteError": "Failed to delete template"
+    },
+    "confirm": {
+      "delete": "Are you sure you want to delete this template? This action cannot be undone."
+    },
+    "button": {
+      "backToActiveList": "Back to Active List"
+    },
+    "columns": {
+      "active": "Active",
+      "templateName": "Template Name",
+      "prepType": "Prep Type",
+      "groups": "Groups",
+      "items": "Items"
+    },
+    "sheet": {
+      "edit": "Edit Template",
+      "create": "Create Template"
+    }
+  },
+  "createList": {
+    "title": "Create New List",
+    "loading": "Loading template...",
+    "usingTemplate": "Using template:",
+    "prepType": "Prep Type:",
+    "noActiveTemplate": "No active template found for this prep type. Please activate a template first.",
+    "scheduleFor": "Schedule For",
+    "selectDate": "Select date",
+    "button": {
+      "cancel": "Cancel",
+      "create": "Create List",
+      "creating": "Creating..."
+    },
+    "toast": {
+      "createSuccess": "List created successfully",
+      "createError": "Failed to create list",
+      "noActiveTemplateError": "No active template found. Please activate a template first.",
+      "selectDateError": "Please select a date"
+    }
+  },
+  "prepList": {
+    "activeView": {
+      "noListFound": "No list found",
+      "noListForDate": "No list found for {date}",
+      "selectDateToView": "Select a date to view a list",
+      "pleaseSelectDate": "Please select a date",
+      "noGroupsFound": "No groups found in this list",
+      "tooltip": {
+        "viewTemplates": "View Templates",
+        "createNewList": "Create New List"
+      }
+    },
+    "historyView": {
+      "title": "All Lists",
+      "description": "View history, current, and upcoming preparation lists",
+      "button": {
+        "backToActiveList": "Back to Active List"
+      },
+      "status": {
+        "active": "Active",
+        "upcoming": "Upcoming",
+        "history": "History"
+      }
+    },
+    "itemRow": {
+      "viewRecipe": "View recipe: {name}"
+    },
+    "status": {
+      "N": "None",
+      "M": "Mark",
+      "P": "Prep",
+      "P2": "Prep 2",
+      "P!": "Priority",
+      "D": "Done"
+    }
+  },
+  "noteDialog": {
+    "title": "{name}",
+    "noNotes": "No notes yet",
+    "label": "Message",
+    "placeholder": "Write a short message...",
+    "characterCount": "characters",
+    "button": {
+      "add": "Add",
+      "adding": "Adding...",
+      "close": "Close"
+    },
+    "toast": {
+      "addSuccess": "Note added",
+      "addError": "Failed to add note",
+      "deleteSuccess": "Note deleted",
+      "deleteError": "Failed to delete note"
+    },
+    "tooltip": {
+      "viewNote": "View note",
+      "viewNotes": "View {count} notes",
+      "addNote": "Add note"
+    }
   }
 }

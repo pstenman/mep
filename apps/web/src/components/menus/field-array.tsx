@@ -31,6 +31,7 @@ interface MenuFieldArrayProps {
 
 export function MenuFieldArray({ form, allergies }: MenuFieldArrayProps) {
   const t = useTranslations("menus");
+  const tAllergies = useTranslations("allergies");
   const { control } = form;
 
   const { fields, append, remove } = useFieldArray({
@@ -176,7 +177,7 @@ export function MenuFieldArray({ form, allergies }: MenuFieldArrayProps) {
                                 htmlFor={checkboxId}
                                 className="text-sm cursor-pointer flex-1"
                               >
-                                {allergy.name}
+                                {tAllergies(allergy.name)}
                               </label>
                             </div>
                           );

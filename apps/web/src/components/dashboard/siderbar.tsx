@@ -46,7 +46,7 @@ export function DashboardSidebar() {
                     : "px-[4px]",
                 )}
               >
-                <Link href="/">
+                <Link href="/dashboard">
                   <p className="font-medium text-[22px]">
                     {state === "expanded" || isMobile ? "Mep" : "M."}
                   </p>

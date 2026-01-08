@@ -5,6 +5,8 @@ import type { PrepType } from "@mep/types";
 import { MenuItemActions } from "@/components/ui/action-menu";
 import { TemplatesCell } from "./templates-cell";
 
+type Translations = (key: string) => string;
+
 interface TemplateItem {
   id: string;
   name: string;
@@ -24,17 +26,19 @@ interface TemplatesColumnsProps {
   prepType: PrepType | null;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  t: Translations;
 }
 
 export const getTemplatesColumns = ({
   prepType,
   onEdit,
   onDelete,
+  t,
 }: TemplatesColumnsProps): ColumnDef<TemplateItem>[] => [
   {
     accessorKey: "isActive",
     id: "isActive",
-    header: "Active",
+    header: t("templates.columns.active"),
     enableSorting: false,
     size: 80,
     cell: ({ row }: { row: Row<TemplateItem> }) => (
@@ -44,19 +48,19 @@ export const getTemplatesColumns = ({
   {
     accessorKey: "name",
     id: "name",
-    header: "Template Name",
+    header: t("templates.columns.templateName"),
     enableResizing: false,
     size: 200,
   },
   {
     accessorKey: "prepTypes",
     id: "prepTypes",
-    header: "Prep Type",
+    header: t("templates.columns.prepType"),
     size: 120,
   },
   {
     id: "groups",
-    header: "Groups",
+    header: t("templates.columns.groups"),
     size: 100,
     cell: ({ row }: { row: Row<TemplateItem> }) => {
       const totalGroups = row.original.prepGroupTemplates?.length || 0;
@@ -65,7 +69,7 @@ export const getTemplatesColumns = ({
   },
   {
     id: "items",
-    header: "Items",
+    header: t("templates.columns.items"),
     size: 100,
     cell: ({ row }: { row: Row<TemplateItem> }) => {
       const totalItems =

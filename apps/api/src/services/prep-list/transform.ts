@@ -23,6 +23,12 @@ export interface FormattedPrepGroup {
   id: string;
   name: string;
   note: string | null;
+  notes?: Array<{
+    id: string;
+    message: string;
+    createdBy: string;
+    createdAt: string;
+  }> | null;
   menuItemId: string | null;
   prepItems: FormattedPrepItem[];
 }
@@ -92,10 +98,21 @@ export const transformPrepItems = (
 export const transformPrepGroup = (
   prepGroup: RawPrepGroupWithRelations,
 ): FormattedPrepGroup => {
+  const notes = prepGroup.notes as
+    | Array<{
+        id: string;
+        message: string;
+        createdBy: string;
+        createdAt: string;
+      }>
+    | null
+    | undefined;
+
   return {
     id: prepGroup.id,
     name: prepGroup.name,
     note: prepGroup.note ?? null,
+    notes: Array.isArray(notes) ? notes : [],
     menuItemId: prepGroup.menuItemId ?? null,
     prepItems: prepGroup.prepItems
       ? transformPrepItems(prepGroup.prepItems)

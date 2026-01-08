@@ -8,6 +8,7 @@
     "main": "Main",
     "breakfast": "Breakfast",
     "lunch": "Lunch",
+    "al-a-carte": "À la Carte",
     "alACarte": "À la Carte",
     "set": "Set Menu",
     "group": "Group Menu"
@@ -44,7 +45,7 @@
     "menuType": {
       "breakfast": "Breakfast",
       "lunch": "Lunch",
-      "alACarte": "À la Carte",
+      "alacarte": "À la Carte",
       "set": "Set Menu",
       "group": "Group Menu"
     },

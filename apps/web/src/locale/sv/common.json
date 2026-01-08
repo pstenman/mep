@@ -1,5 +1,13 @@
 {
   "light": "Ljust",
   "dark": "Mörkt",
-  "system": "Auto"
+  "system": "Auto",
+  "createButton": {
+    "user": "Skapa användare",
+    "preparation": "Skapa prepp mall",
+    "menu": "Skapa meny",
+    "recipe": "Skapa recept",
+    "allergy": "Skapa allergi",
+    "order": "Skapa order"
+  }
 }

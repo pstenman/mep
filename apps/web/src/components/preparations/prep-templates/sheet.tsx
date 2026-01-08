@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { parseAsBoolean, parseAsString } from "nuqs";
 import { useQueryState } from "nuqs";
 import { PreparationTemplateForm } from "./form";
+import { useTranslations } from "next-intl";
 
 export const usePreparationTemplateSheet = () => {
   const [isOpen, setIsOpen] = useQueryState(
@@ -34,6 +35,7 @@ export const usePreparationTemplateSheet = () => {
 };
 
 export function PreparationTemplateSheet() {
+  const t = useTranslations("preparations");
   const { isOpen, close, templateId } = usePreparationTemplateSheet();
   const params = useParams();
   const group = (params?.group as PrepGroup) || "all";
@@ -47,7 +49,9 @@ export function PreparationTemplateSheet() {
       <SheetContent className="flex flex-col p-0">
         <SheetHeader className="px-6 pt-6 pb-4 border-b shrink-0">
           <SheetTitle>
-            {templateId ? "Edit Template" : "Create Template"}
+            {templateId
+              ? t("templates.sheet.edit")
+              : t("templates.sheet.create")}
           </SheetTitle>
         </SheetHeader>
         <div className="flex-1 min-h-0">

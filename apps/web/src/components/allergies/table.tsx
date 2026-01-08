@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
-import { getAllergiesColumns } from "./columns";
+import { useAllergiesColumns } from "./columns";
 import type { FormattedMenuItem } from "@mep/api";
 import type { Allergen } from "@mep/types";
 import { DataTable } from "../ui/data-tables";
@@ -21,16 +20,12 @@ export function AllergiesTable({
   onDeleteMenuItem,
   menuId,
 }: AllergiesTableProps) {
-  const columns = useMemo(
-    () =>
-      getAllergiesColumns({
-        allergies,
-        onEditMenuItem,
-        onDeleteMenuItem,
-        menuId,
-      }),
-    [allergies, onEditMenuItem, onDeleteMenuItem, menuId],
-  );
+  const columns = useAllergiesColumns({
+    allergies,
+    onEditMenuItem,
+    onDeleteMenuItem,
+    menuId,
+  });
 
   return (
     <DataTable

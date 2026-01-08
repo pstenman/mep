@@ -8,6 +8,7 @@ import enPublic from "../../locale/en/public.json";
 import enRecipes from "../../locale/en/recipes.json";
 import enSettings from "../../locale/en/settings.json";
 import enUsers from "../../locale/en/users.json";
+import enOrders from "../../locale/en/orders.json";
 
 import svAuth from "../../locale/sv/auth.json";
 import svCommon from "../../locale/sv/common.json";
@@ -18,6 +19,7 @@ import svPublic from "../../locale/sv/public.json";
 import svRecipes from "../../locale/sv/recipes.json";
 import svSettings from "../../locale/sv/settings.json";
 import svUsers from "../../locale/sv/users.json";
+import svOrders from "../../locale/sv/orders.json";
 
 const localeMessages: Record<string, Record<string, any>> = {
   en: {
@@ -30,6 +32,7 @@ const localeMessages: Record<string, Record<string, any>> = {
     recipes: enRecipes,
     settings: enSettings,
     users: enUsers,
+    orders: enOrders,
   },
   sv: {
     auth: svAuth,
@@ -41,6 +44,7 @@ const localeMessages: Record<string, Record<string, any>> = {
     recipes: svRecipes,
     settings: svSettings,
     users: svUsers,
+    orders: svOrders,
   },
 };
 

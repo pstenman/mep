@@ -3,10 +3,11 @@
 import { trpc } from "@/lib/trpc/client";
 import { EmptyState } from "../empty-state";
 import { Loader2, Check, ArrowLeft, Calendar } from "lucide-react";
-import type { PrepType } from "@mep/types";
+import { PrepType } from "@mep/types";
 import type { PrepGroup } from "@/lib/navigation/dashboard/types";
 import { Badge } from "@mep/ui";
 import { DynamicButton } from "@/components/ui/dynamic-button";
+import { useTranslations } from "next-intl";
 
 interface ListsHistoryViewProps {
   prepType: PrepType | null;
@@ -32,6 +33,7 @@ export function ListsHistoryView({
   prepType,
   onBackClick,
 }: ListsHistoryViewProps) {
+  const t = useTranslations("preparations");
   const { data: listsData, isLoading: listsLoading } =
     trpc.preparations.prepLists.getAll.useQuery({
       filter: prepType
@@ -107,15 +109,17 @@ export function ListsHistoryView({
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-lg font-semibold">All Lists</h2>
+          <h2 className="text-lg font-semibold">
+            {t("prepList.historyView.title")}
+          </h2>
           <p className="text-sm text-muted-foreground">
-            View history, current, and upcoming preparation lists
+            {t("prepList.historyView.description")}
           </p>
         </div>
         {onBackClick && (
           <DynamicButton
             icon={ArrowLeft}
-            tooltip="Back to Active List"
+            tooltip={t("prepList.historyView.button.backToActiveList")}
             size="icon"
             variant="outline"
             onClick={onBackClick}
@@ -148,18 +152,18 @@ export function ListsHistoryView({
                   {isActive && (
                     <Badge variant="default" className="gap-1">
                       <Check className="w-3 h-3" />
-                      Active
+                      {t("prepList.historyView.status.active")}
                     </Badge>
                   )}
                   {isUpcoming && (
                     <Badge variant="secondary" className="gap-1">
                       <Calendar className="w-3 h-3" />
-                      Upcoming
+                      {t("prepList.historyView.status.upcoming")}
                     </Badge>
                   )}
                   {isHistory && (
                     <Badge variant="outline" className="gap-1">
-                      History
+                      {t("prepList.historyView.status.history")}
                     </Badge>
                   )}
                 </div>
@@ -172,7 +176,17 @@ export function ListsHistoryView({
                 </div>
               </div>
               <p className="text-sm text-muted-foreground mb-3">
-                {list.prepTypes}
+                {(() => {
+                  const typeMap: Record<PrepType, string> = {
+                    [PrepType.MAIN]: "main",
+                    [PrepType.BREAKFAST]: "breakfast",
+                    [PrepType.LUNCH]: "lunch",
+                    [PrepType.ALACARTE]: "alACarte",
+                    [PrepType.SET]: "set",
+                    [PrepType.GROUP]: "group",
+                  };
+                  return t(`group.${typeMap[list.prepTypes]}`);
+                })()}
               </p>
               {list.prepGroups && list.prepGroups.length > 0 && (
                 <div className="mt-3 space-y-2">

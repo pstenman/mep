@@ -8,12 +8,16 @@ import { DynamicButton } from "./dynamic-button";
 import { usePreparationTemplateSheet } from "../preparations/prep-templates/sheet";
 import { useMenusSheet } from "../menus/sheet";
 import { useRecipesSheet } from "../recipes/sheet";
+import { useOrderAddForm } from "../orders/view";
+import { useTranslations } from "next-intl";
 
 export function CreateButton() {
+  const t = useTranslations("common");
   const { open: openUserSheet } = useUserSheet();
   const { open: openPreparationTemplateSheet } = usePreparationTemplateSheet();
   const { open: openMenusSheet } = useMenusSheet();
   const { open: openRecipesSheet } = useRecipesSheet();
+  const { open: openOrderAddForm } = useOrderAddForm();
   const pathname = usePathname();
   const route = createRoutes.find((r) => r.match(pathname));
 
@@ -31,6 +35,9 @@ export function CreateButton() {
       case CreateRouteKeyEnum.RECIPE:
         openRecipesSheet();
         break;
+      case CreateRouteKeyEnum.ORDER:
+        openOrderAddForm();
+        break;
       default:
         return;
     }
@@ -38,10 +45,12 @@ export function CreateButton() {
 
   if (!route) return null;
 
+  const tooltip = t(`createButton.${route.key}`);
+
   return (
     <DynamicButton
       icon={Plus}
-      tooltip={route.label}
+      tooltip={tooltip}
       variant="default"
       className="rounded-full w-[40px] h-[40px]"
       size="icon"

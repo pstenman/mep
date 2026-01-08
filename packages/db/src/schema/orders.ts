@@ -14,11 +14,14 @@ export const orders = pgTable("orders", {
   updatedBy: uuid("updated_by")
     .notNull()
     .references(() => users.id),
+  orderDate: timestamp("order_date").notNull(),
   orderItems:
     jsonb("order_items").$type<
       {
+        name: string;
         quantity: number;
-        price: number;
+        unit: string;
+        checked: boolean;
       }[]
     >(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

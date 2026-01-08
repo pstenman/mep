@@ -6,7 +6,7 @@ import {
 } from "@/schema/preparations";
 import { db, type Database } from "..";
 import { PrepStatus, type PrepType } from "@mep/types";
-import { and, eq, ilike, sql } from "drizzle-orm";
+import { and, eq, ilike, sql, asc } from "drizzle-orm";
 
 type PrepListInsert = typeof prepLists.$inferInsert;
 
@@ -56,8 +56,11 @@ export const prepListQueries = {
             id: true,
             name: true,
             note: true,
+            notes: true,
             menuItemId: true,
+            createdAt: true,
           },
+          orderBy: [asc(prepGroups.createdAt), asc(prepGroups.id)],
           with: {
             prepItems: {
               columns: {
@@ -65,7 +68,9 @@ export const prepListQueries = {
                 name: true,
                 status: true,
                 recipeId: true,
+                createdAt: true,
               },
+              orderBy: [asc(prepItems.createdAt), asc(prepItems.id)],
               with: {
                 recipe: {
                   columns: {
@@ -101,8 +106,11 @@ export const prepListQueries = {
             id: true,
             name: true,
             note: true,
+            notes: true,
             menuItemId: true,
+            createdAt: true,
           },
+          orderBy: [asc(prepGroups.createdAt), asc(prepGroups.id)],
           with: {
             prepItems: {
               columns: {
@@ -110,7 +118,9 @@ export const prepListQueries = {
                 name: true,
                 status: true,
                 recipeId: true,
+                createdAt: true,
               },
+              orderBy: [asc(prepItems.createdAt), asc(prepItems.id)],
               with: {
                 recipe: {
                   columns: {
@@ -159,15 +169,21 @@ export const prepListQueries = {
               id: true,
               name: true,
               note: true,
+              notes: true,
               menuItemId: true,
+              createdAt: true,
             },
+            orderBy: [asc(prepGroups.createdAt), asc(prepGroups.id)],
             with: {
               prepItems: {
                 columns: {
                   id: true,
                   name: true,
                   status: true,
+                  recipeId: true,
+                  createdAt: true,
                 },
+                orderBy: [asc(prepItems.createdAt), asc(prepItems.id)],
               },
             },
           },

@@ -1,0 +1,49 @@
+{
+  "form": {
+    "validation": {
+      "nameRequired": "Name is required",
+      "quantityMin": "Quantity must be at least 0",
+      "unitRequired": "Unit is required"
+    },
+    "placeholder": {
+      "itemName": "Item name",
+      "quantity": "0",
+      "unit": "kg"
+    },
+    "button": {
+      "addItem": "Add Item",
+      "cancel": "Cancel",
+      "saveItems": "Save Items",
+      "saving": "Saving...",
+      "edit": "Edit",
+      "save": "Save"
+    }
+  },
+  "view": {
+    "tooltip": {
+      "editItems": "Edit Items"
+    },
+    "empty": {
+      "noItems": "No items for {date}",
+      "clickToAdd": "Click the + button to add items"
+    },
+    "toast": {
+      "itemsAdded": "Items added successfully",
+      "addError": "Failed to add items",
+      "pleaseAddItem": "Please add at least one item"
+    }
+  },
+  "editDialog": {
+    "title": "Edit Order Items",
+    "empty": "No items to edit",
+    "toast": {
+      "updateSuccess": "Order updated successfully",
+      "updateError": "Failed to update order"
+    }
+  },
+  "orderList": {
+    "toast": {
+      "updateError": "Failed to update item"
+    }
+  }
+}
