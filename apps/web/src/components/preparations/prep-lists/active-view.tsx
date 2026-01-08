@@ -21,6 +21,12 @@ import { useTranslations } from "next-intl";
 interface PrepGroupWithItems {
   id: string;
   name: string;
+  notes?: Array<{
+    id: string;
+    message: string;
+    createdBy: string;
+    createdAt: string;
+  }>;
   prepItems: PrepListItem[];
 }
 
@@ -226,17 +232,20 @@ export function ActivePrepView({
   }
 
   const groups: PrepListGroup[] = (selectedList.prepGroups || []).map(
-    (group: PrepGroupWithItems) => ({
-      id: group.id,
-      name: group.name,
-      items: (group.prepItems || []).map((item) => ({
-        id: item.id,
-        name: item.name,
-        status: item.status,
-        recipeId: item.recipeId,
-        recipe: item.recipe,
-      })),
-    }),
+    (group: PrepGroupWithItems) => {
+      return {
+        id: group.id,
+        name: group.name,
+        notes: group.notes || [],
+        items: (group.prepItems || []).map((item) => ({
+          id: item.id,
+          name: item.name,
+          status: item.status,
+          recipeId: item.recipeId,
+          recipe: item.recipe,
+        })),
+      };
+    },
   );
 
   const handleRecipeClick = (recipe: Recipe) => {

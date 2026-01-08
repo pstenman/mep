@@ -135,5 +135,28 @@
       "P!": "Priority",
       "D": "Done"
     }
+  },
+  "noteDialog": {
+    "title": "{name}",
+    "noNotes": "No notes yet",
+    "label": "Message",
+    "placeholder": "Write a short message...",
+    "characterCount": "characters",
+    "button": {
+      "add": "Add",
+      "adding": "Adding...",
+      "close": "Close"
+    },
+    "toast": {
+      "addSuccess": "Note added",
+      "addError": "Failed to add note",
+      "deleteSuccess": "Note deleted",
+      "deleteError": "Failed to delete note"
+    },
+    "tooltip": {
+      "viewNote": "View note",
+      "viewNotes": "View {count} notes",
+      "addNote": "Add note"
+    }
   }
 }

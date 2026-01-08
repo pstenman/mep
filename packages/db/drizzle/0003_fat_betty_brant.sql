@@ -1,0 +1,1 @@
+ALTER TABLE "prep_groups" ADD COLUMN "notes" jsonb DEFAULT '[]'::jsonb;

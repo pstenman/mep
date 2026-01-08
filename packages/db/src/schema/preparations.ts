@@ -1,4 +1,11 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { companies } from "./companies";
 import { users } from "./users";
 import { recipes } from "./recipes";
@@ -90,6 +97,16 @@ export const prepGroups = pgTable("prep_groups", {
   menuItemId: uuid("menu_item_id").references(() => menuItems.id),
   name: text("name").notNull(),
   note: text("note"),
+  notes: jsonb("notes")
+    .$type<
+      {
+        id: string;
+        message: string;
+        createdBy: string;
+        createdAt: string;
+      }[]
+    >()
+    .default([]),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -26,8 +26,16 @@ export interface PrepListItem {
   recipe?: Recipe | null;
 }
 
+export interface PrepGroupNote {
+  id: string;
+  message: string;
+  createdBy: string;
+  createdAt: string;
+}
+
 export interface PrepListGroup {
   id: string;
   name: string;
+  notes?: PrepGroupNote[];
   items: PrepListItem[];
 }

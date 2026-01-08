@@ -30,8 +30,12 @@ export function PreparationTemplateView({
 
   return (
     <>
-      <div className="flex w-full">
-        <div className="w-full px-3 py-4 md:px-6 lg:px-8 max-w-full lg:max-w-[794px]">
+      <div className="flex w-full justify-center">
+        <div
+          className={`w-full px-3 py-4 md:px-6 lg:px-8 max-w-full ${
+            viewMode === "active" ? "lg:max-w-[1400px]" : "lg:max-w-[794px]"
+          }`}
+        >
           {viewMode === "active" ? (
             <ActivePrepView
               prepType={prepType}

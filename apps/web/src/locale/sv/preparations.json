@@ -135,5 +135,28 @@
       "P!": "Prioritet",
       "D": "Klar"
     }
+  },
+  "noteDialog": {
+    "title": "{name}",
+    "noNotes": "Inga meddelanden ännu",
+    "label": "Meddelande",
+    "placeholder": "Skriv ett kort meddelande...",
+    "characterCount": "tecken",
+    "button": {
+      "add": "Lägg till",
+      "adding": "Lägger till...",
+      "close": "Stäng"
+    },
+    "toast": {
+      "addSuccess": "Meddelande tillagd",
+      "addError": "Kunde inte lägga till meddelande",
+      "deleteSuccess": "Meddelande borttagen",
+      "deleteError": "Kunde inte ta bort meddelande"
+    },
+    "tooltip": {
+      "viewNote": "Visa meddelande",
+      "viewNotes": "Visa {count} meddelanden",
+      "addNote": "Lägg till meddelande"
+    }
   }
 }
