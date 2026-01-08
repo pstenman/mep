@@ -137,4 +137,17 @@ export class AuthService {
   static async sendMagicLinkOnPaymentSuccess(email: string) {
     return AuthService.sendMagicLink(email);
   }
+
+  static async deleteUser(supabaseId: string) {
+    try {
+      const supabase = getSupabase();
+      await supabase.auth.admin.deleteUser(supabaseId);
+      logger.info({ supabaseId }, "User deleted from Supabase Auth");
+    } catch (error) {
+      logger.error(
+        { error, supabaseId },
+        "Failed to delete user from Supabase Auth",
+      );
+    }
+  }
 }

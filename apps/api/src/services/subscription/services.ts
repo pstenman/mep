@@ -17,7 +17,9 @@ import type { SubscriptionActivateSchema, SubscriptionSchema } from "./schema";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { getSupabase } from "@/lib/supabase";
+import { logger } from "@/utils/logger";
 import Stripe from "stripe";
+import type { Database } from "@mep/db";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-12-15.clover",
@@ -247,15 +249,15 @@ export class SubscriptionService {
       const magicLink = (magicLinkData as any).properties?.action_link;
 
       if (magicLink) {
-        console.log("\n" + "=".repeat(80));
+        console.log(`\n${"=".repeat(80)}`);
         console.log("🔗 MAGIC LINK (DEV MODE):");
         console.log(magicLink);
-        console.log("=".repeat(80) + "\n");
+        console.log(`${"=".repeat(80)}\n`);
       } else {
-        console.log("\n" + "=".repeat(80));
+        console.log(`\n${"=".repeat(80)}`);
         console.log("⚠️ MAGIC LINK DATA (action_link missing):");
         console.log(JSON.stringify(magicLinkData, null, 2));
-        console.log("=".repeat(80) + "\n");
+        console.log(`${"=".repeat(80)}\n`);
       }
     } catch (error: any) {
       throw new Error(
@@ -352,6 +354,137 @@ export class SubscriptionService {
       }
     } catch {
       // Silent fail during cleanup
+    }
+  }
+
+  static async checkSubscriptionStatus(
+    companyId: string,
+    executor?: Database,
+  ): Promise<{ hasSubscription: boolean; isActive: boolean }> {
+    const dbOrTx = executor ?? db;
+    const subscription = await subscriptionQueries.findByCompanyId(
+      companyId,
+      dbOrTx,
+    );
+
+    if (!subscription) {
+      return { hasSubscription: false, isActive: false };
+    }
+
+    if (subscription.cancelAtPeriodEnd) {
+      return { hasSubscription: true, isActive: false };
+    }
+
+    const isActive =
+      subscription.status === "active" ||
+      subscription.status === "trialing" ||
+      subscription.status === "past_due";
+
+    return { hasSubscription: true, isActive };
+  }
+
+  static async cancelSubscriptionForUser(
+    userId: string,
+    companyId: string,
+    executor?: Database,
+  ) {
+    const dbOrTx = executor ?? db;
+    const subscription = await subscriptionQueries.findByCompanyId(
+      companyId,
+      dbOrTx,
+    );
+
+    if (!subscription) {
+      logger.info({ userId, companyId }, "No subscription found to cancel");
+      return { success: true, message: "No subscription found" };
+    }
+
+    try {
+      const stripeSubscription = await stripe.subscriptions.update(
+        subscription.stripeSubscriptionId,
+        {
+          cancel_at_period_end: true,
+        },
+      );
+
+      await subscriptionQueries.update(
+        subscription.stripeSubscriptionId,
+        {
+          cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end ?? true,
+          canceledAt: stripeSubscription.canceled_at
+            ? new Date(stripeSubscription.canceled_at * 1000)
+            : new Date(),
+          status: stripeSubscription.status as SubscriptionStatus,
+        },
+        dbOrTx,
+      );
+
+      return {
+        success: true,
+        message: "Subscription will cancel at period end",
+        status: stripeSubscription.status,
+        cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
+      };
+    } catch (error: any) {
+      throw new Error(
+        `Failed to cancel subscription in Stripe: ${error?.message || "Unknown error"}`,
+      );
+    }
+  }
+
+  static async syncSubscriptionFromStripe(
+    companyId: string,
+    executor?: Database,
+  ) {
+    const dbOrTx = executor ?? db;
+    const subscription = await subscriptionQueries.findByCompanyId(
+      companyId,
+      dbOrTx,
+    );
+
+    if (!subscription) {
+      return { success: false, message: "No subscription found" };
+    }
+
+    try {
+      const stripeSubscription = await stripe.subscriptions.retrieve(
+        subscription.stripeSubscriptionId,
+      );
+
+      const subscriptionData = stripeSubscription as any;
+      await subscriptionQueries.update(
+        subscription.stripeSubscriptionId,
+        {
+          status: stripeSubscription.status as SubscriptionStatus,
+          currentPeriodStart: new Date(
+            subscriptionData.current_period_start * 1000,
+          ),
+          currentPeriodEnd: new Date(
+            subscriptionData.current_period_end * 1000,
+          ),
+          cancelAtPeriodEnd: subscriptionData.cancel_at_period_end ?? false,
+          canceledAt: subscriptionData.canceled_at
+            ? new Date(subscriptionData.canceled_at * 1000)
+            : null,
+        },
+        dbOrTx,
+      );
+
+      return {
+        success: true,
+        message: "Subscription synced successfully",
+        status: stripeSubscription.status,
+      };
+    } catch (error) {
+      logger.error(
+        {
+          error,
+          companyId,
+          subscriptionId: subscription.stripeSubscriptionId,
+        },
+        "Failed to sync subscription from Stripe",
+      );
+      throw new Error("Failed to sync subscription from Stripe");
     }
   }
 }

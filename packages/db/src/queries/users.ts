@@ -1,6 +1,6 @@
 import { users } from "@/schema/users";
 import { db, type Database } from "..";
-import { and, eq, ilike, or, inArray } from "drizzle-orm";
+import { and, eq, ilike, or, inArray, isNull } from "drizzle-orm";
 import type { Role } from "@mep/types";
 import { memberships } from "@/schema/memberships";
 import { buildOrderByConditions, type PaginationOptions } from "./query-build";
@@ -81,6 +81,9 @@ export const userQueries = {
 
     whereConditions.push(inArray(users.id, userIdArray));
 
+    whereConditions.push(isNull(users.deletedAt));
+    whereConditions.push(eq(users.isAnonymized, false));
+
     if (filters.search?.trim()) {
       whereConditions.push(
         or(
@@ -120,9 +123,15 @@ export const userQueries = {
     return row[0];
   },
 
-  getById: async (id: string) => {
+  getById: async (id: string, includeDeleted = false) => {
+    const whereConditions = [eq(users.id, id)];
+    if (!includeDeleted) {
+      whereConditions.push(isNull(users.deletedAt));
+      whereConditions.push(eq(users.isAnonymized, false));
+    }
+
     const row = await db.query.users.findFirst({
-      where: eq(users.id, id),
+      where: and(...whereConditions),
       with: {
         memberships: true,
       },
@@ -130,9 +139,15 @@ export const userQueries = {
     return row;
   },
 
-  getByEmail: async (email: string) => {
+  getByEmail: async (email: string, includeDeleted = false) => {
+    const whereConditions = [eq(users.email, email)];
+    if (!includeDeleted) {
+      whereConditions.push(isNull(users.deletedAt));
+      whereConditions.push(eq(users.isAnonymized, false));
+    }
+
     const row = await db.query.users.findFirst({
-      where: eq(users.email, email),
+      where: and(...whereConditions),
       with: {
         memberships: true,
       },

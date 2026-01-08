@@ -1,5 +1,5 @@
-import { OwnershipTransferService } from "@/services/memberships/transfer-service";
-import { SubscriptionCancellationService } from "@/services/subscription/cancellation-service";
+import { MembershipService } from "@/services/memberships/service";
+import { SubscriptionService } from "@/services/subscription/services";
 import { ownerProcedure, protectedProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
 import { z } from "zod";
@@ -13,7 +13,7 @@ export const membershipRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const result = await OwnershipTransferService.transferOwnership(
+      const result = await MembershipService.transferOwnership(
         input.companyId,
         ctx.userId,
         input.toUserId,
@@ -24,38 +24,35 @@ export const membershipRouter = createTRPCRouter({
   getOwners: ownerProcedure
     .input(z.object({ companyId: z.uuid() }))
     .query(async ({ input }) => {
-      const owners = await OwnershipTransferService.getOwners(input.companyId);
+      const owners = await MembershipService.getOwners(input.companyId);
       return { data: owners };
     }),
 
   cancelSubscription: ownerProcedure
     .input(z.object({ companyId: z.uuid() }))
     .mutation(async ({ input, ctx }) => {
-      const result =
-        await SubscriptionCancellationService.cancelSubscriptionForUser(
-          ctx.userId,
-          input.companyId,
-        );
+      const result = await SubscriptionService.cancelSubscriptionForUser(
+        ctx.userId,
+        input.companyId,
+      );
       return { data: result };
     }),
 
   checkSubscriptionStatus: protectedProcedure
     .input(z.object({ companyId: z.uuid() }))
     .query(async ({ input }) => {
-      const status =
-        await SubscriptionCancellationService.checkSubscriptionStatus(
-          input.companyId,
-        );
+      const status = await SubscriptionService.checkSubscriptionStatus(
+        input.companyId,
+      );
       return { data: status };
     }),
 
   syncSubscription: ownerProcedure
     .input(z.object({ companyId: z.uuid() }))
     .mutation(async ({ input }) => {
-      const result =
-        await SubscriptionCancellationService.syncSubscriptionFromStripe(
-          input.companyId,
-        );
+      const result = await SubscriptionService.syncSubscriptionFromStripe(
+        input.companyId,
+      );
       return { data: result };
     }),
 });
