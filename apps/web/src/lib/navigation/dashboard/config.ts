@@ -141,17 +141,9 @@ export const createNavigation = (enabledPrepTypes?: string[]): NavGroup[] => {
     {
       id: "orders",
       titleKey: "orders",
-      href: dashboardPrefix("orders/all"),
+      href: dashboardPrefix("orders"),
       icon: Truck,
-      collapsible: true,
-      items: [
-        {
-          id: "orders-all",
-          labelKey: "all",
-          href: dashboardPrefix("orders/all"),
-        },
-        ...groupNavItems("orders", "Orders", enabledPrepTypes),
-      ],
+      collapsible: false,
     },
   ];
 };

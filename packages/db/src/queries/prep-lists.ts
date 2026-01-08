@@ -184,6 +184,16 @@ export const prepListQueries = {
                   createdAt: true,
                 },
                 orderBy: [asc(prepItems.createdAt), asc(prepItems.id)],
+                with: {
+                  recipe: {
+                    columns: {
+                      id: true,
+                      name: true,
+                      instructions: true,
+                      ingredients: true,
+                    },
+                  },
+                },
               },
             },
           },

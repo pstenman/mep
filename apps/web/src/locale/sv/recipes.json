@@ -18,7 +18,7 @@
     "placeholder": {
       "name": "Ange namn",
       "instructions": "Ange instruktioner",
-      "ingredientName": "Ingrediensnamn",
+      "ingredientName": "Ingrediens",
       "quantity": "0",
       "unit": "kg, g, ml, etc."
     },

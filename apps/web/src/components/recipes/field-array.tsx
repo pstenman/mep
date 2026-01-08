@@ -6,7 +6,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
   Input,
   useFieldArray,
@@ -35,47 +34,20 @@ export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <FormLabel>{t("form.label.ingredients")}</FormLabel>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => append(defaultIngredient)}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          {t("form.button.addIngredient")}
-        </Button>
-      </div>
-
+    <div className="space-y-2">
       {fields.map((field, index) => (
-        <div key={field.id} className="p-4 border rounded-lg space-y-3">
-          <div className="flex items-start justify-between">
-            <h4 className="text-sm font-medium text-muted-foreground">
-              {t("form.ingredient.title", { index: index + 1 })}
-            </h4>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => remove(index)}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
+        <div key={field.id} className="flex items-start gap-2">
+          <div className="flex-1 grid grid-cols-4 gap-2">
             <FormField
               control={control}
               name={`ingredients.${index}.name`}
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("form.ingredient.name")}</FormLabel>
+                <FormItem className="col-span-2">
                   <FormControl>
                     <Input
                       {...field}
                       placeholder={t("form.placeholder.ingredientName")}
+                      className="h-9"
                     />
                   </FormControl>
                   <FormMessage />
@@ -87,13 +59,14 @@ export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
               control={control}
               name={`ingredients.${index}.quantity`}
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("form.ingredient.quantity")}</FormLabel>
+                <FormItem className="col-span-1">
                   <FormControl>
                     <Input
                       type="number"
+                      step="0.01"
                       {...field}
                       placeholder={t("form.placeholder.quantity")}
+                      className="h-9"
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value) || 0)
                       }
@@ -109,12 +82,12 @@ export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
               control={control}
               name={`ingredients.${index}.unit`}
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("form.ingredient.unit")}</FormLabel>
+                <FormItem className="col-span-1">
                   <FormControl>
                     <Input
                       {...field}
                       placeholder={t("form.placeholder.unit")}
+                      className="h-9"
                     />
                   </FormControl>
                   <FormMessage />
@@ -122,14 +95,28 @@ export function IngredientsFieldArray({ form }: IngredientsFieldArrayProps) {
               )}
             />
           </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => remove(index)}
+            className="h-9 w-9 p-0"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </div>
       ))}
 
-      {fields.length === 0 && (
-        <div className="text-center py-8 text-sm text-muted-foreground border border-dashed rounded-lg">
-          {t("form.ingredient.empty")}
-        </div>
-      )}
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={() => append(defaultIngredient)}
+        className="w-full"
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        {t("form.button.addIngredient")}
+      </Button>
     </div>
   );
 }
