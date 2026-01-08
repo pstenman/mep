@@ -42,6 +42,30 @@ stripeWebhookRoute.post("/", async (c) => {
     const metadata = stripeSubscription.metadata ?? {};
     const { userId, companyId, membershipId } = metadata;
 
+    const existingSubscription =
+      await subscriptionQueries.findByStripeSubscriptionId(subscriptionId, db);
+
+    if (existingSubscription) {
+      const subscriptionData = stripeSubscription as any;
+      await subscriptionQueries.update(
+        existingSubscription.stripeSubscriptionId,
+        {
+          cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end ?? false,
+          canceledAt: stripeSubscription.canceled_at
+            ? new Date(stripeSubscription.canceled_at * 1000)
+            : null,
+          status: stripeSubscription.status as SubscriptionStatus,
+          currentPeriodStart: subscriptionData.current_period_start
+            ? new Date(subscriptionData.current_period_start * 1000)
+            : existingSubscription.currentPeriodStart,
+          currentPeriodEnd: subscriptionData.current_period_end
+            ? new Date(subscriptionData.current_period_end * 1000)
+            : existingSubscription.currentPeriodEnd,
+        },
+        db,
+      );
+    }
+
     if (
       stripeSubscription.status === "active" &&
       userId &&
@@ -89,6 +113,30 @@ stripeWebhookRoute.post("/", async (c) => {
     const metadata = subscription.metadata ?? {};
     const { userId, companyId, membershipId } = metadata;
 
+    const existingSubscription =
+      await subscriptionQueries.findByStripeSubscriptionId(subscription.id, db);
+
+    if (existingSubscription) {
+      const subscriptionData = subscription as any;
+      await subscriptionQueries.update(
+        existingSubscription.stripeSubscriptionId,
+        {
+          cancelAtPeriodEnd: subscription.cancel_at_period_end ?? false,
+          canceledAt: subscription.canceled_at
+            ? new Date(subscription.canceled_at * 1000)
+            : null,
+          status: subscription.status as SubscriptionStatus,
+          currentPeriodStart: subscriptionData.current_period_start
+            ? new Date(subscriptionData.current_period_start * 1000)
+            : existingSubscription.currentPeriodStart,
+          currentPeriodEnd: subscriptionData.current_period_end
+            ? new Date(subscriptionData.current_period_end * 1000)
+            : existingSubscription.currentPeriodEnd,
+        },
+        db,
+      );
+    }
+
     if (
       subscription.status === "active" &&
       userId &&
@@ -111,22 +159,6 @@ stripeWebhookRoute.post("/", async (c) => {
           existingSubscription?.status === "active"
         ) {
           return c.text("Already activated", 200);
-        }
-
-        if (subscription.cancel_at_period_end !== undefined) {
-          if (existingSubscription) {
-            await subscriptionQueries.update(
-              existingSubscription.stripeSubscriptionId,
-              {
-                cancelAtPeriodEnd: subscription.cancel_at_period_end,
-                canceledAt: subscription.canceled_at
-                  ? new Date(subscription.canceled_at * 1000)
-                  : null,
-                status: subscription.status as SubscriptionStatus,
-              },
-              db,
-            );
-          }
         }
 
         await SubscriptionService.activateSubscriptionFromStripe({

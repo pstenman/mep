@@ -7,6 +7,7 @@
     "status": "Status",
     "currentPeriod": "Current Period",
     "cancelAtPeriodEnd": "Subscription will cancel at the end of the period.",
+    "cancelledOn": "Cancelled {date}",
     "manageButtonLabel": "Manage Subscription"
   },
   "company": {

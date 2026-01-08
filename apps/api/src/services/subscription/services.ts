@@ -88,12 +88,39 @@ export class SubscriptionService {
       throw error;
     }
 
+    let stripeSubscription: Stripe.Subscription;
+    try {
+      stripeSubscription = await stripe.subscriptions.retrieve(
+        subscriptionInfo.subscriptionId,
+      );
+    } catch (error: any) {
+      throw new Error(
+        `Failed to retrieve subscription from Stripe: ${error?.message || "Unknown error"}`,
+      );
+    }
+
     const subscription = await db.transaction(async (tx) => {
       const defaultPlan = await planQueries.getDefault();
       if (!defaultPlan) {
         throw new Error("No plan found in database. Please seed plans first.");
       }
       const planId = defaultPlan.id;
+
+      const subscriptionData = stripeSubscription as any;
+
+      const currentPeriodStart =
+        subscriptionData.current_period_start &&
+        subscriptionData.current_period_start > 0
+          ? new Date(subscriptionData.current_period_start * 1000)
+          : new Date();
+
+      const currentPeriodEnd =
+        subscriptionData.current_period_end &&
+        subscriptionData.current_period_end > 0 &&
+        subscriptionData.current_period_end >
+          subscriptionData.current_period_start
+          ? new Date(subscriptionData.current_period_end * 1000)
+          : new Date(currentPeriodStart.getTime() + 90 * 24 * 60 * 60 * 1000);
 
       return await subscriptionQueries.create(
         {
@@ -102,10 +129,12 @@ export class SubscriptionService {
           stripeCustomerId: subscriptionInfo.customerId,
           planId,
           status: subscriptionInfo.subscriptionStatus as SubscriptionStatus,
-          currentPeriodStart: new Date(),
-          currentPeriodEnd: new Date(),
-          cancelAtPeriodEnd: false,
-          canceledAt: null,
+          currentPeriodStart,
+          currentPeriodEnd,
+          cancelAtPeriodEnd: subscriptionData.cancel_at_period_end ?? false,
+          canceledAt: subscriptionData.canceled_at
+            ? new Date(subscriptionData.canceled_at * 1000)
+            : null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -177,9 +206,9 @@ export class SubscriptionService {
         await companyQueries.activate(companyId, tx);
         await membershipQueries.activate(membershipId, tx);
 
-        const currentPeriodStart = (stripeSubscription as any)
-          .current_period_start;
-        const currentPeriodEnd = (stripeSubscription as any).current_period_end;
+        const subscriptionData = stripeSubscription as any;
+        const currentPeriodStart = subscriptionData.current_period_start;
+        const currentPeriodEnd = subscriptionData.current_period_end;
 
         await subscriptionQueries.update(
           subscription.stripeSubscriptionId,
@@ -191,12 +220,20 @@ export class SubscriptionService {
             currentPeriodEnd: currentPeriodEnd
               ? new Date(currentPeriodEnd * 1000)
               : subscription.currentPeriodEnd,
+            cancelAtPeriodEnd:
+              subscriptionData.cancel_at_period_end ??
+              subscription.cancelAtPeriodEnd,
+            canceledAt: subscriptionData.canceled_at
+              ? new Date(subscriptionData.canceled_at * 1000)
+              : subscription.canceledAt,
           },
           tx,
         );
       });
     } catch (error: any) {
-      throw error;
+      throw new Error(
+        `Failed to activate subscription: ${error?.message || "Unknown error"}`,
+      );
     }
 
     let magicLinkData: Awaited<

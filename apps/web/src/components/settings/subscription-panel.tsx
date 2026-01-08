@@ -40,7 +40,13 @@ export function SubscriptionPanel() {
   const planName =
     planTranslation?.name ?? subscription.plan?.id ?? "Unknown Plan";
 
-  const getStatusBadgeProps = (status: string) => {
+  const getStatusBadgeProps = (status: string, cancelAtPeriodEnd: boolean) => {
+    if (cancelAtPeriodEnd) {
+      return {
+        variant: "destructive" as const,
+      };
+    }
+
     switch (status) {
       case "active":
         return {
@@ -63,7 +69,33 @@ export function SubscriptionPanel() {
     }
   };
 
-  const statusBadgeProps = getStatusBadgeProps(subscription.status);
+  const getStatusText = (
+    status: string,
+    cancelAtPeriodEnd: boolean,
+    currentPeriodEnd: Date,
+    locale: string,
+  ) => {
+    if (cancelAtPeriodEnd) {
+      const dateStr = new Date(currentPeriodEnd).toLocaleDateString(locale, {
+        day: "numeric",
+        month: "short",
+      });
+      return t("subscription.cancelledOn", { date: dateStr });
+    }
+    return status;
+  };
+
+  const statusBadgeProps = getStatusBadgeProps(
+    subscription.status,
+    subscription.cancelAtPeriodEnd ?? false,
+  );
+
+  const statusText = getStatusText(
+    subscription.status,
+    subscription.cancelAtPeriodEnd ?? false,
+    subscription.currentPeriodEnd,
+    locale,
+  );
 
   return (
     <div className="flex flex-col gap-3">
@@ -74,7 +106,7 @@ export function SubscriptionPanel() {
 
       <div className="flex justify-between items-center">
         <Text className="font-medium">{t("subscription.status")}</Text>
-        <Badge {...statusBadgeProps}>{subscription.status}</Badge>
+        <Badge {...statusBadgeProps}>{statusText}</Badge>
       </div>
 
       <div className="flex justify-between items-center">
@@ -84,12 +116,6 @@ export function SubscriptionPanel() {
           {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
         </Text>
       </div>
-
-      {subscription.cancelAtPeriodEnd && (
-        <Text className="text-sm text-error">
-          {t("subscription.cancelAtPeriodEnd")}
-        </Text>
-      )}
 
       <Button onClick={handleBillingPortal} className="mt-2">
         <Text>{t("subscription.manageButtonLabel")}</Text>
