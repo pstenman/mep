@@ -32,9 +32,11 @@ export const prepGroupQueries = {
   getAll: async (filters: PrepGroupFilters) => {
     const rows = await db.query.prepGroups.findMany({
       where: buildPrepGroupFilters(filters),
-      orderBy: (pg, { asc }) => [asc(pg.name)],
+      orderBy: (pg, { asc }) => [asc(pg.createdAt)],
       with: {
-        prepItems: true,
+        prepItems: {
+          orderBy: (pi, { asc }) => [asc(pi.createdAt)],
+        },
       },
     });
     return rows;
@@ -44,7 +46,9 @@ export const prepGroupQueries = {
     const row = await db.query.prepGroups.findFirst({
       where: eq(prepGroups.id, id),
       with: {
-        prepItems: true,
+        prepItems: {
+          orderBy: (pi, { asc }) => [asc(pi.createdAt)],
+        },
       },
     });
     return row;

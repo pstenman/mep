@@ -16,6 +16,7 @@ import { DatePicker } from "@mep/ui";
 import { getNextPrepStatus } from "@/utils/filters/prep-status-helpers";
 import { CreateListDialog } from "./create-list-dialog";
 import { RecipeViewDialog } from "@/components/recipes/view-dialog";
+import { useTranslations } from "next-intl";
 
 interface PrepGroupWithItems {
   id: string;
@@ -40,6 +41,7 @@ export function ActivePrepView({
   prepType,
   onTemplatesClick,
 }: ActivePrepViewProps) {
+  const t = useTranslations("preparations");
   const utils = trpc.useUtils();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
@@ -136,11 +138,15 @@ export function ActivePrepView({
         </>
       ) : (
         <>
-          <h2 className="text-lg font-semibold">No list found</h2>
+          <h2 className="text-lg font-semibold">
+            {t("prepList.activeView.noListFound")}
+          </h2>
           <p className="text-sm text-muted-foreground">
             {selectedDate
-              ? `No list found for ${selectedDate.toLocaleDateString()}`
-              : "Select a date to view a list"}
+              ? t("prepList.activeView.noListForDate", {
+                  date: selectedDate.toLocaleDateString(),
+                })
+              : t("prepList.activeView.selectDateToView")}
           </p>
         </>
       )}
@@ -152,7 +158,7 @@ export function ActivePrepView({
       {onTemplatesClick && (
         <DynamicButton
           icon={FileText}
-          tooltip="View Templates"
+          tooltip={t("prepList.activeView.tooltip.viewTemplates")}
           size="icon"
           variant="outline"
           onClick={onTemplatesClick}
@@ -162,7 +168,7 @@ export function ActivePrepView({
       {prepType && (
         <DynamicButton
           icon={Plus}
-          tooltip="Create New List"
+          tooltip={t("prepList.activeView.tooltip.createNewList")}
           size="icon"
           variant="outline"
           onClick={(e) => {
@@ -193,7 +199,7 @@ export function ActivePrepView({
                   setSelectedDate(today);
                 }
               }}
-              placeholder="Select date"
+              placeholder={t("createList.selectDate")}
             />
             {renderActionButtons()}
           </div>
@@ -201,8 +207,10 @@ export function ActivePrepView({
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-muted-foreground">
               {selectedDate
-                ? `No list found for ${selectedDate.toLocaleDateString()}`
-                : "Please select a date"}
+                ? t("prepList.activeView.noListForDate", {
+                    date: selectedDate.toLocaleDateString(),
+                  })
+                : t("prepList.activeView.pleaseSelectDate")}
             </p>
           </div>
         </div>
@@ -251,7 +259,7 @@ export function ActivePrepView({
                 setSelectedDate(today);
               }
             }}
-            placeholder="Select date"
+            placeholder={t("createList.selectDate")}
           />
           {renderActionButtons()}
         </div>
@@ -264,7 +272,7 @@ export function ActivePrepView({
           />
         ) : (
           <div className="text-center py-8 text-muted-foreground">
-            <p>No groups found in this list</p>
+            <p>{t("prepList.activeView.noGroupsFound")}</p>
           </div>
         )}
       </div>

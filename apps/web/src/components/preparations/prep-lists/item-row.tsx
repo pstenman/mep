@@ -1,6 +1,7 @@
 import { PrepStatus, type PrepListItem, type Recipe } from "@mep/types";
 import { Badge, Button, cn } from "@mep/ui";
 import { BookText } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface PrepItemRowProps {
   item: PrepListItem;
@@ -47,6 +48,7 @@ export function PrepItemRow({
   onStatusToggle,
   onRecipeClick,
 }: PrepItemRowProps) {
+  const t = useTranslations("preparations");
   const handleBadgeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onStatusToggle?.(item.id);
@@ -80,7 +82,7 @@ export function PrepItemRow({
             size="icon"
             onClick={handleRecipeClick}
             className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-            title={`View recipe: ${item.recipe.name}`}
+            title={t("prepList.itemRow.viewRecipe", { name: item.recipe.name })}
           >
             <BookText className="w-4 h-4" />
           </Button>
@@ -95,7 +97,7 @@ export function PrepItemRow({
           getStatusBadgeClassName(item.status),
         )}
       >
-        {item.status}
+        {item.status ? t(`prepList.status.${item.status}`) : ""}
       </Badge>
     </li>
   );

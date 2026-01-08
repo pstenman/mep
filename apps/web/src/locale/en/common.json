@@ -4,7 +4,7 @@
   "system": "Auto",
   "createButton": {
     "user": "Create User",
-    "preparation": "Create Preparation",
+    "preparation": "Create Prep Template",
     "menu": "Create Menu",
     "recipe": "Create Recipe",
     "allergy": "Create Allergy",

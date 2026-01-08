@@ -11,5 +11,129 @@
     "alACarte": "À la Carte",
     "set": "Set Meny",
     "group": "Grupp Meny"
+  },
+  "form": {
+    "validation": {
+      "required": "Detta fält är obligatoriskt"
+    },
+    "toast": {
+      "createSuccess": "Mall skapad",
+      "updateSuccess": "Mall uppdaterad",
+      "error": "Kunde inte spara mall"
+    },
+    "label": {
+      "templateName": "Namn",
+      "prepType": "Typ"
+    },
+    "placeholder": {
+      "templateName": "Namn",
+      "prepType": "Välj typ"
+    },
+    "button": {
+      "cancel": "Avbryt",
+      "update": "Uppdatera mall",
+      "save": "Spara mall",
+      "updating": "Uppdaterar...",
+      "creating": "Skapar..."
+    },
+    "group": {
+      "label": "Meny Rätt eller Grupp",
+      "placeholder": "Rätt eller Grupp namn",
+      "button": {
+        "add": "Lägg till rätt/grupp"
+      }
+    },
+    "item": {
+      "placeholder": "Ange punkt",
+      "selectRecipe": "Välj recept",
+      "button": {
+        "add": "Lägg till"
+      }
+    }
+  },
+  "templates": {
+    "title": "Mallar",
+    "description": "Hantera dina preppmallar. Markera den aktiva mallen för att använda när du skapar nya listor.",
+    "empty": {
+      "title": "Inga mallar hittades",
+      "description": "Inga mallar hittades. Skapa en för att komma igång."
+    },
+    "toast": {
+      "deleteSuccess": "Mall borttagen",
+      "deleteError": "Kunde inte ta bort mall"
+    },
+    "confirm": {
+      "delete": "Är du säker på att du vill ta bort denna mall? Denna åtgärd kan inte ångras."
+    },
+    "button": {
+      "backToActiveList": "Tillbaka till aktiv lista"
+    },
+    "columns": {
+      "active": "Aktiv",
+      "templateName": "Mallnamn",
+      "prepType": "Prepptyp",
+      "groups": "Grupper",
+      "items": "Artiklar"
+    },
+    "sheet": {
+      "edit": "Redigera mall",
+      "create": "Skapa mall"
+    }
+  },
+  "createList": {
+    "title": "Skapa ny lista",
+    "loading": "Laddar mall...",
+    "usingTemplate": "Använder mall:",
+    "prepType": "Prepptyp:",
+    "noActiveTemplate": "Ingen aktiv mall hittades för denna prepptyp. Vänligen aktivera en mall först.",
+    "scheduleFor": "Schemalägg för",
+    "selectDate": "Välj datum",
+    "button": {
+      "cancel": "Avbryt",
+      "create": "Skapa lista",
+      "creating": "Skapar..."
+    },
+    "toast": {
+      "createSuccess": "Lista skapad",
+      "createError": "Kunde inte skapa lista",
+      "noActiveTemplateError": "Ingen aktiv mall hittades. Vänligen aktivera en mall först.",
+      "selectDateError": "Vänligen välj ett datum"
+    }
+  },
+  "prepList": {
+    "activeView": {
+      "noListFound": "Ingen lista hittades",
+      "noListForDate": "Ingen lista hittades för {date}",
+      "selectDateToView": "Välj ett datum för att visa en lista",
+      "pleaseSelectDate": "Vänligen välj ett datum",
+      "noGroupsFound": "Inga grupper hittades i denna lista",
+      "tooltip": {
+        "viewTemplates": "Visa mallar",
+        "createNewList": "Skapa ny lista"
+      }
+    },
+    "historyView": {
+      "title": "Alla listor",
+      "description": "Visa historik, aktuella och kommande prepplistor",
+      "button": {
+        "backToActiveList": "Tillbaka till aktiv lista"
+      },
+      "status": {
+        "active": "Aktiv",
+        "upcoming": "Kommande",
+        "history": "Historik"
+      }
+    },
+    "itemRow": {
+      "viewRecipe": "Visa recept: {name}"
+    },
+    "status": {
+      "N": "Ingen",
+      "M": "Markera",
+      "P": "Prepp",
+      "P2": "Prepp 2",
+      "P!": "Prioritet",
+      "D": "Klar"
+    }
   }
 }

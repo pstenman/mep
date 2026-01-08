@@ -4,7 +4,7 @@
   "system": "Auto",
   "createButton": {
     "user": "Skapa användare",
-    "preparation": "Skapa förberedelse",
+    "preparation": "Skapa prepp mall",
     "menu": "Skapa meny",
     "recipe": "Skapa recept",
     "allergy": "Skapa allergi",

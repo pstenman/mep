@@ -86,10 +86,10 @@ export class AuthService {
         "🔗 Magic link generated (DEV MODE - not sent via email)",
       );
 
-      console.log("\n" + "=".repeat(80));
+      console.log(`\n${"=".repeat(80)}`);
       console.log("🔗 MAGIC LINK (DEV MODE):");
       console.log(magicLink);
-      console.log("=".repeat(80) + "\n");
+      console.log(`${"=".repeat(80)}\n`);
 
       return linkData;
     }

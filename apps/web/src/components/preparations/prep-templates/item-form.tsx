@@ -11,10 +11,11 @@ import {
   cn,
 } from "@mep/ui";
 import type { TemplateFormSchema } from "./schema";
-import { BookText, Minus, Plus } from "lucide-react";
+import { BookText, Trash2, Plus } from "lucide-react";
 import { useState } from "react";
 import { RecipeSelectDialog } from "./recipe-select-dialog";
 import { trpc } from "@/lib/trpc/client";
+import { useTranslations } from "next-intl";
 
 interface PreparationItemFormProps {
   groupIndex: number;
@@ -33,6 +34,7 @@ export function PreparationItemForm({
   onAddItem,
   isLast,
 }: PreparationItemFormProps) {
+  const t = useTranslations("preparations");
   const { control } = form;
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -57,28 +59,18 @@ export function PreparationItemForm({
 
   return (
     <>
-      <div className="w-full px-4">
+      <div className="w-full space-y-2">
         <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => setDialogOpen(true)}
-            className={cn("shrink-0", recipeId && "text-primary")}
-            title={recipeData?.data?.name || "Select recipe"}
-          >
-            <BookText className="w-4 h-4" />
-          </Button>
           <FormField
             name={`groups.${groupIndex}.items.${itemIndex}.name`}
             control={control}
             render={({ field }) => (
-              <FormItem className="flex-1 mb-0">
+              <FormItem className="mb-0">
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="Enter item name"
-                    className="border-none w-60"
+                    placeholder={t("form.item.placeholder")}
+                    className="border-none"
                   />
                 </FormControl>
                 <FormMessage />
@@ -90,28 +82,39 @@ export function PreparationItemForm({
               {recipeData?.data?.name}
             </span>
           )}
-
-          <div className="flex gap-1">
+          <div className="flex gap-5 shrink-0">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => setDialogOpen(true)}
+              className={cn("shrink-0", recipeId && "text-primary")}
+              title={recipeData?.data?.name || t("form.item.selectRecipe")}
+            >
+              <BookText className="w-4 h-4" />
+            </Button>
             <Button
               type="button"
               variant="ghost"
               size="icon"
               onClick={onRemove}
             >
-              <Minus className="w-4 h-4 text-destructive" />
+              <Trash2 className="w-4 h-4 text-destructive" />
             </Button>
-            {isLast && onAddItem && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={onAddItem}
-              >
-                <Plus className="w-4 h-4" />
-              </Button>
-            )}
           </div>
         </div>
+        {isLast && onAddItem && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onAddItem}
+            className="w-full"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {t("form.item.button.add")}
+          </Button>
+        )}
       </div>
 
       <RecipeSelectDialog

@@ -9,6 +9,7 @@ import { DynamicButton } from "@/components/ui/dynamic-button";
 import { TemplatesTable } from "./templates-table";
 import { usePreparationTemplateSheet } from "./sheet";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface TemplatesPrepViewProps {
   prepType: PrepType | null;
@@ -19,6 +20,7 @@ export function TemplatesPrepView({
   prepType,
   onBackClick,
 }: TemplatesPrepViewProps) {
+  const t = useTranslations("preparations");
   const utils = trpc.useUtils();
   const { open: openSheet } = usePreparationTemplateSheet();
 
@@ -35,10 +37,10 @@ export function TemplatesPrepView({
     onSuccess: () => {
       utils.preparations.templates.getAll.invalidate();
       utils.preparations.templates.getActive.invalidate();
-      toast.success("Template deleted successfully");
+      toast.success(t("templates.toast.deleteSuccess"));
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to delete template");
+      toast.error(error.message || t("templates.toast.deleteError"));
       console.error("Failed to delete template:", error);
     },
   });
@@ -59,11 +61,7 @@ export function TemplatesPrepView({
   };
 
   const handleDelete = (id: string) => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this template? This action cannot be undone.",
-      )
-    ) {
+    if (window.confirm(t("templates.confirm.delete"))) {
       deleteTemplate.mutate({ id });
     }
   };
@@ -73,15 +71,15 @@ export function TemplatesPrepView({
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-lg font-semibold">Templates</h2>
+            <h2 className="text-lg font-semibold">{t("templates.title")}</h2>
             <p className="text-sm text-muted-foreground">
-              No templates found. Create one to get started.
+              {t("templates.empty.description")}
             </p>
           </div>
           {onBackClick && (
             <DynamicButton
               icon={ArrowLeft}
-              tooltip="Back to Active List"
+              tooltip={t("templates.button.backToActiveList")}
               size="icon"
               variant="outline"
               onClick={onBackClick}
@@ -100,16 +98,15 @@ export function TemplatesPrepView({
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-lg font-semibold">Templates</h2>
+          <h2 className="text-lg font-semibold">{t("templates.title")}</h2>
           <p className="text-sm text-muted-foreground">
-            Manage your preparation templates. Check the active template to use
-            when creating new lists.
+            {t("templates.description")}
           </p>
         </div>
         {onBackClick && (
           <DynamicButton
             icon={ArrowLeft}
-            tooltip="Back to Active List"
+            tooltip={t("templates.button.backToActiveList")}
             size="icon"
             variant="outline"
             onClick={onBackClick}

@@ -15,6 +15,7 @@ import {
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import type { PrepType } from "@mep/types";
+import { useTranslations } from "next-intl";
 
 interface CreateListDialogProps {
   open: boolean;
@@ -27,6 +28,7 @@ export function CreateListDialog({
   onOpenChange,
   prepType,
 }: CreateListDialogProps) {
+  const t = useTranslations("preparations");
   const utils = trpc.useUtils();
 
   const tomorrow = useMemo(() => {
@@ -55,26 +57,24 @@ export function CreateListDialog({
       onSuccess: () => {
         utils.preparations.prepLists.getActive.invalidate();
         utils.preparations.prepLists.getAll.invalidate();
-        toast.success("List created successfully");
+        toast.success(t("createList.toast.createSuccess"));
         onOpenChange(false);
         setSelectedDate(tomorrow);
       },
       onError: (error: Error) => {
-        toast.error(error.message || "Failed to create list");
+        toast.error(error.message || t("createList.toast.createError"));
         console.error("Create list error:", error);
       },
     });
 
   const handleCreate = async () => {
     if (!activeTemplate?.data?.id) {
-      toast.error(
-        "No active template found. Please activate a template first.",
-      );
+      toast.error(t("createList.toast.noActiveTemplateError"));
       return;
     }
 
     if (!selectedDate) {
-      toast.error("Please select a date");
+      toast.error(t("createList.toast.selectDateError"));
       return;
     }
 
@@ -95,22 +95,22 @@ export function CreateListDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New List</DialogTitle>
+          <DialogTitle>{t("createList.title")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
           {isLoadingTemplate ? (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin" />
-              Loading template...
+              {t("createList.loading")}
             </div>
           ) : activeTemplate?.data ? (
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
-                Using template:{" "}
+                {t("createList.usingTemplate")}{" "}
                 <span className="font-medium">{activeTemplate.data.name}</span>
               </p>
               <p className="text-sm text-muted-foreground">
-                Prep Type:{" "}
+                {t("createList.prepType")}{" "}
                 <span className="font-medium">
                   {activeTemplate.data.prepTypes}
                 </span>
@@ -118,13 +118,14 @@ export function CreateListDialog({
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">
-              No active template found for this prep type. Please activate a
-              template first.
+              {t("createList.noActiveTemplate")}
             </p>
           )}
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Schedule For</Label>
+            <Label className="text-sm font-medium">
+              {t("createList.scheduleFor")}
+            </Label>
             <DatePicker
               value={selectedDate}
               onChange={(date) => {
@@ -136,7 +137,7 @@ export function CreateListDialog({
                   setSelectedDate(undefined);
                 }
               }}
-              placeholder="Select date"
+              placeholder={t("createList.selectDate")}
             />
           </div>
 
@@ -147,7 +148,7 @@ export function CreateListDialog({
               onClick={() => onOpenChange(false)}
               disabled={createFromTemplate.isPending}
             >
-              Cancel
+              {t("createList.button.cancel")}
             </Button>
             <Button
               type="button"
@@ -162,10 +163,10 @@ export function CreateListDialog({
               {createFromTemplate.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
+                  {t("createList.button.creating")}
                 </>
               ) : (
-                "Create List"
+                t("createList.button.create")
               )}
             </Button>
           </div>

@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { getTemplatesColumns } from "./templates-columns";
 import { DataTable } from "@/components/ui/data-tables";
 import type { PrepType } from "@mep/types";
+import { useTranslations } from "next-intl";
 
 interface TemplateItem {
   id: string;
@@ -33,14 +34,16 @@ export function TemplatesTable({
   onEdit,
   onDelete,
 }: TemplatesTableProps) {
+  const t = useTranslations("preparations");
   const columns = useMemo(
     () =>
       getTemplatesColumns({
         prepType,
         onEdit,
         onDelete,
+        t,
       }),
-    [prepType, onEdit, onDelete],
+    [prepType, onEdit, onDelete, t],
   );
 
   return (

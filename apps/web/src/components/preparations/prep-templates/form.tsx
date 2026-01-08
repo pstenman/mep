@@ -41,10 +41,9 @@ export function PreparationTemplateForm({
   type: _type,
   templateId,
   onSuccess,
-  onCancel,
 }: PreparationTemplateFormProps) {
   const utils = trpc.useUtils();
-  const t = useTranslations("preparations.form");
+  const t = useTranslations("preparations");
 
   const { data: settingsData } = trpc.companySettings.get.useQuery();
   const enabledPrepTypes = useMemo<PrepType[]>(() => {
@@ -58,6 +57,18 @@ export function PreparationTemplateForm({
     return enabledPrepTypes[0] || PrepType.BREAKFAST;
   }, [enabledPrepTypes]);
 
+  const getPrepTypeLabel = (type: PrepType): string => {
+    const typeMap: Record<PrepType, string> = {
+      [PrepType.MAIN]: "main",
+      [PrepType.BREAKFAST]: "breakfast",
+      [PrepType.LUNCH]: "lunch",
+      [PrepType.ALACARTE]: "alACarte",
+      [PrepType.SET]: "set",
+      [PrepType.GROUP]: "group",
+    };
+    return t(`group.${typeMap[type]}`);
+  };
+
   const { data: templateData, isLoading: isLoadingTemplate } =
     trpc.preparations.templates.getById.useQuery(
       { id: templateId! },
@@ -65,7 +76,9 @@ export function PreparationTemplateForm({
     );
 
   const form = useForm<TemplateFormSchema>({
-    resolver: zodResolver(templateFormSchema(t)),
+    resolver: zodResolver(
+      templateFormSchema((key: string) => t(`form.${key}`)),
+    ),
     defaultValues: {
       name: "",
       prepTypes: defaultPrepType,
@@ -117,16 +130,12 @@ export function PreparationTemplateForm({
   const createTemplate = trpc.preparations.templates.create.useMutation({
     onSuccess: () => {
       utils.preparations.templates.getAll.invalidate();
-      toast.success(
-        t("form.toast.createSuccess") || "Template created successfully",
-      );
+      toast.success(t("form.toast.createSuccess"));
       form.reset();
       onSuccess?.();
     },
     onError: (error: Error) => {
-      toast.error(
-        error.message || t("form.toast.error") || "Failed to create template",
-      );
+      toast.error(error.message || t("form.toast.error"));
     },
   });
 
@@ -134,15 +143,11 @@ export function PreparationTemplateForm({
     onSuccess: () => {
       utils.preparations.templates.getAll.invalidate();
       utils.preparations.templates.getById.invalidate({ id: templateId! });
-      toast.success(
-        t("form.toast.updateSuccess") || "Template updated successfully",
-      );
+      toast.success(t("form.toast.updateSuccess"));
       onSuccess?.();
     },
     onError: (error: Error) => {
-      toast.error(
-        error.message || t("form.toast.error") || "Failed to update template",
-      );
+      toast.error(error.message || t("form.toast.error"));
     },
   });
 
@@ -190,9 +195,12 @@ export function PreparationTemplateForm({
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Template Name</FormLabel>
+                <FormLabel>{t("form.label.templateName")}</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Enter template name" />
+                  <Input
+                    {...field}
+                    placeholder={t("form.placeholder.templateName")}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -204,16 +212,18 @@ export function PreparationTemplateForm({
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Prep Type</FormLabel>
+                <FormLabel>{t("form.label.prepType")}</FormLabel>
                 <FormControl>
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select prep type" />
+                      <SelectValue
+                        placeholder={t("form.placeholder.prepType")}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       {enabledPrepTypes.map((type: PrepType) => (
                         <SelectItem key={type} value={type}>
-                          {type}
+                          {getPrepTypeLabel(type)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -243,11 +253,6 @@ export function PreparationTemplateForm({
         </div>
 
         <SheetFooter className="shrink-0 px-6 pb-4 pt-4 border-t flex justify-end gap-2">
-          {onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel}>
-              Cancel
-            </Button>
-          )}
           <Button
             type="submit"
             disabled={
@@ -258,11 +263,11 @@ export function PreparationTemplateForm({
           >
             {createTemplate.isPending || updateTemplate.isPending
               ? templateId
-                ? "Updating..."
-                : "Creating..."
+                ? t("form.button.updating")
+                : t("form.button.creating")
               : templateId
-                ? "Update Template"
-                : "Save Template"}
+                ? t("form.button.update")
+                : t("form.button.save")}
           </Button>
         </SheetFooter>
       </form>
