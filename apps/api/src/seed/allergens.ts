@@ -1,6 +1,4 @@
-import { db } from "@mep/db";
-import { allergyQueries } from "@mep/db/queries/allergies.js";
-import { allergies } from "@mep/db/schema/allergies.js";
+import { db, allergies, allergyQueries } from "@mep/db";
 import { Allergen } from "@mep/types";
 import { eq } from "drizzle-orm";
 import { logger } from "../utils/logger";
