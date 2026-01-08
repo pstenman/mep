@@ -18,6 +18,11 @@ import { logger } from "@/utils/logger";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { getSupabase } from "@/lib/supabase";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2025-12-15.clover",
+});
 
 export class SubscriptionService {
   static async createSubscription(input: SubscriptionSchema) {
@@ -116,27 +121,156 @@ export class SubscriptionService {
     userId,
     companyId,
     membershipId,
-  }: SubscriptionActivateSchema) {
-    const supabaseId = await userQueries.getSupabaseIdByUserId(userId, db);
-    if (!supabaseId) throw new Error("Supabase ID not found");
+    stripeSubscriptionId,
+  }: SubscriptionActivateSchema & { stripeSubscriptionId?: string }) {
+    const user = await userQueries.getById(userId, true);
+    if (!user) {
+      logger.error(
+        { userId, companyId, membershipId },
+        "User not found when activating subscription",
+      );
+      throw new Error(`User not found: ${userId}`);
+    }
 
-    const user = await userQueries.getById(userId);
-    if (!user) throw new Error("User not found");
-    if (!user.email) throw new Error("User email not found");
+    if (!user.supabaseId) {
+      logger.error(
+        { userId, companyId, membershipId },
+        "User exists but has no Supabase ID",
+      );
+      throw new Error(`Supabase ID not found for user: ${userId}`);
+    }
 
-    await db.transaction(async (tx) => {
-      await userQueries.activate(userId, tx);
-      await companyQueries.activate(companyId, tx);
-      await membershipQueries.activate(membershipId, tx);
-    });
+    if (!user.email) {
+      logger.error(
+        { userId, companyId, membershipId },
+        "User exists but has no email",
+      );
+      throw new Error(`User email not found for user: ${userId}`);
+    }
 
-    const magicLinkData = await AuthService.sendMagicLinkOnPaymentSuccess(
-      user.email,
+    const subscription = await subscriptionQueries.findByCompanyId(
+      companyId,
+      db,
     );
-    logger.info(
-      { userId, companyId, membershipId, magicLink: magicLinkData },
-      "Subscription activated and magic link sent",
-    );
+
+    if (!subscription) {
+      logger.error(
+        { userId, companyId, membershipId },
+        "Subscription not found in database",
+      );
+      throw new Error(`Subscription not found for company: ${companyId}`);
+    }
+
+    const subscriptionIdToUse =
+      stripeSubscriptionId || subscription.stripeSubscriptionId;
+
+    let stripeSubscription: Stripe.Subscription;
+    try {
+      stripeSubscription =
+        await stripe.subscriptions.retrieve(subscriptionIdToUse);
+    } catch (error: any) {
+      logger.error(
+        {
+          error: {
+            message: error?.message,
+            type: error?.type,
+            code: error?.code,
+            statusCode: error?.statusCode,
+          },
+          userId,
+          companyId,
+          membershipId,
+          stripeSubscriptionId: subscriptionIdToUse,
+        },
+        "Failed to retrieve subscription from Stripe",
+      );
+      throw new Error(
+        `Failed to retrieve subscription from Stripe: ${error?.message || "Unknown error"}`,
+      );
+    }
+
+    if (
+      stripeSubscriptionId &&
+      stripeSubscriptionId !== subscription.stripeSubscriptionId
+    ) {
+      await subscriptionQueries.update(
+        subscription.stripeSubscriptionId,
+        {
+          stripeSubscriptionId: stripeSubscriptionId,
+        },
+        db,
+      );
+      subscription.stripeSubscriptionId = stripeSubscriptionId;
+    }
+
+    try {
+      await db.transaction(async (tx) => {
+        await userQueries.activate(userId, tx);
+        await companyQueries.activate(companyId, tx);
+        await membershipQueries.activate(membershipId, tx);
+
+        const currentPeriodStart = (stripeSubscription as any)
+          .current_period_start;
+        const currentPeriodEnd = (stripeSubscription as any).current_period_end;
+
+        await subscriptionQueries.update(
+          subscription.stripeSubscriptionId,
+          {
+            status: stripeSubscription.status as SubscriptionStatus,
+            currentPeriodStart: currentPeriodStart
+              ? new Date(currentPeriodStart * 1000)
+              : subscription.currentPeriodStart,
+            currentPeriodEnd: currentPeriodEnd
+              ? new Date(currentPeriodEnd * 1000)
+              : subscription.currentPeriodEnd,
+          },
+          tx,
+        );
+      });
+    } catch (error: any) {
+      logger.error(
+        {
+          error: {
+            message: error?.message,
+            name: error?.name,
+            stack: error?.stack,
+          },
+          userId,
+          companyId,
+          membershipId,
+          stripeSubscriptionId: subscription.stripeSubscriptionId,
+        },
+        "Failed to update subscription in database transaction",
+      );
+      throw error;
+    }
+
+    let magicLinkData: Awaited<
+      ReturnType<typeof AuthService.sendMagicLinkOnPaymentSuccess>
+    >;
+    try {
+      magicLinkData = await AuthService.sendMagicLinkOnPaymentSuccess(
+        user.email,
+      );
+    } catch (error: any) {
+      logger.error(
+        {
+          error: {
+            message: error?.message,
+            name: error?.name,
+            stack: error?.stack,
+          },
+          userId,
+          companyId,
+          membershipId,
+          email: user.email,
+        },
+        "Failed to send magic link, but subscription was activated",
+      );
+      throw new Error(
+        `Subscription activated but failed to send magic link: ${error?.message || "Unknown error"}`,
+      );
+    }
 
     return magicLinkData;
   }

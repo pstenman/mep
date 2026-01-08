@@ -1,4 +1,5 @@
 import { SubscriptionService } from "@/services/subscription/services";
+import { subscriptionQueries, db } from "@mep/db";
 import { logger } from "@/utils/logger";
 import { Hono } from "hono";
 import Stripe from "stripe";
@@ -10,8 +11,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 export const stripeWebhookRoute = new Hono();
 
 stripeWebhookRoute.post("/", async (c) => {
-  logger.info("Stripe webhook hit");
-
   const sig = c.req.header("stripe-signature");
   if (!sig) return c.text("Missing stripe-signature", 400);
 
@@ -32,28 +31,170 @@ stripeWebhookRoute.post("/", async (c) => {
 
   if (event.type === "invoice.payment_succeeded") {
     const invoice = event.data.object as Stripe.Invoice;
+    const subscriptionId = (invoice as any).subscription as string | null;
 
-    const line = invoice.lines.data[0];
-    const metadata = line?.metadata ?? {};
+    if (!subscriptionId || typeof subscriptionId !== "string") {
+      logger.warn(
+        { invoiceId: invoice.id },
+        "Missing subscription ID in invoice.payment_succeeded",
+      );
+      return c.text("Missing subscription ID", 200);
+    }
 
+    const stripeSubscription =
+      await stripe.subscriptions.retrieve(subscriptionId);
+    const metadata = stripeSubscription.metadata ?? {};
     const { userId, companyId, membershipId } = metadata;
 
-    if (!userId || !companyId || !membershipId) {
-      logger.warn({ invoiceId: invoice.id }, "Missing metadata");
-      return c.text("Missing metadata", 200);
+    if (
+      stripeSubscription.status === "active" &&
+      userId &&
+      companyId &&
+      membershipId
+    ) {
+      try {
+        const existingSubscription = await subscriptionQueries.findByCompanyId(
+          companyId,
+          db,
+        );
+
+        if (existingSubscription?.status === "active") {
+          return c.text("Already activated", 200);
+        }
+
+        await SubscriptionService.activateSubscriptionFromStripe({
+          userId,
+          companyId,
+          membershipId,
+          stripeSubscriptionId: subscriptionId,
+        });
+        logger.info(
+          { userId, companyId, subscriptionId },
+          "Subscription activated via invoice.payment_succeeded",
+        );
+        return c.text("Activation completed", 200);
+      } catch (error: any) {
+        const errorDetails: Record<string, unknown> = {
+          message: error?.message || String(error) || "Unknown error",
+          name: error?.name,
+          stack: error?.stack,
+        };
+        logger.error(
+          {
+            error: errorDetails,
+            userId,
+            companyId,
+            membershipId,
+            subscriptionId,
+            invoiceId: invoice.id,
+          },
+          "Failed to activate subscription from invoice.payment_succeeded",
+        );
+        return c.text(`Activation failed: ${errorDetails.message}`, 500);
+      }
     }
 
-    if (invoice.amount_paid <= 0) {
-      logger.info({ invoiceId: invoice.id }, "Zero-amount invoice, skipping");
-      return c.text("Zero invoice", 200);
+    return c.text("Webhook processed", 200);
+  }
+
+  if (event.type === "customer.subscription.updated") {
+    const subscription = event.data.object as Stripe.Subscription;
+    const metadata = subscription.metadata ?? {};
+    const { userId, companyId, membershipId } = metadata;
+
+    if (
+      subscription.status === "active" &&
+      userId &&
+      companyId &&
+      membershipId
+    ) {
+      try {
+        const existingSubscription = await subscriptionQueries.findByCompanyId(
+          companyId,
+          db,
+        );
+
+        if (existingSubscription?.status === "active") {
+          return c.text("Already activated", 200);
+        }
+
+        await SubscriptionService.activateSubscriptionFromStripe({
+          userId,
+          companyId,
+          membershipId,
+          stripeSubscriptionId: subscription.id,
+        });
+        logger.info(
+          { userId, companyId, subscriptionId: subscription.id },
+          "Subscription activated via customer.subscription.updated",
+        );
+        return c.text("Activation completed", 200);
+      } catch (error: any) {
+        const errorDetails: Record<string, unknown> = {
+          message: error?.message || String(error) || "Unknown error",
+          name: error?.name,
+          stack: error?.stack,
+        };
+        logger.error(
+          {
+            error: errorDetails,
+            userId,
+            companyId,
+            membershipId,
+            subscriptionId: subscription.id,
+          },
+          "Failed to activate subscription from webhook",
+        );
+        return c.text(`Activation failed: ${errorDetails.message}`, 500);
+      }
     }
 
-    await SubscriptionService.activateSubscriptionFromStripe({
-      userId,
-      companyId,
-      membershipId,
-    });
-    return c.text("Activation completed", 200);
+    return c.text("Webhook processed", 200);
+  }
+
+  if (event.type === "customer.subscription.created") {
+    const subscription = event.data.object as Stripe.Subscription;
+    const metadata = subscription.metadata ?? {};
+    const { userId, companyId, membershipId } = metadata;
+
+    if (
+      subscription.status === "active" &&
+      userId &&
+      companyId &&
+      membershipId
+    ) {
+      try {
+        await SubscriptionService.activateSubscriptionFromStripe({
+          userId,
+          companyId,
+          membershipId,
+          stripeSubscriptionId: subscription.id,
+        });
+        logger.info(
+          { userId, companyId, subscriptionId: subscription.id },
+          "Subscription activated via customer.subscription.created",
+        );
+        return c.text("Activation completed", 200);
+      } catch (error: any) {
+        const errorDetails: Record<string, unknown> = {
+          message: error?.message || String(error) || "Unknown error",
+          name: error?.name,
+          stack: error?.stack,
+        };
+        logger.error(
+          {
+            error: errorDetails,
+            userId,
+            companyId,
+            membershipId,
+            subscriptionId: subscription.id,
+          },
+          "Failed to activate subscription from webhook",
+        );
+        return c.text(`Activation failed: ${errorDetails.message}`, 500);
+      }
+    }
+    return c.text("Webhook processed", 200);
   }
 
   if (event.type === "invoice.payment_failed") {
@@ -80,10 +221,6 @@ stripeWebhookRoute.post("/", async (c) => {
         companyId,
         membershipId,
       });
-      logger.info(
-        { userId, companyId, subscriptionId },
-        "Cleaned up failed payment subscription",
-      );
     }
     return c.text("Cleanup completed", 200);
   }
@@ -105,10 +242,6 @@ stripeWebhookRoute.post("/", async (c) => {
         companyId,
         membershipId,
       });
-      logger.info(
-        { userId, companyId, subscriptionId: subscription.id },
-        "Cleaned up incomplete subscription",
-      );
     }
     return c.text("Webhook processed", 200);
   }

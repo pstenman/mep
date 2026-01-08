@@ -24,6 +24,7 @@ export const stripeRouter = createTRPCRouter({
         subscriptionStatus,
         plan,
         amount,
+        paymentIntentStatus,
       } = await StripeSubscriptionService.createStripeSubscription(input);
 
       return {
@@ -33,6 +34,7 @@ export const stripeRouter = createTRPCRouter({
         subscriptionStatus,
         plan,
         amount,
+        paymentIntentStatus,
       };
     }),
 
