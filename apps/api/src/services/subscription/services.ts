@@ -14,7 +14,6 @@ import { CompanyStatus, Role, type SubscriptionStatus } from "@mep/types";
 import { StripeSubscriptionService } from "../stripe-subscriptions/service";
 import { AuthService } from "../auth/service";
 import type { SubscriptionActivateSchema, SubscriptionSchema } from "./schema";
-import { logger } from "@/utils/logger";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { getSupabase } from "@/lib/supabase";
@@ -125,26 +124,14 @@ export class SubscriptionService {
   }: SubscriptionActivateSchema & { stripeSubscriptionId?: string }) {
     const user = await userQueries.getById(userId, true);
     if (!user) {
-      logger.error(
-        { userId, companyId, membershipId },
-        "User not found when activating subscription",
-      );
       throw new Error(`User not found: ${userId}`);
     }
 
     if (!user.supabaseId) {
-      logger.error(
-        { userId, companyId, membershipId },
-        "User exists but has no Supabase ID",
-      );
       throw new Error(`Supabase ID not found for user: ${userId}`);
     }
 
     if (!user.email) {
-      logger.error(
-        { userId, companyId, membershipId },
-        "User exists but has no email",
-      );
       throw new Error(`User email not found for user: ${userId}`);
     }
 
@@ -154,10 +141,6 @@ export class SubscriptionService {
     );
 
     if (!subscription) {
-      logger.error(
-        { userId, companyId, membershipId },
-        "Subscription not found in database",
-      );
       throw new Error(`Subscription not found for company: ${companyId}`);
     }
 
@@ -169,21 +152,6 @@ export class SubscriptionService {
       stripeSubscription =
         await stripe.subscriptions.retrieve(subscriptionIdToUse);
     } catch (error: any) {
-      logger.error(
-        {
-          error: {
-            message: error?.message,
-            type: error?.type,
-            code: error?.code,
-            statusCode: error?.statusCode,
-          },
-          userId,
-          companyId,
-          membershipId,
-          stripeSubscriptionId: subscriptionIdToUse,
-        },
-        "Failed to retrieve subscription from Stripe",
-      );
       throw new Error(
         `Failed to retrieve subscription from Stripe: ${error?.message || "Unknown error"}`,
       );
@@ -228,20 +196,6 @@ export class SubscriptionService {
         );
       });
     } catch (error: any) {
-      logger.error(
-        {
-          error: {
-            message: error?.message,
-            name: error?.name,
-            stack: error?.stack,
-          },
-          userId,
-          companyId,
-          membershipId,
-          stripeSubscriptionId: subscription.stripeSubscriptionId,
-        },
-        "Failed to update subscription in database transaction",
-      );
       throw error;
     }
 
@@ -252,21 +206,21 @@ export class SubscriptionService {
       magicLinkData = await AuthService.sendMagicLinkOnPaymentSuccess(
         user.email,
       );
+
+      const magicLink = (magicLinkData as any).properties?.action_link;
+
+      if (magicLink) {
+        console.log("\n" + "=".repeat(80));
+        console.log("🔗 MAGIC LINK (DEV MODE):");
+        console.log(magicLink);
+        console.log("=".repeat(80) + "\n");
+      } else {
+        console.log("\n" + "=".repeat(80));
+        console.log("⚠️ MAGIC LINK DATA (action_link missing):");
+        console.log(JSON.stringify(magicLinkData, null, 2));
+        console.log("=".repeat(80) + "\n");
+      }
     } catch (error: any) {
-      logger.error(
-        {
-          error: {
-            message: error?.message,
-            name: error?.name,
-            stack: error?.stack,
-          },
-          userId,
-          companyId,
-          membershipId,
-          email: user.email,
-        },
-        "Failed to send magic link, but subscription was activated",
-      );
       throw new Error(
         `Subscription activated but failed to send magic link: ${error?.message || "Unknown error"}`,
       );
@@ -333,7 +287,6 @@ export class SubscriptionService {
   }) {
     const user = await userQueries.getById(userId);
     if (!user) {
-      logger.warn({ userId }, "User not found for cleanup");
       return;
     }
 
@@ -360,16 +313,8 @@ export class SubscriptionService {
       if (user.supabaseId) {
         await supabase.auth.admin.deleteUser(user.supabaseId);
       }
-    } catch (error) {
-      logger.error(
-        { error, userId },
-        "Failed to delete Supabase user during cleanup",
-      );
+    } catch {
+      // Silent fail during cleanup
     }
-
-    logger.info(
-      { userId, companyId, membershipId },
-      "Cleaned up failed subscription",
-    );
   }
 }

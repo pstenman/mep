@@ -1,8 +1,9 @@
 import { SubscriptionService } from "@/services/subscription/services";
-import { subscriptionQueries, db } from "@mep/db";
-import { logger } from "@/utils/logger";
+import { subscriptionQueries, userQueries, db } from "@mep/db";
 import { Hono } from "hono";
 import Stripe from "stripe";
+import type { SubscriptionStatus } from "@mep/types";
+import { CompanyStatus } from "@mep/types";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-12-15.clover",
@@ -25,7 +26,6 @@ stripeWebhookRoute.post("/", async (c) => {
       process.env.STRIPE_SECRET_WEBHOOK!,
     );
   } catch (error: any) {
-    logger.error({ error }, "Webhook signature verification failed");
     return c.text(`Webhook Error: ${error.message}`, 400);
   }
 
@@ -34,10 +34,6 @@ stripeWebhookRoute.post("/", async (c) => {
     const subscriptionId = (invoice as any).subscription as string | null;
 
     if (!subscriptionId || typeof subscriptionId !== "string") {
-      logger.warn(
-        { invoiceId: invoice.id },
-        "Missing subscription ID in invoice.payment_succeeded",
-      );
       return c.text("Missing subscription ID", 200);
     }
 
@@ -53,12 +49,20 @@ stripeWebhookRoute.post("/", async (c) => {
       membershipId
     ) {
       try {
+        const user = await userQueries.getById(userId, true);
+        const company = await db.query.companies.findFirst({
+          where: (companies, { eq }) => eq(companies.id, companyId),
+        });
         const existingSubscription = await subscriptionQueries.findByCompanyId(
           companyId,
           db,
         );
 
-        if (existingSubscription?.status === "active") {
+        if (
+          user?.isActive &&
+          company?.status === CompanyStatus.ACTIVE &&
+          existingSubscription?.status === "active"
+        ) {
           return c.text("Already activated", 200);
         }
 
@@ -68,28 +72,11 @@ stripeWebhookRoute.post("/", async (c) => {
           membershipId,
           stripeSubscriptionId: subscriptionId,
         });
-        logger.info(
-          { userId, companyId, subscriptionId },
-          "Subscription activated via invoice.payment_succeeded",
-        );
         return c.text("Activation completed", 200);
       } catch (error: any) {
         const errorDetails: Record<string, unknown> = {
           message: error?.message || String(error) || "Unknown error",
-          name: error?.name,
-          stack: error?.stack,
         };
-        logger.error(
-          {
-            error: errorDetails,
-            userId,
-            companyId,
-            membershipId,
-            subscriptionId,
-            invoiceId: invoice.id,
-          },
-          "Failed to activate subscription from invoice.payment_succeeded",
-        );
         return c.text(`Activation failed: ${errorDetails.message}`, 500);
       }
     }
@@ -109,13 +96,37 @@ stripeWebhookRoute.post("/", async (c) => {
       membershipId
     ) {
       try {
+        const user = await userQueries.getById(userId, true);
+        const company = await db.query.companies.findFirst({
+          where: (companies, { eq }) => eq(companies.id, companyId),
+        });
         const existingSubscription = await subscriptionQueries.findByCompanyId(
           companyId,
           db,
         );
 
-        if (existingSubscription?.status === "active") {
+        if (
+          user?.isActive &&
+          company?.status === CompanyStatus.ACTIVE &&
+          existingSubscription?.status === "active"
+        ) {
           return c.text("Already activated", 200);
+        }
+
+        if (subscription.cancel_at_period_end !== undefined) {
+          if (existingSubscription) {
+            await subscriptionQueries.update(
+              existingSubscription.stripeSubscriptionId,
+              {
+                cancelAtPeriodEnd: subscription.cancel_at_period_end,
+                canceledAt: subscription.canceled_at
+                  ? new Date(subscription.canceled_at * 1000)
+                  : null,
+                status: subscription.status as SubscriptionStatus,
+              },
+              db,
+            );
+          }
         }
 
         await SubscriptionService.activateSubscriptionFromStripe({
@@ -124,27 +135,11 @@ stripeWebhookRoute.post("/", async (c) => {
           membershipId,
           stripeSubscriptionId: subscription.id,
         });
-        logger.info(
-          { userId, companyId, subscriptionId: subscription.id },
-          "Subscription activated via customer.subscription.updated",
-        );
         return c.text("Activation completed", 200);
       } catch (error: any) {
         const errorDetails: Record<string, unknown> = {
           message: error?.message || String(error) || "Unknown error",
-          name: error?.name,
-          stack: error?.stack,
         };
-        logger.error(
-          {
-            error: errorDetails,
-            userId,
-            companyId,
-            membershipId,
-            subscriptionId: subscription.id,
-          },
-          "Failed to activate subscription from webhook",
-        );
         return c.text(`Activation failed: ${errorDetails.message}`, 500);
       }
     }
@@ -170,27 +165,11 @@ stripeWebhookRoute.post("/", async (c) => {
           membershipId,
           stripeSubscriptionId: subscription.id,
         });
-        logger.info(
-          { userId, companyId, subscriptionId: subscription.id },
-          "Subscription activated via customer.subscription.created",
-        );
         return c.text("Activation completed", 200);
       } catch (error: any) {
         const errorDetails: Record<string, unknown> = {
           message: error?.message || String(error) || "Unknown error",
-          name: error?.name,
-          stack: error?.stack,
         };
-        logger.error(
-          {
-            error: errorDetails,
-            userId,
-            companyId,
-            membershipId,
-            subscriptionId: subscription.id,
-          },
-          "Failed to activate subscription from webhook",
-        );
         return c.text(`Activation failed: ${errorDetails.message}`, 500);
       }
     }
@@ -202,10 +181,6 @@ stripeWebhookRoute.post("/", async (c) => {
     const subscriptionId = (invoice as any).subscription as string | null;
 
     if (!subscriptionId || typeof subscriptionId !== "string") {
-      logger.warn(
-        { invoiceId: invoice.id },
-        "Missing subscription ID in invoice",
-      );
       return c.text("Missing subscription ID", 200);
     }
 

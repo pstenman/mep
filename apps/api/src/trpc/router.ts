@@ -4,6 +4,7 @@ import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { planRouter } from "@/routers/plans";
 import { subscriptionRouter } from "@/routers/subscriptions";
 import { userRouter } from "@/routers/users";
+import { membershipRouter } from "@/routers/memberships";
 import { allergiesRouter } from "@/routers/allergies";
 import { recipesRouter } from "@/routers/recipes";
 import { menusRouter } from "@/routers/menus";
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
   subscription: subscriptionRouter,
   plans: planRouter,
   users: userRouter,
+  memberships: membershipRouter,
   allergies: allergiesRouter,
   recipes: recipesRouter,
   menus: menusRouter,
