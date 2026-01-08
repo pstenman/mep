@@ -5,13 +5,6 @@ import { logger } from "../utils/logger";
 
 export async function seedAllergies() {
   try {
-    const COMPANY_ID = process.env.SYSTEM_COMPANY_ID;
-    const USER_ID = process.env.SYSTEM_USER_ID;
-
-    if (!COMPANY_ID || !USER_ID) {
-      throw new Error("SYSTEM_COMPANY_ID or SYSTEM_USER_ID is missing");
-    }
-
     let createdCount = 0;
     let skippedCount = 0;
 
@@ -25,9 +18,8 @@ export async function seedAllergies() {
       if (existing.length === 0) {
         await allergyQueries.create({
           name,
-          companyId: COMPANY_ID,
-          createdBy: USER_ID,
-          updatedBy: USER_ID,
+          createdBy: null,
+          updatedBy: null,
         });
         createdCount++;
       } else {

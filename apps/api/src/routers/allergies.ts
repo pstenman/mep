@@ -8,10 +8,18 @@ import { createTRPCRouter } from "@/trpc/server";
 import { z } from "zod";
 
 export const allergiesRouter = createTRPCRouter({
-  getAll: companyProcedure.query(async ({ ctx }) => {
-    const result = await AllergyService.getAll(ctx.companyId);
-    return { data: result };
-  }),
+  getAll: companyProcedure
+    .input(
+      z
+        .object({
+          search: z.string().optional(),
+        })
+        .optional(),
+    )
+    .query(async ({ input }) => {
+      const result = await AllergyService.getAll(input?.search);
+      return { data: result };
+    }),
 
   getById: companyProcedure
     .input(z.object({ id: z.uuid() }))
@@ -23,11 +31,7 @@ export const allergiesRouter = createTRPCRouter({
   create: companyProcedure
     .input(createAllergySchema)
     .mutation(async ({ input, ctx }) => {
-      const allergy = await AllergyService.create(
-        input,
-        ctx.companyId,
-        ctx.userId,
-      );
+      const allergy = await AllergyService.create(input, ctx.userId);
       return { data: allergy };
     }),
 

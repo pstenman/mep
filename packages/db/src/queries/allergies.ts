@@ -6,20 +6,17 @@ type AllergyRow = typeof allergies.$inferSelect;
 type AllergyInsert = typeof allergies.$inferInsert;
 
 export interface AllergyFilters {
-  companyId: string;
   search?: string;
 }
 
 export function buildAllergyFilters(filters: AllergyFilters) {
   const whereConditions = [];
 
-  whereConditions.push(eq(allergies.companyId, filters.companyId));
-
   if (filters.search?.trim()) {
     whereConditions.push(ilike(allergies.name, `%${filters.search}%`));
   }
 
-  return and(...whereConditions);
+  return whereConditions.length > 0 ? and(...whereConditions) : undefined;
 }
 
 export const allergyQueries = {
@@ -54,7 +51,7 @@ export const allergyQueries = {
 
   update: async (
     id: string,
-    input: Partial<Omit<AllergyInsert, "id" | "companyId" | "createdAt">>,
+    input: Partial<Omit<AllergyInsert, "id" | "createdAt">>,
     executor?: Database,
   ): Promise<AllergyRow> => {
     const dbOrTx = executor ?? db;

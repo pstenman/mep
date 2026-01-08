@@ -2,37 +2,27 @@ import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import type { Allergen } from "@mep/types";
 import { relations } from "drizzle-orm";
 import { menuItemAllergies } from "./menus";
-import { companies } from "./companies";
 import { users } from "./users";
 
 export const allergies = pgTable("allergies", {
   id: uuid("id").primaryKey().defaultRandom(),
-  companyId: uuid("company_id")
-    .notNull()
-    .references(() => companies.id),
-  name: text("name").$type<Allergen>().notNull(),
-  createdBy: uuid("created_by")
-    .notNull()
-    .references(() => users.id),
-  updatedBy: uuid("updated_by")
-    .notNull()
-    .references(() => users.id),
+  name: text("name").$type<Allergen>().notNull().unique(),
+  createdBy: uuid("created_by").references(() => users.id),
+  updatedBy: uuid("updated_by").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const allergiesRelations = relations(allergies, ({ one, many }) => ({
-  company: one(companies, {
-    fields: [allergies.companyId],
-    references: [companies.id],
-  }),
-  createdBy: one(users, {
+  createdByUser: one(users, {
     fields: [allergies.createdBy],
     references: [users.id],
+    relationName: "createdBy",
   }),
-  updatedBy: one(users, {
+  updatedByUser: one(users, {
     fields: [allergies.updatedBy],
     references: [users.id],
+    relationName: "updatedBy",
   }),
   menuItemAllergies: many(menuItemAllergies),
 }));
