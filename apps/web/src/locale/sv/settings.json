@@ -19,11 +19,11 @@
     "updateSuccess": "Inställningar uppdaterades",
     "updateError": "Kunde inte uppdatera inställningar",
     "prepTypes": {
-      "main": "Huvudrätt",
+      "main": "Huvud",
       "breakfast": "Frukost",
       "lunch": "Lunch",
       "al-a-carte": "À la Carte",
-      "set": "Meny",
+      "set": "Set",
       "group": "Grupp"
     }
   },

@@ -18,7 +18,7 @@
     "placeholder": {
       "name": "Enter recipe name",
       "instructions": "Enter cooking instructions",
-      "ingredientName": "Ingredient name",
+      "ingredientName": "Ingredient",
       "quantity": "0",
       "unit": "kg, g, ml, etc."
     },
