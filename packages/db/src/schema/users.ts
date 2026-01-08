@@ -18,6 +18,9 @@ export const users = pgTable("users", {
   lastName: text("last_name").notNull(),
   phoneNumber: text("phone_number"),
   isActive: boolean("is_active").notNull().default(false),
+  deletedAt: timestamp("deleted_at"),
+  isAnonymized: boolean("is_anonymized").notNull().default(false),
+  anonymizedAt: timestamp("anonymized_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   image: jsonb("image").$type<{

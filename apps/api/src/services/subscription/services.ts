@@ -14,10 +14,16 @@ import { CompanyStatus, Role, type SubscriptionStatus } from "@mep/types";
 import { StripeSubscriptionService } from "../stripe-subscriptions/service";
 import { AuthService } from "../auth/service";
 import type { SubscriptionActivateSchema, SubscriptionSchema } from "./schema";
-import { logger } from "@/utils/logger";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { getSupabase } from "@/lib/supabase";
+import { logger } from "@/utils/logger";
+import Stripe from "stripe";
+import type { Database } from "@mep/db";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2025-12-15.clover",
+});
 
 export class SubscriptionService {
   static async createSubscription(input: SubscriptionSchema) {
@@ -84,12 +90,39 @@ export class SubscriptionService {
       throw error;
     }
 
+    let stripeSubscription: Stripe.Subscription;
+    try {
+      stripeSubscription = await stripe.subscriptions.retrieve(
+        subscriptionInfo.subscriptionId,
+      );
+    } catch (error: any) {
+      throw new Error(
+        `Failed to retrieve subscription from Stripe: ${error?.message || "Unknown error"}`,
+      );
+    }
+
     const subscription = await db.transaction(async (tx) => {
       const defaultPlan = await planQueries.getDefault();
       if (!defaultPlan) {
         throw new Error("No plan found in database. Please seed plans first.");
       }
       const planId = defaultPlan.id;
+
+      const subscriptionData = stripeSubscription as any;
+
+      const currentPeriodStart =
+        subscriptionData.current_period_start &&
+        subscriptionData.current_period_start > 0
+          ? new Date(subscriptionData.current_period_start * 1000)
+          : new Date();
+
+      const currentPeriodEnd =
+        subscriptionData.current_period_end &&
+        subscriptionData.current_period_end > 0 &&
+        subscriptionData.current_period_end >
+          subscriptionData.current_period_start
+          ? new Date(subscriptionData.current_period_end * 1000)
+          : new Date(currentPeriodStart.getTime() + 90 * 24 * 60 * 60 * 1000);
 
       return await subscriptionQueries.create(
         {
@@ -98,10 +131,12 @@ export class SubscriptionService {
           stripeCustomerId: subscriptionInfo.customerId,
           planId,
           status: subscriptionInfo.subscriptionStatus as SubscriptionStatus,
-          currentPeriodStart: new Date(),
-          currentPeriodEnd: new Date(),
-          cancelAtPeriodEnd: false,
-          canceledAt: null,
+          currentPeriodStart,
+          currentPeriodEnd,
+          cancelAtPeriodEnd: subscriptionData.cancel_at_period_end ?? false,
+          canceledAt: subscriptionData.canceled_at
+            ? new Date(subscriptionData.canceled_at * 1000)
+            : null,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -116,27 +151,119 @@ export class SubscriptionService {
     userId,
     companyId,
     membershipId,
-  }: SubscriptionActivateSchema) {
-    const supabaseId = await userQueries.getSupabaseIdByUserId(userId, db);
-    if (!supabaseId) throw new Error("Supabase ID not found");
+    stripeSubscriptionId,
+  }: SubscriptionActivateSchema & { stripeSubscriptionId?: string }) {
+    const user = await userQueries.getById(userId, true);
+    if (!user) {
+      throw new Error(`User not found: ${userId}`);
+    }
 
-    const user = await userQueries.getById(userId);
-    if (!user) throw new Error("User not found");
-    if (!user.email) throw new Error("User email not found");
+    if (!user.supabaseId) {
+      throw new Error(`Supabase ID not found for user: ${userId}`);
+    }
 
-    await db.transaction(async (tx) => {
-      await userQueries.activate(userId, tx);
-      await companyQueries.activate(companyId, tx);
-      await membershipQueries.activate(membershipId, tx);
-    });
+    if (!user.email) {
+      throw new Error(`User email not found for user: ${userId}`);
+    }
 
-    const magicLinkData = await AuthService.sendMagicLinkOnPaymentSuccess(
-      user.email,
+    const subscription = await subscriptionQueries.findByCompanyId(
+      companyId,
+      db,
     );
-    logger.info(
-      { userId, companyId, membershipId, magicLink: magicLinkData },
-      "Subscription activated and magic link sent",
-    );
+
+    if (!subscription) {
+      throw new Error(`Subscription not found for company: ${companyId}`);
+    }
+
+    const subscriptionIdToUse =
+      stripeSubscriptionId || subscription.stripeSubscriptionId;
+
+    let stripeSubscription: Stripe.Subscription;
+    try {
+      stripeSubscription =
+        await stripe.subscriptions.retrieve(subscriptionIdToUse);
+    } catch (error: any) {
+      throw new Error(
+        `Failed to retrieve subscription from Stripe: ${error?.message || "Unknown error"}`,
+      );
+    }
+
+    if (
+      stripeSubscriptionId &&
+      stripeSubscriptionId !== subscription.stripeSubscriptionId
+    ) {
+      await subscriptionQueries.update(
+        subscription.stripeSubscriptionId,
+        {
+          stripeSubscriptionId: stripeSubscriptionId,
+        },
+        db,
+      );
+      subscription.stripeSubscriptionId = stripeSubscriptionId;
+    }
+
+    try {
+      await db.transaction(async (tx) => {
+        await userQueries.activate(userId, tx);
+        await companyQueries.activate(companyId, tx);
+        await membershipQueries.activate(membershipId, tx);
+
+        const subscriptionData = stripeSubscription as any;
+        const currentPeriodStart = subscriptionData.current_period_start;
+        const currentPeriodEnd = subscriptionData.current_period_end;
+
+        await subscriptionQueries.update(
+          subscription.stripeSubscriptionId,
+          {
+            status: stripeSubscription.status as SubscriptionStatus,
+            currentPeriodStart: currentPeriodStart
+              ? new Date(currentPeriodStart * 1000)
+              : subscription.currentPeriodStart,
+            currentPeriodEnd: currentPeriodEnd
+              ? new Date(currentPeriodEnd * 1000)
+              : subscription.currentPeriodEnd,
+            cancelAtPeriodEnd:
+              subscriptionData.cancel_at_period_end ??
+              subscription.cancelAtPeriodEnd,
+            canceledAt: subscriptionData.canceled_at
+              ? new Date(subscriptionData.canceled_at * 1000)
+              : subscription.canceledAt,
+          },
+          tx,
+        );
+      });
+    } catch (error: any) {
+      throw new Error(
+        `Failed to activate subscription: ${error?.message || "Unknown error"}`,
+      );
+    }
+
+    let magicLinkData: Awaited<
+      ReturnType<typeof AuthService.sendMagicLinkOnPaymentSuccess>
+    >;
+    try {
+      magicLinkData = await AuthService.sendMagicLinkOnPaymentSuccess(
+        user.email,
+      );
+
+      const magicLink = (magicLinkData as any).properties?.action_link;
+
+      if (magicLink) {
+        console.log(`\n${"=".repeat(80)}`);
+        console.log("🔗 MAGIC LINK (DEV MODE):");
+        console.log(magicLink);
+        console.log(`${"=".repeat(80)}\n`);
+      } else {
+        console.log(`\n${"=".repeat(80)}`);
+        console.log("⚠️ MAGIC LINK DATA (action_link missing):");
+        console.log(JSON.stringify(magicLinkData, null, 2));
+        console.log(`${"=".repeat(80)}\n`);
+      }
+    } catch (error: any) {
+      throw new Error(
+        `Subscription activated but failed to send magic link: ${error?.message || "Unknown error"}`,
+      );
+    }
 
     return magicLinkData;
   }
@@ -199,7 +326,6 @@ export class SubscriptionService {
   }) {
     const user = await userQueries.getById(userId);
     if (!user) {
-      logger.warn({ userId }, "User not found for cleanup");
       return;
     }
 
@@ -226,16 +352,139 @@ export class SubscriptionService {
       if (user.supabaseId) {
         await supabase.auth.admin.deleteUser(user.supabaseId);
       }
-    } catch (error) {
-      logger.error(
-        { error, userId },
-        "Failed to delete Supabase user during cleanup",
-      );
+    } catch {
+      // Silent fail during cleanup
+    }
+  }
+
+  static async checkSubscriptionStatus(
+    companyId: string,
+    executor?: Database,
+  ): Promise<{ hasSubscription: boolean; isActive: boolean }> {
+    const dbOrTx = executor ?? db;
+    const subscription = await subscriptionQueries.findByCompanyId(
+      companyId,
+      dbOrTx,
+    );
+
+    if (!subscription) {
+      return { hasSubscription: false, isActive: false };
     }
 
-    logger.info(
-      { userId, companyId, membershipId },
-      "Cleaned up failed subscription",
+    if (subscription.cancelAtPeriodEnd) {
+      return { hasSubscription: true, isActive: false };
+    }
+
+    const isActive =
+      subscription.status === "active" ||
+      subscription.status === "trialing" ||
+      subscription.status === "past_due";
+
+    return { hasSubscription: true, isActive };
+  }
+
+  static async cancelSubscriptionForUser(
+    userId: string,
+    companyId: string,
+    executor?: Database,
+  ) {
+    const dbOrTx = executor ?? db;
+    const subscription = await subscriptionQueries.findByCompanyId(
+      companyId,
+      dbOrTx,
     );
+
+    if (!subscription) {
+      logger.info({ userId, companyId }, "No subscription found to cancel");
+      return { success: true, message: "No subscription found" };
+    }
+
+    try {
+      const stripeSubscription = await stripe.subscriptions.update(
+        subscription.stripeSubscriptionId,
+        {
+          cancel_at_period_end: true,
+        },
+      );
+
+      await subscriptionQueries.update(
+        subscription.stripeSubscriptionId,
+        {
+          cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end ?? true,
+          canceledAt: stripeSubscription.canceled_at
+            ? new Date(stripeSubscription.canceled_at * 1000)
+            : new Date(),
+          status: stripeSubscription.status as SubscriptionStatus,
+        },
+        dbOrTx,
+      );
+
+      return {
+        success: true,
+        message: "Subscription will cancel at period end",
+        status: stripeSubscription.status,
+        cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
+      };
+    } catch (error: any) {
+      throw new Error(
+        `Failed to cancel subscription in Stripe: ${error?.message || "Unknown error"}`,
+      );
+    }
+  }
+
+  static async syncSubscriptionFromStripe(
+    companyId: string,
+    executor?: Database,
+  ) {
+    const dbOrTx = executor ?? db;
+    const subscription = await subscriptionQueries.findByCompanyId(
+      companyId,
+      dbOrTx,
+    );
+
+    if (!subscription) {
+      return { success: false, message: "No subscription found" };
+    }
+
+    try {
+      const stripeSubscription = await stripe.subscriptions.retrieve(
+        subscription.stripeSubscriptionId,
+      );
+
+      const subscriptionData = stripeSubscription as any;
+      await subscriptionQueries.update(
+        subscription.stripeSubscriptionId,
+        {
+          status: stripeSubscription.status as SubscriptionStatus,
+          currentPeriodStart: new Date(
+            subscriptionData.current_period_start * 1000,
+          ),
+          currentPeriodEnd: new Date(
+            subscriptionData.current_period_end * 1000,
+          ),
+          cancelAtPeriodEnd: subscriptionData.cancel_at_period_end ?? false,
+          canceledAt: subscriptionData.canceled_at
+            ? new Date(subscriptionData.canceled_at * 1000)
+            : null,
+        },
+        dbOrTx,
+      );
+
+      return {
+        success: true,
+        message: "Subscription synced successfully",
+        status: stripeSubscription.status,
+      };
+    } catch (error) {
+      logger.error(
+        {
+          error,
+          companyId,
+          subscriptionId: subscription.stripeSubscriptionId,
+        },
+        "Failed to sync subscription from Stripe",
+      );
+      throw new Error("Failed to sync subscription from Stripe");
+    }
   }
 }

@@ -39,5 +39,52 @@
         "phoneNumber": "Telefonnummer"
       }
     }
+  },
+  "deleteAccount": {
+    "title": "Ta bort konto",
+    "checking": "Kontrollerar om ditt konto kan tas bort...",
+    "cannotDelete": "Kan inte ta bort konto",
+    "onlyOwner": "Du är den enda ägaren av följande företag:",
+    "activeSubscription": "(Aktiv prenumeration)",
+    "transferRequired": "Vänligen överför ägarskapet till en annan användare innan du tar bort ditt konto.",
+    "cancelRequired": "Vänligen avsluta din prenumeration innan du tar bort ditt konto.",
+    "transferButton": "Överför ägarskap",
+    "cancelSubscription": "Avsluta prenumeration för {company}",
+    "canceling": "Avslutar...",
+    "alreadyCanceled": "Prenumerationen för {company} är redan schemalagd att avslutas. Du kan ta bort ditt konto när prenumerationsperioden är slut.",
+    "close": "Stäng",
+    "confirmTitle": "Ta bort konto",
+    "confirmDescription": "Är du säker på att du vill ta bort ditt konto? Denna åtgärd kan inte ångras. Alla dina personuppgifter kommer att tas bort permanent.",
+    "confirmWarning": "Detta kommer att permanent ta bort ditt konto och all tillhörande data. Du kommer att loggas ut omedelbart.",
+    "cancel": "Avbryt",
+    "deleting": "Tar bort...",
+    "deleteButton": "Ta bort konto",
+    "deletingTitle": "Tar bort konto",
+    "deletingDescription": "Vänligen vänta medan vi tar bort ditt konto...",
+    "confirmCancelSubscription": "Är du säker på att du vill avsluta din prenumeration? Denna åtgärd kan inte ångras.",
+    "toast": {
+      "cancelSuccess": "Prenumerationen avslutad",
+      "cancelError": "Kunde inte avsluta prenumerationen",
+      "deleteSuccess": "Ditt konto har tagits bort",
+      "deleteError": "Kunde inte ta bort kontot"
+    }
+  },
+  "transferOwnership": {
+    "title": "Överför ägarskap",
+    "description": "Välj en användare att överföra företagsägarskapet till. Du kommer att bli en vanlig användare efter överföringen.",
+    "selectLabel": "Välj användare att överföra till:",
+    "selectPlaceholder": "Välj en användare...",
+    "noUsers": "Inga tillgängliga användare",
+    "noUsersMessage": "Det finns inga andra användare i ditt företag att överföra ägarskapet till. Vänligen lägg till en användare först.",
+    "cancel": "Avbryt",
+    "transferring": "Överför...",
+    "transferButton": "Överför ägarskap",
+    "confirmTitle": "Överför ägarskap",
+    "confirmMessage": "Är du säker på att du vill överföra ägarskapet? Du kommer att bli en vanlig användare efter överföringen.",
+    "toast": {
+      "success": "Ägarskapet överfört",
+      "error": "Kunde inte överföra ägarskapet",
+      "selectUser": "Vänligen välj en användare att överföra ägarskapet till"
+    }
   }
 }

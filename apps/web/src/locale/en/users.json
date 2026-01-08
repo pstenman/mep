@@ -39,5 +39,52 @@
       "createSuccess": "User created successfully",
       "error": "Something went wrong. Please try again."
     }
+  },
+  "deleteAccount": {
+    "title": "Delete Account",
+    "checking": "Checking if your account can be deleted...",
+    "cannotDelete": "Cannot Delete Account",
+    "onlyOwner": "You are the only owner of the following companies:",
+    "activeSubscription": "(Active subscription)",
+    "transferRequired": "Please transfer ownership to another user before deleting your account.",
+    "cancelRequired": "Please cancel your subscription before deleting your account.",
+    "transferButton": "Transfer Ownership",
+    "cancelSubscription": "Cancel Subscription for {company}",
+    "canceling": "Canceling...",
+    "alreadyCanceled": "Subscription for {company} is already scheduled to cancel. You can delete your account once the subscription period ends.",
+    "close": "Close",
+    "confirmTitle": "Delete Account",
+    "confirmDescription": "Are you sure you want to delete your account? This action cannot be undone. All your personal data will be permanently removed.",
+    "confirmWarning": "This will permanently delete your account and all associated data. You will be logged out immediately.",
+    "cancel": "Cancel",
+    "deleting": "Deleting...",
+    "deleteButton": "Delete Account",
+    "deletingTitle": "Deleting Account",
+    "deletingDescription": "Please wait while we delete your account...",
+    "confirmCancelSubscription": "Are you sure you want to cancel your subscription? This action cannot be undone.",
+    "toast": {
+      "cancelSuccess": "Subscription canceled successfully",
+      "cancelError": "Failed to cancel subscription",
+      "deleteSuccess": "Your account has been deleted successfully",
+      "deleteError": "Failed to delete account"
+    }
+  },
+  "transferOwnership": {
+    "title": "Transfer Ownership",
+    "description": "Select a user to transfer company ownership to. You will become a regular user after the transfer.",
+    "selectLabel": "Select User to Transfer To:",
+    "selectPlaceholder": "Select a user...",
+    "noUsers": "No available users",
+    "noUsersMessage": "There are no other users in your company to transfer ownership to. Please add a user first.",
+    "cancel": "Cancel",
+    "transferring": "Transferring...",
+    "transferButton": "Transfer Ownership",
+    "confirmTitle": "Transfer Ownership",
+    "confirmMessage": "Are you sure you want to transfer ownership? You will become a regular user after the transfer.",
+    "toast": {
+      "success": "Ownership transferred successfully",
+      "error": "Failed to transfer ownership",
+      "selectUser": "Please select a user to transfer ownership to"
+    }
   }
 }

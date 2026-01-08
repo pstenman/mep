@@ -28,6 +28,9 @@ export const useCompanySubscription = () => {
   );
   const [plan, setPlan] = useState<string | null>(null);
   const [amount, setAmount] = useState<string | null>(null);
+  const [paymentIntentStatus, setPaymentIntentStatus] = useState<
+    "ready" | "pending" | null
+  >(null);
   const [loading, setLoading] = useState(false);
   const [authData, setAuthData] = useState<{
     userId: string;
@@ -63,6 +66,7 @@ export const useCompanySubscription = () => {
       setSubscriptionStatus(stripeData.subscriptionStatus);
       setPlan(stripeData.plan);
       setAmount(stripeData.amount);
+      setPaymentIntentStatus(stripeData.paymentIntentStatus);
 
       return stripeData.clientSecret;
     } catch (err) {
@@ -108,6 +112,7 @@ export const useCompanySubscription = () => {
     subscriptionStatus,
     plan,
     amount,
+    paymentIntentStatus,
     loading,
     createSubscription,
     cleanup,

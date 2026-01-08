@@ -8,6 +8,13 @@
       "when": 1767682790170,
       "tag": "0000_striped_cammi",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1767753706149,
+      "tag": "0001_boring_shadowcat",
+      "breakpoints": true
     }
   ]
 }

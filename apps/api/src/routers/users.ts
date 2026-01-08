@@ -77,4 +77,14 @@ export const userRouter = createTRPCRouter({
       const user = await UserService.updateCurrentUser(ctx.userId, input);
       return { data: user };
     }),
+
+  checkDeletionEligibility: protectedProcedure.query(async ({ ctx }) => {
+    const eligibility = await UserService.checkDeletionEligibility(ctx.userId);
+    return { data: eligibility };
+  }),
+
+  requestDeletion: protectedProcedure.mutation(async ({ ctx }) => {
+    const result = await UserService.requestDeletion(ctx.userId);
+    return { data: result };
+  }),
 });
