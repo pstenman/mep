@@ -164,6 +164,39 @@ export const preparationsRouter = createTRPCRouter({
         const result = await PrepGroupService.delete(input.id, ctx.companyId!);
         return { data: result };
       }),
+
+    addNote: companyProcedure
+      .input(
+        z.object({
+          prepGroupId: z.uuid(),
+          message: z.string().min(1).max(500),
+        }),
+      )
+      .mutation(async ({ input, ctx }) => {
+        const prepGroup = await PrepGroupService.addNote(
+          input.prepGroupId,
+          input.message,
+          ctx.userId!,
+          ctx.companyId!,
+        );
+        return { data: prepGroup };
+      }),
+
+    deleteNote: companyProcedure
+      .input(
+        z.object({
+          prepGroupId: z.uuid(),
+          noteId: z.uuid(),
+        }),
+      )
+      .mutation(async ({ input, ctx }) => {
+        const prepGroup = await PrepGroupService.deleteNote(
+          input.prepGroupId,
+          input.noteId,
+          ctx.companyId!,
+        );
+        return { data: prepGroup };
+      }),
   },
 
   prepItems: {

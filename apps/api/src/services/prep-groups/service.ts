@@ -82,6 +82,12 @@ export class PrepGroupService {
       name: string;
       menuItemId: string | null;
       note: string | null;
+      notes: Array<{
+        id: string;
+        message: string;
+        createdBy: string;
+        createdAt: string;
+      }>;
     }> = {};
 
     if (input.name !== undefined) {
@@ -96,7 +102,77 @@ export class PrepGroupService {
       updateData.note = input.note;
     }
 
+    if (input.notes !== undefined) {
+      updateData.notes = input.notes;
+    }
+
     const prepGroup = await prepGroupQueries.update(input.id, updateData);
+    return prepGroup;
+  }
+
+  static async addNote(
+    prepGroupId: string,
+    message: string,
+    userId: string,
+    companyId: string,
+  ) {
+    const existing = await prepGroupQueries.getById(prepGroupId);
+    if (!existing) {
+      throw new Error("Prep group not found");
+    }
+    if (existing.companyId !== companyId) {
+      throw new Error("Prep group does not belong to this company");
+    }
+
+    const currentNotes =
+      (existing.notes as Array<{
+        id: string;
+        message: string;
+        createdBy: string;
+        createdAt: string;
+      }>) || [];
+
+    const newNote = {
+      id: crypto.randomUUID(),
+      message: message.trim(),
+      createdBy: userId,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedNotes = [...currentNotes, newNote];
+
+    const prepGroup = await prepGroupQueries.update(prepGroupId, {
+      notes: updatedNotes,
+    });
+    return prepGroup;
+  }
+
+  static async deleteNote(
+    prepGroupId: string,
+    noteId: string,
+    companyId: string,
+  ) {
+    const existing = await prepGroupQueries.getById(prepGroupId);
+    if (!existing) {
+      throw new Error("Prep group not found");
+    }
+    if (existing.companyId !== companyId) {
+      throw new Error("Prep group does not belong to this company");
+    }
+
+    const currentNotes =
+      (existing.notes as Array<{
+        id: string;
+        message: string;
+        createdBy: string;
+        createdAt: string;
+      }>) || [];
+
+    const updatedNotes = currentNotes.filter((note) => note.id !== noteId);
+
+    const prepGroup = await prepGroupQueries.update(prepGroupId, {
+      notes: updatedNotes,
+    });
     return prepGroup;
   }
 

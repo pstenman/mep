@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+export const prepGroupNoteSchema = z.object({
+  id: z.uuid(),
+  message: z.string().min(1).max(500),
+  createdBy: z.uuid(),
+  createdAt: z.string(),
+});
+
 export const createPrepGroupSchema = z.object({
   name: z.string().min(1),
   prepListId: z.uuid(),
@@ -12,6 +19,7 @@ export const updatePrepGroupSchema = z.object({
   name: z.string().min(1).optional(),
   menuItemId: z.uuid().optional().nullable(),
   note: z.string().optional().nullable(),
+  notes: z.array(prepGroupNoteSchema).optional(),
 });
 
 export const prepGroupFiltersSchema = z.object({
