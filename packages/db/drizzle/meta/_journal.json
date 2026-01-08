@@ -15,6 +15,13 @@
       "when": 1767753706149,
       "tag": "0001_boring_shadowcat",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1767850439198,
+      "tag": "0002_mighty_sentry",
+      "breakpoints": true
     }
   ]
 }

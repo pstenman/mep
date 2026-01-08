@@ -1,5 +1,13 @@
 {
   "light": "Light",
   "dark": "Dark",
-  "system": "Auto"
+  "system": "Auto",
+  "createButton": {
+    "user": "Create User",
+    "preparation": "Create Preparation",
+    "menu": "Create Menu",
+    "recipe": "Create Recipe",
+    "allergy": "Create Allergy",
+    "order": "Create Order"
+  }
 }

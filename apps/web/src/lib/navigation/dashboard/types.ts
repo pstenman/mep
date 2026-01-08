@@ -20,7 +20,7 @@ export const GROUP_KEYS = [
 
 export type GroupKey = (typeof GROUP_KEYS)[number];
 export type PrepGroup = (typeof GROUP_KEYS)[number];
-export type GroupedSection = "preparations" | "menus" | "orders" | "allergies";
+export type GroupedSection = "preparations" | "menus" | "allergies";
 
 /**
  * Navigation item (sub-item within a navigation group)

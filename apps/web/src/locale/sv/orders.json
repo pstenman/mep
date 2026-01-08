@@ -1,0 +1,50 @@
+{
+  "form": {
+    "validation": {
+      "nameRequired": "Namn är obligatoriskt",
+      "quantityMin": "Kvantitet måste vara minst 0",
+      "unitRequired": "Enhet är obligatorisk"
+    },
+    "placeholder": {
+      "itemName": "Namn",
+      "quantity": "0",
+      "unit": "kg"
+    },
+    "button": {
+      "addItem": "Lägg till artikel",
+      "cancel": "Avbryt",
+      "saveItems": "Spara artiklar",
+      "saving": "Sparar...",
+      "edit": "Redigera",
+      "save": "Spara"
+    }
+  },
+  "view": {
+    "tooltip": {
+      "editItems": "Redigera artiklar"
+    },
+    "empty": {
+      "noItems": "Inga artiklar för {date}",
+      "clickToAdd": "Klicka på +-knappen för att lägga till artiklar"
+    },
+    "toast": {
+      "itemsAdded": "Artiklar tillagda",
+      "addError": "Kunde inte lägga till artiklar",
+      "pleaseAddItem": "Vänligen lägg till minst en artikel"
+    }
+  },
+  "editDialog": {
+    "title": "Redigera orderartiklar",
+    "empty": "Inga artiklar att redigera",
+    "toast": {
+      "updateSuccess": "Order uppdaterad",
+      "updateError": "Kunde inte uppdatera order"
+    }
+  },
+  "orderList": {
+    "toast": {
+      "updateError": "Kunde inte uppdatera artikel"
+    }
+  }
+}
+

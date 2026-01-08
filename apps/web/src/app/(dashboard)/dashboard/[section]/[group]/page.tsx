@@ -6,14 +6,9 @@ import type {
   GroupKey,
 } from "@/lib/navigation/dashboard/types";
 
-const GROUPED_SECTIONS = [
-  "preparations",
-  "menus",
-  "orders",
-  "allergies",
-] as const;
+const GROUPED_SECTIONS = ["preparations", "menus", "allergies"] as const;
 
-const ALLOWED_GROUPS_WITH_ALL = ["allergies", "orders"] as const;
+const ALLOWED_GROUPS_WITH_ALL = ["allergies"] as const;
 
 export default async function SectionGroupPage({
   params,

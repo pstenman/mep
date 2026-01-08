@@ -2,11 +2,12 @@ import { orderQueries, type OrderFilters } from "@mep/db";
 import type { CreateOrderSchema, UpdateOrderSchema } from "./schema";
 
 export class OrderService {
-  static async getAll(companyId: string) {
-    const filters: OrderFilters = {
+  static async getAll(companyId: string, filters?: Partial<OrderFilters>) {
+    const filterData: OrderFilters = {
       companyId,
+      ...filters,
     };
-    const rows = await orderQueries.getAll(filters);
+    const rows = await orderQueries.getAll(filterData);
     return { items: rows };
   }
 
@@ -19,9 +20,13 @@ export class OrderService {
     companyId: string,
     userId: string,
   ) {
+    const normalizedDate = new Date(input.orderDate);
+    normalizedDate.setHours(0, 0, 0, 0);
+
     const order = await orderQueries.create({
       companyId,
-      orderItems: input.orderItems,
+      orderDate: normalizedDate,
+      orderItems: input.orderItems || [],
       createdBy: userId,
       updatedBy: userId,
     });
@@ -35,11 +40,23 @@ export class OrderService {
     }
 
     const updateData: Partial<{
-      orderItems: Array<{ quantity: number; price: number }> | null;
+      orderDate: Date;
+      orderItems: Array<{
+        name: string;
+        quantity: number;
+        unit: string;
+        checked: boolean;
+      }> | null;
       updatedBy: string;
     }> = {
       updatedBy: userId,
     };
+
+    if (input.orderDate !== undefined) {
+      const normalizedDate = new Date(input.orderDate);
+      normalizedDate.setHours(0, 0, 0, 0);
+      updateData.orderDate = normalizedDate;
+    }
 
     if (input.orderItems !== undefined) {
       updateData.orderItems = input.orderItems || null;
@@ -47,6 +64,12 @@ export class OrderService {
 
     const order = await orderQueries.update(input.id, updateData);
     return order;
+  }
+
+  static async getByDate(companyId: string, orderDate: Date) {
+    const normalizedDate = new Date(orderDate);
+    normalizedDate.setHours(0, 0, 0, 0);
+    return await orderQueries.getByDate(companyId, normalizedDate);
   }
 
   static async delete(id: string, companyId: string) {

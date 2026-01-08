@@ -7,6 +7,7 @@ import { OrderService } from "@/services/orders/service";
 import { companyProcedure } from "@/trpc/procedures";
 import { createTRPCRouter } from "@/trpc/server";
 import { z } from "zod";
+import type { OrderFilters } from "@mep/db";
 
 export const ordersRouter = createTRPCRouter({
   getAll: companyProcedure
@@ -17,8 +18,14 @@ export const ordersRouter = createTRPCRouter({
         })
         .partial(),
     )
-    .query(async ({ ctx }) => {
-      const result = await OrderService.getAll(ctx.companyId!);
+    .query(async ({ input, ctx }) => {
+      const filters: OrderFilters = {
+        companyId: ctx.companyId!,
+      };
+      if (input?.filter?.orderDate) {
+        filters.orderDate = input.filter.orderDate;
+      }
+      const result = await OrderService.getAll(ctx.companyId!, filters);
       return { data: result };
     }),
 
@@ -26,6 +33,16 @@ export const ordersRouter = createTRPCRouter({
     .input(z.object({ id: z.uuid() }))
     .query(async ({ input }) => {
       const order = await OrderService.getById(input.id);
+      return { data: order };
+    }),
+
+  getByDate: companyProcedure
+    .input(z.object({ orderDate: z.coerce.date() }))
+    .query(async ({ input, ctx }) => {
+      const order = await OrderService.getByDate(
+        ctx.companyId!,
+        input.orderDate,
+      );
       return { data: order };
     }),
 

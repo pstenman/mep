@@ -1,16 +1,31 @@
 import { orders } from "@/schema/orders";
 import { db, type Database } from "..";
-import { eq } from "drizzle-orm";
+import { eq, and, gte, lt } from "drizzle-orm";
 
 type OrderRow = typeof orders.$inferSelect;
 type OrderInsert = typeof orders.$inferInsert;
 
 export interface OrderFilters {
   companyId: string;
+  orderDate?: Date;
 }
 
 export function buildOrderFilters(filters: OrderFilters) {
-  return eq(orders.companyId, filters.companyId);
+  const conditions = [eq(orders.companyId, filters.companyId)];
+
+  if (filters.orderDate) {
+    const normalizedDate = new Date(filters.orderDate);
+    normalizedDate.setHours(0, 0, 0, 0);
+    const nextDay = new Date(normalizedDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    conditions.push(
+      gte(orders.orderDate, normalizedDate),
+      lt(orders.orderDate, nextDay),
+    );
+  }
+
+  return and(...conditions);
 }
 
 export const orderQueries = {
@@ -31,6 +46,27 @@ export const orderQueries = {
   getById: async (id: string) => {
     const row = await db.query.orders.findFirst({
       where: eq(orders.id, id),
+      with: {
+        company: true,
+        createdBy: true,
+        updatedBy: true,
+      },
+    });
+    return row;
+  },
+
+  getByDate: async (companyId: string, orderDate: Date) => {
+    const normalizedDate = new Date(orderDate);
+    normalizedDate.setHours(0, 0, 0, 0);
+    const nextDay = new Date(normalizedDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    const row = await db.query.orders.findFirst({
+      where: and(
+        eq(orders.companyId, companyId),
+        gte(orders.orderDate, normalizedDate),
+        lt(orders.orderDate, nextDay),
+      ),
       with: {
         company: true,
         createdBy: true,
